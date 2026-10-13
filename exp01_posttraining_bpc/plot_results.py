@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
 
 PAIR_ORDER = ["qwen2.5", "qwen3", "smollm2", "qwen2.5-math"]
-PAIR_LABEL = {"qwen2.5": "Qwen2.5-1.5B\n→ Instruct", "qwen3": "Qwen3-1.7B-Base\n→ Qwen3-1.7B (RL)",
+PAIR_LABEL = {"qwen2.5": "Qwen2.5-1.5B\n→ Instruct", "qwen3": "Qwen3-1.7B-Base\n→ Qwen3-1.7B (post)",
               "smollm2": "SmolLM2-1.7B\n→ Instruct", "qwen2.5-math": "Qwen2.5-Math-1.5B\n→ R1-Distill"}
 CORPUS_ORDER = ["wiki2026", "arxiv2026", "gutenberg2026", "enwik8_ctrl"]
 BASE_C, POST_C = "#2a78d6", "#eb6834"   # dataviz reference palette slots 1, 2
