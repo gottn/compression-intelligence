@@ -1,0 +1,571 @@
+{
+ "corpus": "arxiv2026",
+ "bytes": 100041,
+ "chars": 99872,
+ "n_docs": 80,
+ "min_date_required": "2026-08-01",
+ "built_utc": "2026-10-13T16:55:08Z",
+ "notes": "arXiv API, 200 newest per category; kept published>=2026-08-01 (cs.LG 200, math.AP 200); interleaved; whitespace normalised; LaTeX left as-is.",
+ "docs": [
+  {
+   "url": "http://arxiv.org/abs/2610.13935v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Hide and Seek: HIDE Concepts to SEEK explanations for black box models",
+   "bytes": 1457
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13934v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "A Riesz-Map Preconditioned Extragradient Method for Price Formation in Mean Field Games",
+   "bytes": 1759
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13931v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Constructive Bounds for the Topological Expressivity of Neural Networks",
+   "bytes": 1384
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13921v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "An Aleksandrov estimate for kinetic equations with rough coefficients",
+   "bytes": 278
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13928v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "AI Models Can Provably Hide Arbitrary Capabilities",
+   "bytes": 1183
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13913v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "The Bernstein problem in higher dimensional Heisenberg groups",
+   "bytes": 297
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13924v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "KL Before and After Mixing: A Round-Complexity Separation in Parallel Sampling",
+   "bytes": 1636
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13898v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "The Inviscid Limit in Uniformly Local Yudovich Spaces",
+   "bytes": 536
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13923v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Goal-Oriented Bundle Management and Flow Control for Deep-Space Communications via Reinforcement Learning",
+   "bytes": 1913
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13887v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Ground states and sharp logarithmic Sobolev inequalities for logarithmic Schrödinger equations with partial confinement",
+   "bytes": 1329
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13918v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "DyssomniaNN: Multi-Scale Spiking Neural Modeling of Human Sleep Disorders and Perceived Restedness",
+   "bytes": 1669
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13883v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Existence and large-field asymptotics of Hopfions in a continuum model of frustrated magnets",
+   "bytes": 852
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13917v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Designing Protein Structures from Natural Language",
+   "bytes": 1645
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13866v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Characterizing higher-dimensional Hölder domains via spherical geometric functions",
+   "bytes": 901
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13909v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Revisiting Tabular Deep Regression: Objectives and the Limits of Global Early Stopping",
+   "bytes": 1823
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13813v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Existence and uniqueness of bound states with prescribed number of nodes for nonlinear dispersive equations on spherically symmetric manifolds",
+   "bytes": 747
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13901v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Hitting-Time Bounds for Asynchronous Q-Learning",
+   "bytes": 1820
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13753v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Scattering for the KP-II equation",
+   "bytes": 887
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13881v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Prediction Is Not a Sufficient Memory State",
+   "bytes": 1326
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13752v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Asymmetric minimal mass blow-up for the quintic NLS on a star graph",
+   "bytes": 1104
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13871v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Partially Informed Stochastic Optimization via Zeroth-Order Residual Tracking",
+   "bytes": 1772
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13747v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Travel time tomography for elliptically anisotropic elastic planar media",
+   "bytes": 1188
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13851v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Finite-Sample Guarantees for Fully Discrete Conditional Diffusion Models",
+   "bytes": 1173
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13746v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Topping's conjecture for solutions of harmonic map flow with isolated bubbles",
+   "bytes": 337
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13844v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Inference-Time Steering Across Scaffolds and Epitopes for Sample-Efficient De Novo Nanobody Design",
+   "bytes": 1142
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13738v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Sharp upper bounds for Steklov eigenvalues on warped products",
+   "bytes": 929
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13841v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Returning to Development States: When Full Sandbox Snapshots Help Coding Agents",
+   "bytes": 838
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13680v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Diffraction of waves by finite thin coatings: asymptotic expansion and effective models",
+   "bytes": 2001
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13835v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Specialists Learn Faster: Knowledge Organization in Pre-training Shapes Knowledge Update Efficiency",
+   "bytes": 1346
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13673v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Statistical inference for rough Burgers-type stochastic partial differential equations",
+   "bytes": 1435
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13834v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "On the Design Space of Continuous Diffusion Language Models",
+   "bytes": 1975
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13629v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "An inverse spectral problem for the wave equation with a varying Robin parameter at the boundary",
+   "bytes": 1467
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13819v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Shared Canonical Component Removal Beyond Expert Views",
+   "bytes": 970
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13618v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Global Existence of Strong and Weak Solutions to the 2D Compressible Navier-Stokes-Poisson System in Bounded Domains with Large Data and Vacuum",
+   "bytes": 1466
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13818v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "TabMF: Learning Dataset Representations with Tabular Foundation Models",
+   "bytes": 1245
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13613v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Global Existence and Partial Regularity for the Three-Dimensional Chemotaxis--Navier--Stokes System in a Half-Space",
+   "bytes": 1919
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13816v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Dream to Remember: Continual Steering of Generalist Robot Policies with World Models",
+   "bytes": 1742
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13601v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Non-resonant angles in a Robin eigenvalue problem",
+   "bytes": 1031
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13812v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Spanning Diffusion and Flow-based Posterior Sampling via Exact Gaussian Conditioning",
+   "bytes": 1651
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13592v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "The conformal Poisson embedding method for the anisotropic Calderón problem with a potential",
+   "bytes": 689
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13811v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "QTestBench: A Test Framework for Evaluating LLM-Generated Quantum Code",
+   "bytes": 1676
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13577v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Boundary stabilization of multi-dimensional first-order quasilinear hyperbolic systems",
+   "bytes": 611
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13808v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Diversity-Aware Ensemble of Quantum-Classical Models via Combinatorial Fusion",
+   "bytes": 1225
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13559v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Identifying secondary critical mass levels in two- and higher-dimensional Keller-Segel systems",
+   "bytes": 1490
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13806v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "FORTE: A Production Framework for Feature Evaluation and Deprecation in Industrial Recommender Systems",
+   "bytes": 2019
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13539v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Hölder regularity of solutions to parabolic equations associated with fractional $p$-Laplacian type operators",
+   "bytes": 1098
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13804v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Constrained Probabilistic Numerics: Gaussian Process Solvers for Linear PDEs under Linear Inequality Constraints",
+   "bytes": 1924
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13513v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Short scale asymptotics in nonlocal spectral problems",
+   "bytes": 1812
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13799v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Adaptive Variance Reduction without Knowing Oracle Smoothness",
+   "bytes": 1387
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13497v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Blocking of bistable front propagation: Application to Wolbachia population replacement",
+   "bytes": 1409
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13789v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Randomized Momentum Transport with Cheap Predictors",
+   "bytes": 1271
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13486v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Weighted Liouville Theorems and A Priori Bounds for Indefinite Superlinear Equations with Pucci's Maximal Operator",
+   "bytes": 847
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13787v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Optimal Algorithms for Nonsmooth Nonconvex Stochastic Optimization with Constraints",
+   "bytes": 1276
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13478v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Complex Monge-Amp{è}re equations with boundary values: a variational approach",
+   "bytes": 850
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13786v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Your Discrete Graph Diffusion Model is Secretly Memorizing",
+   "bytes": 1360
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13457v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "The binormal flow: a toy model for turbulence",
+   "bytes": 789
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13778v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "ReplaySSM: Cache SSM Inputs, Not State",
+   "bytes": 1546
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13405v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Recovering a Riemannian manifold from minimal surface areas",
+   "bytes": 649
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13773v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Geometry-Aware Multi-Objective Optimization: Norm-Constrained Oracles with Entropic Weight Updates",
+   "bytes": 1460
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13343v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Loss of derivatives for hyperbolic operators with coefficients oscillating in time",
+   "bytes": 941
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13768v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "From Pixels to Privacy-Sensitive Features: An Information-Theoretic Framework for Reconstruction Bounds",
+   "bytes": 1807
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13266v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Existence of ergodic invariant measures for 3D Navier-Stokes eqs with superlinear noise",
+   "bytes": 890
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13767v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "DualQuant: Dual-scale Calibration-free Weight-and-Activation Quantization for LLMs",
+   "bytes": 1932
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13248v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Global Regular Solutions for One-Dimensional Degenerate Compressible Non-Resistive MHD Equations with Large Data and Far-Field Vacuum",
+   "bytes": 1340
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13766v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Shortcut Learning in Geospatial Foundation Model Embeddings for Cross-Disaster Damage Assessment",
+   "bytes": 1690
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13241v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Weighted derivative estimates for Kolmogorov equations",
+   "bytes": 600
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13765v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "When Edge Independence Fails: Joint Graph Diffusion with Latent Sociability Priors",
+   "bytes": 1481
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13235v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Vector and matrix monotonicity characterisation of the \"load forces\" in nonlinear elasticity: compressible versus incompressible response",
+   "bytes": 820
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13764v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "How Well Do Prior-Data Fitted Networks Amortize Bayesian Inference?",
+   "bytes": 1054
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13226v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Gradient rearrangement estimates for singular and degenerate anisotropic $p$-Laplace equations",
+   "bytes": 1165
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13755v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Matched-Context Group Policy Optimization for LLM Agent Training",
+   "bytes": 1631
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13214v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Minimizing tangent maps into complex projective space",
+   "bytes": 325
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13750v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "Studying the Effects of Task Diversity Using Small Mathematical Worlds",
+   "bytes": 1137
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13151v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Stability of composite waves consisting of a non-classical Liu shock and a rarefaction wave for a non-convex viscoelastic system",
+   "bytes": 1202
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13744v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "A Privileged Teacher That Only Scores Cannot Search: Critique-Conditioned On-Policy Self-Distillation for Reasoning",
+   "bytes": 1870
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13140v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Remarks on temperature-dependent Cahn--Hilliard equations",
+   "bytes": 354
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13740v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "SmolWAM: A Latent World-Action Model for Robotic Manipulation on Edge Devices",
+   "bytes": 988
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13139v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Strict Dirichlet Pólya Inequality for Simply Connected Planar Domains",
+   "bytes": 552
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13737v1",
+   "date": "2026-10-09",
+   "cat": "cs.LG",
+   "title": "SafeDiSTL: Decomposing Joint Constraints for Safe Multi-Agent Reinforcement Learning",
+   "bytes": 1356
+  },
+  {
+   "url": "http://arxiv.org/abs/2610.13137v1",
+   "date": "2026-10-09",
+   "cat": "math.AP",
+   "title": "Qualitative-to-quantitative regularity for degenerate equations",
+   "bytes": 1186
+  }
+ ]
+}

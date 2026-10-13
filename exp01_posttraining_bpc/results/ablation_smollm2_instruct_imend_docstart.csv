@@ -1,0 +1,5 @@
+model,pair,role,condition,corpus,bytes,chars,tokens,total_bits,bpb,bpc,wall_s,tokens_per_byte,bits_per_token,n_windows,window,dtype,doc_start
+HuggingFaceTB/SmolLM2-1.7B-Instruct,smollm2,post,raw,arxiv2026,100041,99872,21645,90047.526,0.90011,0.90163,18.4,0.21636,4.1602,22,1024,float16,<|im_end|>
+HuggingFaceTB/SmolLM2-1.7B-Instruct,smollm2,post,raw,enwik8_ctrl,100000,99504,34453,72413.497,0.72413,0.72774,29.3,0.34453,2.10181,34,1024,float16,<|im_end|>
+HuggingFaceTB/SmolLM2-1.7B-Instruct,smollm2,post,raw,wiki2026,101843,101589,23387,75409.201,0.74045,0.7423,19.8,0.22964,3.22441,23,1024,float16,<|im_end|>
+HuggingFaceTB/SmolLM2-1.7B-Instruct,smollm2,post,raw,gutenberg2026,106023,104188,26285,89922.873,0.84814,0.86308,22.3,0.24792,3.42107,26,1024,float16,<|im_end|>

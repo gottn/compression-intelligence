@@ -1,0 +1,147 @@
+{
+ "corpus": "wiki2026",
+ "bytes": 101843,
+ "chars": 101589,
+ "n_docs": 17,
+ "min_date_required": "2026-08-01",
+ "built_utc": "2026-10-13T17:35:21Z",
+ "notes": "1320 candidate new mainspace pages from the newest 5000 creations in recentchanges: event pages ('2026' in title, >=3000 B) first, then other new articles (>=6000 B), newest first, excluding sub-event/result/squad/season/team/list pages; of the first 400, 97 have a plain-text lead >= 600 chars (prose pre-screen); creation date verified with rvdir=newer; extracts via prop=extracts&explaintext=1; References/See also/External links sections dropped; each article capped at 12k chars.",
+ "docs": [
+  {
+   "title": "2026 Azerbaijani protests",
+   "url": "https://en.wikipedia.org/w/index.php?title=2026+Azerbaijani+protests&oldid=1380075044",
+   "date": "2026-10-13T16:42:03Z",
+   "created": "2026-10-13T16:42:03Z",
+   "kind": "event",
+   "bytes": 2701
+  },
+  {
+   "title": "2026 Poland school stabbings",
+   "url": "https://en.wikipedia.org/w/index.php?title=2026+Poland+school+stabbings&oldid=1380006464",
+   "date": "2026-10-08T21:07:18Z",
+   "created": "2026-10-08T21:07:18Z",
+   "kind": "event",
+   "bytes": 8767
+  },
+  {
+   "title": "2026 Reyes Cup",
+   "url": "https://en.wikipedia.org/w/index.php?title=2026+Reyes+Cup&oldid=1379535120",
+   "date": "2026-10-08T04:21:47Z",
+   "created": "2026-10-08T04:21:47Z",
+   "kind": "event",
+   "bytes": 2846
+  },
+  {
+   "title": "2026 United States Chess Championship",
+   "url": "https://en.wikipedia.org/w/index.php?title=2026+United+States+Chess+Championship&oldid=1380005693",
+   "date": "2026-10-07T18:39:08Z",
+   "created": "2026-10-07T18:39:08Z",
+   "kind": "event",
+   "bytes": 2414
+  },
+  {
+   "title": "2026–27 Verbandspokal",
+   "url": "https://en.wikipedia.org/w/index.php?title=2026%E2%80%9327+Verbandspokal&oldid=1379036553",
+   "date": "2026-10-07T14:45:45Z",
+   "created": "2026-10-07T14:45:45Z",
+   "kind": "event",
+   "bytes": 1700
+  },
+  {
+   "title": "2026 US–Denmark–Greenland agreement",
+   "url": "https://en.wikipedia.org/w/index.php?title=2026+US%E2%80%93Denmark%E2%80%93Greenland+agreement&oldid=1379195112",
+   "date": "2026-10-05T12:13:39Z",
+   "created": "2026-10-05T12:13:39Z",
+   "kind": "event",
+   "bytes": 6543
+  },
+  {
+   "title": "United Nations General Assembly Resolution 2832 (XXVI)",
+   "url": "https://en.wikipedia.org/w/index.php?title=United+Nations+General+Assembly+Resolution+2832+%28XXVI%29&oldid=1380075751",
+   "date": "2026-10-13T16:57:52Z",
+   "created": "2026-10-13T16:57:52Z",
+   "kind": "other_new_article",
+   "bytes": 10232
+  },
+  {
+   "title": "Anatole Von Lilienfeld",
+   "url": "https://en.wikipedia.org/w/index.php?title=Anatole+Von+Lilienfeld&oldid=1380079222",
+   "date": "2026-10-13T15:44:11Z",
+   "created": "2026-10-13T15:44:11Z",
+   "kind": "other_new_article",
+   "bytes": 4626
+  },
+  {
+   "title": "Green Deal Ukraïna",
+   "url": "https://en.wikipedia.org/w/index.php?title=Green+Deal+Ukra%C3%AFna&oldid=1380066372",
+   "date": "2026-10-13T15:07:38Z",
+   "created": "2026-10-13T15:07:38Z",
+   "kind": "other_new_article",
+   "bytes": 8145
+  },
+  {
+   "title": "Judah Spinner",
+   "url": "https://en.wikipedia.org/w/index.php?title=Judah+Spinner&oldid=1380077113",
+   "date": "2026-10-13T15:05:29Z",
+   "created": "2026-10-13T15:05:29Z",
+   "kind": "other_new_article",
+   "bytes": 4289
+  },
+  {
+   "title": "Lachit Borphukan Maidam",
+   "url": "https://en.wikipedia.org/w/index.php?title=Lachit+Borphukan+Maidam&oldid=1380059957",
+   "date": "2026-10-13T11:08:48Z",
+   "created": "2026-10-13T11:08:48Z",
+   "kind": "other_new_article",
+   "bytes": 5706
+  },
+  {
+   "title": "Bo Heinebäck",
+   "url": "https://en.wikipedia.org/w/index.php?title=Bo+Heineb%C3%A4ck&oldid=1380074166",
+   "date": "2026-10-13T09:41:29Z",
+   "created": "2026-10-13T09:41:29Z",
+   "kind": "other_new_article",
+   "bytes": 7118
+  },
+  {
+   "title": "Ultimate unification",
+   "url": "https://en.wikipedia.org/w/index.php?title=Ultimate+unification&oldid=1380056252",
+   "date": "2026-10-13T09:09:04Z",
+   "created": "2026-10-13T09:09:04Z",
+   "kind": "other_new_article",
+   "bytes": 11275
+  },
+  {
+   "title": "Planet Patrol (video game)",
+   "url": "https://en.wikipedia.org/w/index.php?title=Planet+Patrol+%28video+game%29&oldid=1380021699",
+   "date": "2026-10-13T08:41:04Z",
+   "created": "2026-10-13T08:41:04Z",
+   "kind": "other_new_article",
+   "bytes": 3992
+  },
+  {
+   "title": "Tankard Inn",
+   "url": "https://en.wikipedia.org/w/index.php?title=Tankard+Inn&oldid=1380028031",
+   "date": "2026-10-13T07:53:38Z",
+   "created": "2026-10-13T07:53:38Z",
+   "kind": "other_new_article",
+   "bytes": 3050
+  },
+  {
+   "title": "Hokkaido Rensa Satsujin: Ohotsuku ni Kiyu",
+   "url": "https://en.wikipedia.org/w/index.php?title=Hokkaido+Rensa+Satsujin%3A+Ohotsuku+ni+Kiyu&oldid=1380080340",
+   "date": "2026-10-13T07:01:44Z",
+   "created": "2026-10-13T07:01:44Z",
+   "kind": "other_new_article",
+   "bytes": 8597
+  },
+  {
+   "title": "Felipe Reyes (artist)",
+   "url": "https://en.wikipedia.org/w/index.php?title=Felipe+Reyes+%28artist%29&oldid=1380079632",
+   "date": "2026-10-13T06:48:34Z",
+   "created": "2026-10-13T06:48:34Z",
+   "kind": "other_new_article",
+   "bytes": 9809
+  }
+ ]
+}

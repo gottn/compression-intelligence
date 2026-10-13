@@ -1,0 +1,58 @@
+recentchanges: 500 new pages so far
+recentchanges: 1000 new pages so far
+recentchanges: 1500 new pages so far
+recentchanges: 2000 new pages so far
+recentchanges: 2500 new pages so far
+recentchanges: 3000 new pages so far
+recentchanges: 3500 new pages so far
+recentchanges: 4000 new pages so far
+recentchanges: 4500 new pages so far
+recentchanges: 5000 new pages so far
+wiki: 1320 candidates, 97 with lead >= 600 chars
+wiki: 2026 Azerbaijani protests (0 B so far)
+wiki: Expeditie Robinson 2026 (2701 B so far)
+wiki: 2026 UK Music Video Awards (2701 B so far)
+wiki: 2026 Chicago Marathon (2701 B so far)
+wiki: 2026–27 Campeonato de Portugal (2701 B so far)
+wiki: 2026 Bengaluru Freedom Park protests (2701 B so far)
+wiki: 2026 Kramatorsk bus massacre (2701 B so far)
+wiki: 2026 Poland school stabbings (2701 B so far)
+wiki: 2026 Reyes Cup (11468 B so far)
+wiki: 2026 United States Chess Championship (14314 B so far)
+wiki: 2026–27 Verbandspokal (16728 B so far)
+wiki: 2026 Central League Climax Series (18428 B so far)
+wiki: October 2026 No Kings protests (18428 B so far)
+wiki: 2026 US–Denmark–Greenland agreement (18428 B so far)
+wiki: United Nations General Assembly Resolution 2832 (XXVI) (24971 B so far)
+wiki: Anatole Von Lilienfeld (35203 B so far)
+wiki: Green Deal Ukraïna (39829 B so far)
+wiki: Judah Spinner (47974 B so far)
+wiki: Lachit Borphukan Maidam (52263 B so far)
+wiki: Bo Heinebäck (57969 B so far)
+wiki: Ultimate unification (65087 B so far)
+wiki: Planet Patrol (video game) (76362 B so far)
+wiki: Tankard Inn (80354 B so far)
+wiki: Hokkaido Rensa Satsujin: Ohotsuku ni Kiyu (83404 B so far)
+wiki: Felipe Reyes (artist) (92001 B so far)
+{"corpus": "wiki2026", "bytes": 101843, "chars": 101589, "n_docs": 17}
+Traceback (most recent call last):
+  File "/Users/musaabmahjoub/Documents/Personal/compression-intelligence/exp01_posttraining_bpc/collect_corpora.py", line 370, in <module>
+    main()
+  File "/Users/musaabmahjoub/Documents/Personal/compression-intelligence/exp01_posttraining_bpc/collect_corpora.py", line 365, in main
+    text, docs, notes = fn()
+                        ^^^^
+  File "/Users/musaabmahjoub/Documents/Personal/compression-intelligence/exp01_posttraining_bpc/collect_corpora.py", line 359, in <lambda>
+    "gutenberg2026": lambda: build_gutenberg2026(args.target_bytes),
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/musaabmahjoub/Documents/Personal/compression-intelligence/exp01_posttraining_bpc/collect_corpora.py", line 317, in build_gutenberg2026
+    date = parse_release_date(meta["release"])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/musaabmahjoub/Documents/Personal/compression-intelligence/exp01_posttraining_bpc/collect_corpora.py", line 307, in parse_release_date
+    return time.strftime("%Y-%m-%d", time.strptime(f"{m.group(1)} {m.group(2)} {m.group(3)}", "%B %d %Y"))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.10_1/Frameworks/Python.framework/Versions/3.12/lib/python3.12/_strptime.py", line 647, in _strptime_time
+    tt = _strptime(data_string, format)[0]
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.10_1/Frameworks/Python.framework/Versions/3.12/lib/python3.12/_strptime.py", line 432, in _strptime
+    raise ValueError("time data %r does not match format %r" %
+ValueError: time data 'Oct 13 2026' does not match format '%B %d %Y'

@@ -1,0 +1,46 @@
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<04:42,  1.19it/s]Loading weights:  54%|█████▍    | 184/338 [00:00<00:00, 266.78it/s]Loading weights:  86%|████████▌ | 289/338 [00:01<00:00, 168.56it/s]Loading weights: 100%|██████████| 338/338 [00:02<00:00, 155.51it/s]
+{"model": "Qwen/Qwen2.5-1.5B", "corpus": "arxiv2026", "bpb": 0.82439}
+{"model": "Qwen/Qwen2.5-1.5B", "corpus": "enwik8_ctrl", "bpb": 0.69541}
+{"model": "Qwen/Qwen2.5-1.5B", "corpus": "wiki2026", "bpb": 0.71906}
+{"model": "Qwen/Qwen2.5-1.5B", "corpus": "gutenberg2026", "bpb": 0.86294}
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<04:25,  1.27it/s]Loading weights:  54%|█████▍    | 183/338 [00:00<00:00, 276.46it/s]Loading weights:  83%|████████▎ | 282/338 [00:01<00:00, 269.81it/s]Loading weights: 100%|██████████| 338/338 [00:01<00:00, 235.42it/s]
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "corpus": "arxiv2026", "bpb": 0.83168}
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "corpus": "enwik8_ctrl", "bpb": 0.70608}
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "corpus": "wiki2026", "bpb": 0.72394}
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "corpus": "gutenberg2026", "bpb": 0.87411}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+HTTP Error 429 thrown while requesting GET https://huggingface.co/api/models/Qwen/Qwen3-1.7B-Base/tree/main/additional_chat_templates
+Rate limited. Waiting 77.0s before retry [Retry 1/5].
+Loading weights:   0%|          | 0/310 [00:00<?, ?it/s]Loading weights:   0%|          | 1/310 [00:01<07:04,  1.37s/it]Loading weights:  61%|██████▏   | 190/310 [00:01<00:00, 141.51it/s]Loading weights:  71%|███████   | 220/310 [00:01<00:00, 147.10it/s]Loading weights:  79%|███████▉  | 245/310 [00:02<00:00, 132.63it/s]Loading weights:  85%|████████▌ | 264/310 [00:02<00:00, 138.09it/s]Loading weights:  91%|█████████ | 282/310 [00:02<00:00, 120.95it/s]Loading weights:  96%|█████████▌| 297/310 [00:02<00:00, 121.42it/s]Loading weights: 100%|██████████| 310/310 [00:02<00:00, 110.43it/s]
+{"model": "Qwen/Qwen3-1.7B-Base", "corpus": "arxiv2026", "bpb": 0.8074}
+{"model": "Qwen/Qwen3-1.7B-Base", "corpus": "enwik8_ctrl", "bpb": 0.69325}
+{"model": "Qwen/Qwen3-1.7B-Base", "corpus": "wiki2026", "bpb": 0.72432}
+{"model": "Qwen/Qwen3-1.7B-Base", "corpus": "gutenberg2026", "bpb": 0.86926}
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   0%|          | 1/311 [00:01<05:15,  1.02s/it]Loading weights:  47%|████▋     | 147/311 [00:01<00:00, 178.99it/s]Loading weights:  73%|███████▎  | 227/311 [00:01<00:00, 189.12it/s]Loading weights:  90%|█████████ | 280/311 [00:02<00:00, 111.22it/s]Loading weights: 100%|██████████| 311/311 [00:02<00:00, 113.86it/s]
+{"model": "Qwen/Qwen3-1.7B", "corpus": "arxiv2026", "bpb": 0.95404}
+{"model": "Qwen/Qwen3-1.7B", "corpus": "enwik8_ctrl", "bpb": 0.87504}
+{"model": "Qwen/Qwen3-1.7B", "corpus": "wiki2026", "bpb": 0.8475}
+{"model": "Qwen/Qwen3-1.7B", "corpus": "gutenberg2026", "bpb": 1.00709}
+Loading weights:   0%|          | 0/218 [00:00<?, ?it/s]Loading weights:   0%|          | 1/218 [00:00<01:11,  3.04it/s]Loading weights:  23%|██▎       | 50/218 [00:00<00:01, 147.78it/s]Loading weights:  36%|███▌      | 78/218 [00:00<00:00, 149.20it/s]Loading weights:  46%|████▌     | 100/218 [00:00<00:00, 156.39it/s]Loading weights:  55%|█████▌    | 120/218 [00:00<00:00, 142.57it/s]Loading weights:  63%|██████▎   | 138/218 [00:01<00:00, 145.00it/s]Loading weights:  72%|███████▏  | 156/218 [00:01<00:00, 146.08it/s]Loading weights:  80%|███████▉  | 174/218 [00:01<00:00, 146.35it/s]Loading weights:  88%|████████▊ | 192/218 [00:01<00:00, 147.17it/s]Loading weights:  96%|█████████▋| 210/218 [00:01<00:00, 146.29it/s]Loading weights: 100%|██████████| 218/218 [00:01<00:00, 142.01it/s]
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (21645 > 8192). Running this sequence through the model will result in indexing errors
+{"model": "HuggingFaceTB/SmolLM2-1.7B", "corpus": "arxiv2026", "bpb": 0.87041}
+{"model": "HuggingFaceTB/SmolLM2-1.7B", "corpus": "enwik8_ctrl", "bpb": 0.67383}
+{"model": "HuggingFaceTB/SmolLM2-1.7B", "corpus": "wiki2026", "bpb": 0.71247}
+{"model": "HuggingFaceTB/SmolLM2-1.7B", "corpus": "gutenberg2026", "bpb": 0.81412}
+Loading weights:   0%|          | 0/218 [00:00<?, ?it/s]Loading weights:   0%|          | 1/218 [00:00<01:07,  3.21it/s]Loading weights:  22%|██▏       | 48/218 [00:00<00:01, 146.37it/s]Loading weights:  34%|███▍      | 74/218 [00:00<00:00, 163.31it/s]Loading weights:  44%|████▍     | 97/218 [00:00<00:00, 151.65it/s]Loading weights:  54%|█████▎    | 117/218 [00:00<00:00, 156.75it/s]Loading weights:  62%|██████▏   | 136/218 [00:00<00:00, 150.95it/s]Loading weights:  70%|███████   | 153/218 [00:01<00:00, 151.75it/s]Loading weights:  78%|███████▊  | 170/218 [00:01<00:00, 147.21it/s]Loading weights:  85%|████████▌ | 186/218 [00:01<00:00, 108.31it/s]Loading weights:  91%|█████████▏| 199/218 [00:01<00:00, 61.84it/s] Loading weights:  96%|█████████▌| 209/218 [00:02<00:00, 64.76it/s]Loading weights: 100%|██████████| 218/218 [00:02<00:00, 99.07it/s]
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (21645 > 8192). Running this sequence through the model will result in indexing errors
+{"model": "HuggingFaceTB/SmolLM2-1.7B-Instruct", "corpus": "arxiv2026", "bpb": 0.90248}
+{"model": "HuggingFaceTB/SmolLM2-1.7B-Instruct", "corpus": "enwik8_ctrl", "bpb": 0.72696}
+{"model": "HuggingFaceTB/SmolLM2-1.7B-Instruct", "corpus": "wiki2026", "bpb": 0.74139}
+{"model": "HuggingFaceTB/SmolLM2-1.7B-Instruct", "corpus": "gutenberg2026", "bpb": 0.85024}
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<04:39,  1.21it/s]Loading weights:  54%|█████▍    | 184/338 [00:00<00:00, 265.99it/s]Loading weights:  83%|████████▎ | 281/338 [00:01<00:00, 262.27it/s]Loading weights: 100%|██████████| 338/338 [00:02<00:00, 165.84it/s]
+{"model": "Qwen/Qwen2.5-Math-1.5B", "corpus": "arxiv2026", "bpb": 0.82506}
+{"model": "Qwen/Qwen2.5-Math-1.5B", "corpus": "enwik8_ctrl", "bpb": 0.90529}
+{"model": "Qwen/Qwen2.5-Math-1.5B", "corpus": "wiki2026", "bpb": 0.89528}
+{"model": "Qwen/Qwen2.5-Math-1.5B", "corpus": "gutenberg2026", "bpb": 1.06564}
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights:   0%|          | 1/339 [00:00<04:39,  1.21it/s]Loading weights:  40%|████      | 136/339 [00:00<00:01, 190.84it/s]Loading weights:  58%|█████▊    | 197/339 [00:01<00:00, 187.02it/s]Loading weights:  70%|███████   | 238/339 [00:01<00:00, 164.66it/s]Loading weights:  79%|███████▉  | 268/339 [00:02<00:00, 111.52it/s]Loading weights:  85%|████████▌ | 289/339 [00:02<00:00, 116.23it/s]Loading weights:  91%|█████████ | 308/339 [00:02<00:00, 115.75it/s]Loading weights:  97%|█████████▋| 328/339 [00:02<00:00, 120.42it/s]Loading weights: 100%|██████████| 339/339 [00:02<00:00, 126.66it/s]
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (20702 > 16384). Running this sequence through the model will result in indexing errors
+{"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", "corpus": "arxiv2026", "bpb": 1.00558}
+{"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", "corpus": "enwik8_ctrl", "bpb": 1.21152}
+{"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", "corpus": "wiki2026", "bpb": 1.09771}
+{"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", "corpus": "gutenberg2026", "bpb": 1.25969}

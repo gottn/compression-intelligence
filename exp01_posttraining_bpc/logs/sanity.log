@@ -1,0 +1,57 @@
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (34563 > 1024). Running this sequence through the model will result in indexing errors
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 11000.28it/s]
+[transformers] `loss_type=None` was set in the config but it is unrecognized. Using the default loss: `ForCausalLMLoss`.
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (20702 > 16384). Running this sequence through the model will result in indexing errors
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights:   0%|          | 1/339 [00:01<08:15,  1.47s/it]Loading weights:  33%|███▎      | 112/339 [00:01<00:02, 84.88it/s]Loading weights:  40%|███▉      | 135/339 [00:01<00:02, 98.11it/s]Loading weights:  46%|████▋     | 157/339 [00:02<00:01, 98.44it/s]Loading weights:  52%|█████▏    | 175/339 [00:02<00:01, 100.03it/s]Loading weights:  56%|█████▌    | 190/339 [00:02<00:01, 105.03it/s]Loading weights:  60%|██████    | 205/339 [00:02<00:01, 109.70it/s]Loading weights:  65%|██████▍   | 219/339 [00:02<00:01, 110.56it/s]Loading weights:  68%|██████▊   | 232/339 [00:02<00:01, 94.55it/s] Loading weights:  72%|███████▏  | 244/339 [00:02<00:00, 96.74it/s]Loading weights:  76%|███████▌  | 256/339 [00:03<00:00, 94.14it/s]Loading weights:  79%|███████▉  | 268/339 [00:03<00:00, 86.74it/s]Loading weights:  83%|████████▎ | 281/339 [00:03<00:00, 90.78it/s]Loading weights:  86%|████████▋ | 293/339 [00:03<00:00, 91.55it/s]Loading weights:  90%|████████▉ | 305/339 [00:03<00:00, 98.14it/s]Loading weights:  93%|█████████▎| 316/339 [00:03<00:00, 88.30it/s]Loading weights:  97%|█████████▋| 328/339 [00:03<00:00, 89.73it/s]Loading weights: 100%|██████████| 339/339 [00:03<00:00, 86.87it/s]
+{
+ "device": "mps",
+ "torch": "2.14.1",
+ "gpt2_window_checks": {
+  "model": "openai-community/gpt2",
+  "window_tokens": 1023,
+  "fp32_bits": 5039.48,
+  "fp16_bits": 5040.393,
+  "fp16_vs_fp32_rel": 0.00018116252702276786,
+  "fp16_ok": true,
+  "repeat_bits": 5040.393,
+  "deterministic": true,
+  "hf_labels_loss_bits": 5040.393,
+  "labels_rel_diff": 1.139864904012265e-08
+ },
+ "gpt2_raw": {
+  "enwik8_ctrl": {
+   "model": "openai-community/gpt2",
+   "window": 1023,
+   "doc_start": "<|endoftext|>",
+   "bytes": 100000,
+   "chars": 99504,
+   "tokens": 34563,
+   "total_bits": 124256.035,
+   "bpb": 1.24256,
+   "bpc": 1.24875,
+   "tokens_per_byte": 0.34563,
+   "bits_per_token": 3.59506,
+   "wall_s": 2.9,
+   "bpb_first_token_of_windows": 0.00454
+  },
+  "arxiv2026": {
+   "model": "openai-community/gpt2",
+   "window": 1023,
+   "doc_start": "<|endoftext|>",
+   "bytes": 100041,
+   "chars": 99872,
+   "tokens": 22046,
+   "total_bits": 127611.927,
+   "bpb": 1.2756,
+   "bpc": 1.27775,
+   "tokens_per_byte": 0.22037,
+   "bits_per_token": 5.78844,
+   "wall_s": 1.8,
+   "bpb_first_token_of_windows": 0.00313
+  }
+ },
+ "r1_prefix_ablation_arxiv2026_bpb": {
+  "bos_151646": 1.05262,
+  "eot_151643": 1.14212
+ }
+}

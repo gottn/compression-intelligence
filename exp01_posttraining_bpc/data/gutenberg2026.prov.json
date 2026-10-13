@@ -1,0 +1,43 @@
+{
+ "corpus": "gutenberg2026",
+ "bytes": 106023,
+ "chars": 104188,
+ "n_docs": 4,
+ "min_date_required": "2026-08-01",
+ "built_utc": "2026-10-13T17:37:43Z",
+ "notes": "FALLBACK for news2026: en.wikinews.org has no new mainspace article since 2026-05 (logevents). English Gutenberg books released >= 2026-08-01, header/footer stripped, ~27000 B slice per book starting at max(15000 chars, 1/8 of the book) to skip front matter. CAVEAT: release date is the transcription date; the underlying texts are old (public domain) and may exist in pre-training data via other scans.",
+ "docs": [
+  {
+   "url": "https://www.gutenberg.org/cache/epub/79777/pg79777.txt",
+   "date": "2026-10-13",
+   "title": "The early history of Piccadilly, Leicester Square, Soho, & their neighbourhood : based on a plan drawn in 1585",
+   "author": "Kingsford, Charles Lethbridge, 1862-1926",
+   "gutenberg_id": 79777,
+   "bytes": 26726
+  },
+  {
+   "url": "https://www.gutenberg.org/cache/epub/79775/pg79775.txt",
+   "date": "2026-10-13",
+   "title": "Picture logic : An attempt to popularise the science of reasoning by the combination of humorous pictures with examples of reasoning taken from daily life",
+   "author": "Swinburne, Alfred James, 1847?-1915",
+   "gutenberg_id": 79775,
+   "bytes": 26243
+  },
+  {
+   "url": "https://www.gutenberg.org/cache/epub/79773/pg79773.txt",
+   "date": "2026-10-13",
+   "title": "The historical evolution of the Ukrainian problem",
+   "author": "Hrushevsʹkyĭ, Mykhaĭlo, 1866-1934",
+   "gutenberg_id": 79773,
+   "bytes": 26087
+  },
+  {
+   "url": "https://www.gutenberg.org/cache/epub/79772/pg79772.txt",
+   "date": "2026-10-12",
+   "title": "Jeff Clayton's surprise : or, The lure of the red dragon",
+   "author": "Ward, William (Author at Arthur Westbrook Co. (Cleveland, Ohio))",
+   "gutenberg_id": 79772,
+   "bytes": 26960
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "corpus": "enwik8_ctrl",
+ "bytes": 100000,
+ "chars": 99504,
+ "n_docs": 1,
+ "min_date_required": null,
+ "built_utc": "2026-10-13T16:55:17Z",
+ "notes": "enwik8 bytes [1,000,000, 1,100,000); raw XML/wiki markup kept; invalid edge bytes dropped.",
+ "docs": [
+  {
+   "url": "http://mattmahoney.net/dc/enwik8.zip",
+   "date": "2006 (Wikipedia dump, March 2006)",
+   "byte_range": [
+    1000000,
+    1100000
+   ],
+   "dropped_edge_bytes": 0
+  }
+ ]
+}

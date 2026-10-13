@@ -1,0 +1,176 @@
+{
+ "corpora": {
+  "wiki2026": {
+   "bytes": 101843,
+   "chars": 101589
+  },
+  "arxiv2026": {
+   "bytes": 100041,
+   "chars": 99872
+  },
+  "gutenberg2026": {
+   "bytes": 106023,
+   "chars": 104188
+  },
+  "enwik8_ctrl": {
+   "bytes": 100000,
+   "chars": 99504
+  }
+ },
+ "pairs": {
+  "qwen2.5": {
+   "base": "Qwen/Qwen2.5-1.5B",
+   "post": "Qwen/Qwen2.5-1.5B-Instruct",
+   "vocab_base": 151665,
+   "vocab_post": 151665,
+   "corpora": {
+    "wiki2026": {
+     "identical_ids": true,
+     "tokens_base": 22435,
+     "tokens_post": 22435,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "arxiv2026": {
+     "identical_ids": true,
+     "tokens_base": 20702,
+     "tokens_post": 20702,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "gutenberg2026": {
+     "identical_ids": true,
+     "tokens_base": 24979,
+     "tokens_post": 24979,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "enwik8_ctrl": {
+     "identical_ids": true,
+     "tokens_base": 30521,
+     "tokens_post": 30521,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    }
+   },
+   "all_identical": true
+  },
+  "qwen3": {
+   "base": "Qwen/Qwen3-1.7B-Base",
+   "post": "Qwen/Qwen3-1.7B",
+   "vocab_base": 151669,
+   "vocab_post": 151669,
+   "corpora": {
+    "wiki2026": {
+     "identical_ids": true,
+     "tokens_base": 22435,
+     "tokens_post": 22435,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "arxiv2026": {
+     "identical_ids": true,
+     "tokens_base": 20702,
+     "tokens_post": 20702,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "gutenberg2026": {
+     "identical_ids": true,
+     "tokens_base": 24979,
+     "tokens_post": 24979,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "enwik8_ctrl": {
+     "identical_ids": true,
+     "tokens_base": 30521,
+     "tokens_post": 30521,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    }
+   },
+   "all_identical": true
+  },
+  "smollm2": {
+   "base": "HuggingFaceTB/SmolLM2-1.7B",
+   "post": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "vocab_base": 49152,
+   "vocab_post": 49152,
+   "corpora": {
+    "wiki2026": {
+     "identical_ids": true,
+     "tokens_base": 23387,
+     "tokens_post": 23387,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "arxiv2026": {
+     "identical_ids": true,
+     "tokens_base": 21645,
+     "tokens_post": 21645,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "gutenberg2026": {
+     "identical_ids": true,
+     "tokens_base": 26285,
+     "tokens_post": 26285,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "enwik8_ctrl": {
+     "identical_ids": true,
+     "tokens_base": 34453,
+     "tokens_post": 34453,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    }
+   },
+   "all_identical": true
+  },
+  "qwen2.5-math": {
+   "base": "Qwen/Qwen2.5-Math-1.5B",
+   "post": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+   "vocab_base": 151665,
+   "vocab_post": 151665,
+   "corpora": {
+    "wiki2026": {
+     "identical_ids": true,
+     "tokens_base": 22435,
+     "tokens_post": 22435,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "arxiv2026": {
+     "identical_ids": true,
+     "tokens_base": 20702,
+     "tokens_post": 20702,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "gutenberg2026": {
+     "identical_ids": true,
+     "tokens_base": 24979,
+     "tokens_post": 24979,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    },
+    "enwik8_ctrl": {
+     "identical_ids": true,
+     "tokens_base": 30521,
+     "tokens_post": 30521,
+     "roundtrip_base": true,
+     "roundtrip_post": true
+    }
+   },
+   "all_identical": true
+  }
+ },
+ "special_strings_in_corpora": {
+  "wiki2026": [],
+  "arxiv2026": [],
+  "gutenberg2026": [],
+  "enwik8_ctrl": []
+ }
+}
