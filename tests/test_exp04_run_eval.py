@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 from exp04_benchmarks.run_eval import (
     GROUPS,
     MMLU_SUBJECTS,
-    lm_eval_argv,
-    newest_results,
+    TASK_DIRS,
+    eval_kwargs,
+    model_kwargs,
+    neutral_generation_config,
     samples_spec,
     summarize_results,
     task_lines,
@@ -21,19 +21,28 @@ def test_samples_spec_reproduces_per_task_limits() -> None:
     assert sum(len(v) for v in spec.values()) == 2000 + 57 * 40
 
 
-def test_lm_eval_argv_is_identical_across_models_except_the_id() -> None:
+def test_model_and_eval_kwargs_are_identical_across_models_except_the_id() -> None:
+    a, b = model_kwargs("o/base"), model_kwargs("o/post")
+    assert {k: v for k, v in a.items() if k != "pretrained"} == {k: v for k, v in b.items() if k != "pretrained"}
+    assert a == {"pretrained": "o/base", "dtype": "float16", "max_length": 2048, "batch_size": "auto",
+                 "device": "cuda"}
     loglik, gsm8k, ifeval = GROUPS
-    a = lm_eval_argv("py", "o/base", gsm8k, "/out/g", None)
-    b = lm_eval_argv("py", "o/post", gsm8k, "/out/g", None)
-    assert [x for x in a if "o/base" not in x] == [x for x in b if "o/post" not in x]
-    assert "--apply_chat_template" not in a and "--log_samples" not in a and "--num_fewshot" not in a
-    assert a[a.index("--limit") + 1] == "300" and a[a.index("--tasks") + 1] == "gsm8k"
-    assert "pretrained=o/base,dtype=float16,max_length=2048" in a
-    assert a[a.index("--batch_size") + 1] == "auto" and a[a.index("--seed") + 1] == "0,1234,1234,1234"
-    ll = lm_eval_argv("py", "o/base", loglik, "/out/l", "/out/s.json")
-    assert "--limit" not in ll and ll[ll.index("--samples") + 1] == "/out/s.json"
-    assert ll[ll.index("--tasks") + 1] == "arc_easy,arc_challenge,hellaswag,piqa,winogrande,mmlu"
-    assert lm_eval_argv("py", "m", ifeval, "/o", None)[-1] == "200"
+    g = eval_kwargs(gsm8k, None)
+    assert g["tasks"] == ["gsm8k"] and g["limit"] == 300 and "samples" not in g and "num_fewshot" not in g
+    assert g["apply_chat_template"] is False and g["log_samples"] is False
+    assert (g["random_seed"], g["numpy_random_seed"], g["torch_random_seed"], g["fewshot_random_seed"]) == \
+        (0, 1234, 1234, 1234)
+    ll = eval_kwargs(loglik, samples_spec())
+    assert "limit" not in ll and len(ll["samples"]) == 58
+    assert ll["tasks"] == ["arc_easy", "arc_challenge", "hellaswag", "piqa", "winogrande", "mmlu"]
+    assert eval_kwargs(ifeval, None)["limit"] == 200
+
+
+def test_task_dirs_name_one_directory_per_task_family() -> None:
+    # arc_easy and arc_challenge share arc/; the default 0-shot mmlu lives in mmlu/default/.
+    family = {"arc_easy": "arc", "arc_challenge": "arc", "mmlu": "mmlu/default"}
+    tasks = [t for g in GROUPS for t in g.tasks]
+    assert sorted({family.get(t, t) for t in tasks}) == sorted(TASK_DIRS)
 
 
 RES = {
@@ -68,8 +77,11 @@ def test_task_lines_print_headline_metric_with_stderr() -> None:
     assert lines == ["SCORE o/m arc_easy: acc_norm[none]=0.6500±0.0100 n=2376 shot=[0] (loglik group, 61 s)"]
 
 
-def test_newest_results_ignores_files_from_before_the_call() -> None:
-    old, new, newer = Path("a/results_1.json"), Path("a/results_2.json"), Path("b/results_3.json")
-    mt = {old: 10.0, new: 100.0, newer: 101.0}
-    assert newest_results([old, new, newer], 50.0, mt) == newer
-    assert newest_results([old], 50.0, mt) is None
+def test_neutral_generation_config_keeps_only_token_ids() -> None:
+    qwen_instruct = {"bos_token_id": 151643, "eos_token_id": [151645, 151643], "pad_token_id": 151643,
+                     "do_sample": True, "temperature": 0.7, "top_p": 0.8, "top_k": 20, "repetition_penalty": 1.05,
+                     "max_new_tokens": 2048, "transformers_version": "4.37.0"}
+    kept, dropped = neutral_generation_config(qwen_instruct)
+    assert kept == {"bos_token_id": 151643, "eos_token_id": [151645, 151643], "pad_token_id": 151643}
+    assert list(dropped) == ["do_sample", "max_new_tokens", "repetition_penalty", "temperature", "top_k", "top_p"]
+    assert neutral_generation_config({"eos_token_id": 2, "pad_token_id": None}) == ({"eos_token_id": 2}, {})

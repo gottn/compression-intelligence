@@ -3,20 +3,30 @@
     python exp04_benchmarks/run_eval.py prefetch                      # setup job: datasets + nltk data
     python exp04_benchmarks/run_eval.py run --index I --out DIR [--groups loglik,gsm8k,ifeval]
 
-`run` maps the Slurm array index to a model (cilab.stages.model_at) and calls lm_eval once per task group:
+`run` maps the Slurm array index to a model (cilab.stages.model_at), loads it once (lm-eval HFLM) and calls
+`lm_eval.simple_evaluate` once per task group, each in its own try/except:
   loglik  arc_easy, arc_challenge, hellaswag, piqa, winogrande, mmlu   (log-likelihood, harness few-shot defaults)
   gsm8k   gsm8k, 5-shot (task default), first 300 test problems        (generative)
   ifeval  ifeval, 0-shot, first 200 prompts                            (generative)
 Every call: HF backend, fp16, batch_size auto, max_length 2048, NO chat template (base and post-trained models
-see identical prompts), --seed 0,1234,1234,1234, no --log_samples.
+see identical prompts), seeds 0 / 1234 / 1234 / 1234, log_samples off.
 
-`--limit` is global to one lm_eval call, so the loglik group passes the brief's per-task limits as `--samples`
-(a JSON file of doc indices): hellaswag docs 0..1999 and docs 0..39 of each of the 57 MMLU subjects; tasks
-not in the file run in full. lm-eval selects `--limit N` as docs 0..N-1, so this is the same selection.
+In-process, not one CLI process per group: the dry run (job 1080307) spent ~6.5 min per CLI call indexing all
+of lm-eval's task YAMLs over the network file system with the GPU idle. Here the TaskManager indexes only the
+7 task directories used (TASK_DIRS), once, and the model loads once. simple_evaluate is what the CLI calls.
+
+`limit` is global to one call, so the loglik group passes the brief's per-task limits as `samples` (doc
+indices): hellaswag docs 0..1999 and docs 0..39 of each of the 57 MMLU subjects; tasks not listed run in full.
+lm-eval selects `--limit N` as docs 0..N-1, so this is the same selection.
+Generation config: transformers 5 merges the checkpoint's generation_config.json into every generate() call,
+and an explicit max_new_tokens there (Qwen: 2048) beats the max_length lm-eval passes, so gsm8k ran past
+lm-eval's 256-token default in the dry run; instruct checkpoints also carry sampling defaults (temperature,
+top_p, repetition_penalty). The driver replaces it with a config holding only the token ids
+(neutral_generation_config), so every model decodes greedily under the harness's own limits.
 max_length 2048: lm-eval's auto batch size for generation probes a forward pass at the model's max length
 (131072 for Qwen2.5-1.5B), which would force batch 1; 2048 fits every prompt here (ifeval: ctx + 1280 gen).
 
-Outputs under DIR/<model slug>/: <group>/<sanitized model>/results_*.json (lm-eval), <group>/done.json,
+Outputs under DIR/<model slug>/: <group>/results.json (lm-eval's results dict), <group>/done.json,
 loglik_samples.json, summary.json. A group with a done.json is skipped (resumable after a Slurm requeue).
 A failed group does not stop the others; the process exits 1 at the end if any group failed.
 """
@@ -25,9 +35,9 @@ from __future__ import annotations
 import argparse
 import json
 import platform
-import subprocess
 import sys
 import time
+import traceback
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -53,8 +63,10 @@ MMLU_SUBJECTS: tuple[str, ...] = (
     "virology", "world_religions",
 )
 HELLASWAG_N, MMLU_N = 2000, 40
-SEED_ARG = "0,1234,1234,1234"  # python random, numpy, torch, few-shot sampler
+SEEDS: dict[str, int] = {"random_seed": 0, "numpy_random_seed": 1234, "torch_random_seed": 1234,
+                         "fewshot_random_seed": 1234}  # lm-eval's defaults, passed explicitly
 MAX_LENGTH = 2048  # tokens
+TASK_DIRS: tuple[str, ...] = ("arc", "hellaswag", "piqa", "winogrande", "mmlu/default", "gsm8k", "ifeval")
 
 
 @dataclass(frozen=True)
@@ -87,17 +99,32 @@ def samples_spec(hellaswag_n: int = HELLASWAG_N, mmlu_n: int = MMLU_N,
     return spec
 
 
-def lm_eval_argv(python: str, model: str, group: Group, out_dir: str, samples_path: str | None) -> list[str]:
-    """The lm_eval command line of one task group (identical prompting for every model: no chat template)."""
-    argv = [python, "-m", "lm_eval", "run", "--model", "hf",
-            "--model_args", f"pretrained={model},dtype=float16,max_length={MAX_LENGTH}",
-            "--tasks", ",".join(group.tasks), "--batch_size", "auto", "--device", "cuda",
-            "--seed", SEED_ARG, "--output_path", out_dir]
+def model_kwargs(model: str) -> dict[str, object]:
+    """HFLM arguments; identical for every checkpoint except the id."""
+    return {"pretrained": model, "dtype": "float16", "max_length": MAX_LENGTH, "batch_size": "auto",
+            "device": "cuda"}
+
+
+GEN_KEEP: tuple[str, ...] = ("bos_token_id", "eos_token_id", "pad_token_id", "decoder_start_token_id")
+
+
+def neutral_generation_config(diff: Mapping[str, object]) -> tuple[dict[str, object], dict[str, object]]:
+    """(kept, dropped) from a GenerationConfig.to_diff_dict(): keep only token ids; drop every length,
+    sampling and penalty default the checkpoint ships, so decoding is lm-eval's greedy setting for all models."""
+    kept = {k: diff[k] for k in GEN_KEEP if diff.get(k) is not None}
+    dropped = {k: v for k, v in sorted(diff.items()) if k not in GEN_KEEP and k != "transformers_version"}
+    return kept, dropped
+
+
+def eval_kwargs(group: Group, samples: Mapping[str, list[int]] | None) -> dict[str, object]:
+    """simple_evaluate arguments of one task group (no chat template, no sample logging, fixed seeds)."""
+    kw: dict[str, object] = {"tasks": list(group.tasks), "log_samples": False, "apply_chat_template": False,
+                             **SEEDS}
     if group.limit is not None:
-        argv += ["--limit", str(group.limit)]
-    elif samples_path is not None:
-        argv += ["--samples", samples_path]
-    return argv
+        kw["limit"] = group.limit
+    elif samples is not None:
+        kw["samples"] = dict(samples)
+    return kw
 
 
 def _metrics(entry: Mapping[str, object]) -> dict[str, float]:
@@ -148,12 +175,6 @@ def task_lines(model: str, group: str, summary: Mapping[str, Mapping[str, object
     return lines
 
 
-def newest_results(paths: Sequence[Path], since: float, mtimes: Mapping[Path, float]) -> Path | None:
-    """The newest results_*.json written at or after `since` (epoch s), or None."""
-    fresh = [p for p in paths if mtimes[p] >= since]
-    return max(fresh, key=lambda p: (mtimes[p], p.name)) if fresh else None
-
-
 # ----------------------------------------------------------------------------- effects
 def gpu_name() -> str:
     try:
@@ -174,41 +195,67 @@ def env_versions() -> dict[str, str]:
     return out
 
 
-def run_group(model: str, group: Group, root: Path) -> dict[str, object]:
+def task_manager():  # -> lm_eval.tasks.TaskManager
+    """TaskManager over only the task directories this experiment uses (fast to index)."""
+    import lm_eval.tasks
+    from lm_eval.tasks import TaskManager
+    root = Path(lm_eval.tasks.__file__).parent
+    return TaskManager(include_defaults=False, include_path=[str(root / d) for d in TASK_DIRS])
+
+
+def run_group(lm: object, tm: object, model: str, group: Group, root: Path) -> dict[str, object]:
+    from lm_eval import simple_evaluate
+    from lm_eval.utils import handle_non_serializable
     gdir = root / group.name
     gdir.mkdir(parents=True, exist_ok=True)
-    samples = None
-    if group.name == "loglik":
-        samples = root / "loglik_samples.json"
-        samples.write_text(json.dumps(samples_spec()))
-    argv = lm_eval_argv(sys.executable, model, group, str(gdir), str(samples) if samples else None)
-    print(f"[{time.strftime('%H:%M:%S')}] {group.name}: {' '.join(argv)}", flush=True)
+    samples = samples_spec() if group.name == "loglik" else None
+    if samples is not None:
+        (root / "loglik_samples.json").write_text(json.dumps(samples))
+    kw = eval_kwargs(group, samples)
+    print(f"[{time.strftime('%H:%M:%S')}] {group.name}: simple_evaluate({ {k: v for k, v in kw.items() if k != 'samples'} }"
+          f"{', samples=loglik_samples.json' if samples else ''})", flush=True)
     t0 = time.time()
-    rc = subprocess.run(argv, check=False).returncode  # streams into the Slurm log
+    rec: dict[str, object] = {"group": group.name, "kwargs": {k: v for k, v in kw.items() if k != "samples"},
+                              "samples_file": "loglik_samples.json" if samples else None}
+    try:
+        res = simple_evaluate(model=lm, task_manager=tm, **kw)
+    except Exception:
+        rec.update(status="failed", wall_s=round(time.time() - t0, 1), error=traceback.format_exc())
+        print(f"FAILED {model} {group.name}:\n{rec['error']}", flush=True)
+        _free_cuda()
+        return rec
     wall = time.time() - t0
-    paths = sorted(gdir.glob("**/results_*.json"))
-    found = newest_results(paths, t0 - 1, {p: p.stat().st_mtime for p in paths})
-    rec = {"group": group.name, "returncode": rc, "wall_s": round(wall, 1), "argv": argv[1:],
-           "results_file": str(found.relative_to(root)) if found else None}
-    if rc == 0 and found is not None:
-        res = json.loads(found.read_text())
-        rec["status"] = "ok"
-        rec["tasks"] = summarize_results(res, group.tasks)
-        rec["config"] = {k: res.get("config", {}).get(k) for k in ("batch_size", "batch_sizes", "model_dtype",
-                                                                    "random_seed", "numpy_seed", "torch_seed",
-                                                                    "fewshot_seed", "limit", "model_num_parameters")}
-        rec["lm_eval_version"], rec["transformers_version"] = res.get("lm_eval_version"), res.get("transformers_version")
-        rec["max_length"], rec["chat_template"] = res.get("max_length"), res.get("chat_template")
-        missing = [t for t in group.tasks if t not in rec["tasks"]]
-        if missing:
-            rec["status"], rec["missing_tasks"] = "incomplete", missing
-        (gdir / "done.json").write_text(json.dumps(rec, indent=1))
-        for line in task_lines(model, group.name, rec["tasks"], wall):
-            print(line, flush=True)
-    else:
-        rec["status"] = "failed"
-        print(f"FAILED {model} {group.name}: returncode {rc}, results file {found}", flush=True)
+    res.pop("samples", None)
+    (gdir / "results.json").write_text(json.dumps(res, indent=1, default=handle_non_serializable))
+    rec.update(status="ok", wall_s=round(wall, 1), results_file=f"{group.name}/results.json",
+               tasks=summarize_results(res, group.tasks))
+    rec["config"] = {k: res.get("config", {}).get(k) for k in ("batch_size", "batch_sizes", "model_dtype",
+                                                                "random_seed", "numpy_seed", "torch_seed",
+                                                                "fewshot_seed", "limit", "model_num_parameters")}
+    rec["lm_eval_version"], rec["transformers_version"] = res.get("lm_eval_version"), res.get("transformers_version")
+    rec["max_length"], rec["chat_template"] = res.get("max_length"), res.get("chat_template")
+    missing = [t for t in group.tasks if t not in rec["tasks"]]
+    if missing:
+        rec["status"], rec["missing_tasks"] = "incomplete", missing
+    (gdir / "done.json").write_text(json.dumps(rec, indent=1, default=handle_non_serializable))
+    for line in task_lines(model, group.name, rec["tasks"], wall):
+        print(line, flush=True)
     return rec
+
+
+def set_neutral_generation_config(lm: object) -> tuple[dict[str, object], dict[str, object]]:
+    from transformers import GenerationConfig
+    kept, dropped = neutral_generation_config(lm.model.generation_config.to_diff_dict())
+    lm.model.generation_config = GenerationConfig(**kept)
+    return kept, dropped
+
+
+def _free_cuda() -> None:
+    try:
+        import torch
+        torch.cuda.empty_cache()
+    except Exception as e:  # report, never fail the run on it
+        print(f"empty_cache failed: {e}", flush=True)
 
 
 def cmd_run(args: argparse.Namespace) -> int:
@@ -217,29 +264,47 @@ def cmd_run(args: argparse.Namespace) -> int:
     root.mkdir(parents=True, exist_ok=True)
     wanted = [g for g in GROUPS if g.name in args.groups.split(",")]
     print(f"exp04 index {args.index}: {model} on {platform.node()} gpu={gpu_name()} {env_versions()}", flush=True)
-    recs = []
-    for g in wanted:
-        done = root / g.name / "done.json"
-        if done.exists():
-            rec = json.loads(done.read_text())
-            print(f"skip {g.name}: done.json exists ({rec.get('status')})", flush=True)
-        else:
-            rec = run_group(model, g, root)
-        recs.append(rec)
+    todo = [g for g in wanted if not (root / g.name / "done.json").exists()]
+    gen_kept: dict[str, object] = {}
+    gen_dropped: dict[str, object] = {}
+    recs = {g.name: json.loads((root / g.name / "done.json").read_text()) for g in wanted if g not in todo}
+    for name, rec in recs.items():
+        print(f"skip {name}: done.json exists ({rec.get('status')})", flush=True)
+    if todo:
+        t0 = time.time()
+        tm = task_manager()
+        print(f"[{time.strftime('%H:%M:%S')}] task index built in {time.time() - t0:.0f} s", flush=True)
+        try:
+            from lm_eval.models.huggingface import HFLM
+            t0 = time.time()
+            lm = HFLM(**model_kwargs(model))
+            print(f"[{time.strftime('%H:%M:%S')}] model loaded in {time.time() - t0:.0f} s", flush=True)
+            gen_kept, gen_dropped = set_neutral_generation_config(lm)
+            print(f"generation config: kept {gen_kept}, dropped {gen_dropped}", flush=True)
+        except Exception:
+            err = traceback.format_exc()
+            print(f"FAILED {model} model load:\n{err}", flush=True)
+            recs.update({g.name: {"group": g.name, "status": "failed", "error": err} for g in todo})
+            lm = None
+        if lm is not None:
+            for g in todo:
+                recs[g.name] = run_group(lm, tm, model, g, root)
     summary = {"model": model, "index": args.index, "host": platform.node(), "gpu": gpu_name(),
-               "versions": env_versions(), "groups": {r["group"]: r for r in recs}}
-    (root / "summary.json").write_text(json.dumps(summary, indent=1))
-    bad = [r["group"] for r in recs if r.get("status") != "ok"]
-    print(f"exp04 index {args.index} {model}: groups ok "
-          f"{[r['group'] for r in recs if r.get('status') == 'ok']}, failed {bad}", flush=True)
+               "versions": env_versions(), "model_kwargs": model_kwargs(model),
+               "generation_config_kept": gen_kept, "generation_config_dropped": gen_dropped,
+               "groups": {g.name: recs[g.name] for g in wanted}}
+    (root / "summary.json").write_text(json.dumps(summary, indent=1, default=str))
+    bad = [g.name for g in wanted if recs[g.name].get("status") != "ok"]
+    print(f"exp04 index {args.index} {model}: groups ok {[g.name for g in wanted if g.name not in bad]}, "
+          f"failed {bad}", flush=True)
     return 1 if bad else 0
 
 
 def cmd_prefetch(args: argparse.Namespace) -> int:
     """Build every task once (downloads its dataset into HF_HOME) and the ifeval nltk data. No model, no GPU."""
-    from lm_eval.tasks import TaskManager, get_task_dict
+    from lm_eval.tasks import get_task_dict
     names = [t for g in GROUPS for t in g.tasks]
-    tasks = get_task_dict(names, TaskManager())
+    tasks = get_task_dict(names, task_manager())
     print(f"prefetched {len(tasks)} task entries for {names}", flush=True)
     import lm_eval.tasks.ifeval.instructions_util  # noqa: F401  (downloads nltk punkt_tab on import)
     print("nltk punkt_tab ok; versions", env_versions(), flush=True)

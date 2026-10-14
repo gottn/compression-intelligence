@@ -8,8 +8,10 @@
 # the cache from exp03 (SmolLM2-1.7B, -Instruct, Qwen3-1.7B-Base, Qwen3-1.7B) download inside their own task.
 # A failed task group does not stop the others; the task exits non-zero at the end so sacct shows it.
 # Resumable: a Slurm requeue (same $CI_OUT) skips groups that wrote done.json.
+# GPU type pinned to A10 (24 GB) so every checkpoint runs the same fp16 kernels; on 2026-10-14 three A10 nodes
+# were idle while L40S had 66 jobs pending. The first dry run (1080307, any GPU) landed on a T4.
 #SBATCH --partition=prioritized
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:a10:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=48G
 #SBATCH --time=02:30:00

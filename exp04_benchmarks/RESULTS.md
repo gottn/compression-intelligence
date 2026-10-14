@@ -24,11 +24,13 @@ Every post-trained checkpoint is compared with its **family base** (R1-Distill a
 ## Benchmarks (AAU, `infra/slurm/exp04_eval.sbatch`, driver `run_eval.py`)
 
 - lm-evaluation-harness 0.4.13 (pinned in `infra/cluster/requirements-exp04.txt`), HF backend, fp16, `batch_size auto`, `max_length 2048`, `--seed 0,1234,1234,1234`, greedy decoding (task defaults), no `--log_samples`.
+- **Decoding is the harness's greedy default for every model.** transformers 5 merges each checkpoint's `generation_config.json` into `generate()`; Qwen's sets `max_new_tokens: 2048`, which overrode lm-eval's 256-token gsm8k limit in the first dry run (job 1080307, cancelled), and instruct checkpoints also ship sampling and repetition-penalty defaults. The driver replaces the generation config with one holding only the token ids (the dropped fields are recorded per model in `summary.json`). gsm8k therefore generates at most 256 new tokens (lm-eval's default; the task sets no `max_gen_toks`) and ifeval at most 1,280 (task setting).
+- **One GPU type for all checkpoints:** the array job pins `--gres=gpu:a10:1`, so fp16 kernels are the same for every model.
 - **No chat template for any model.** Base and post-trained checkpoints see byte-identical prompts. This favours base models on generative tasks and is a stated confound, not a hidden one.
 - General side (log-likelihood, harness default few-shot = 0 for all six): arc_easy (test, 2,376), arc_challenge (test, 1,172), hellaswag (first 2,000 validation docs), piqa (validation, 1,838), winogrande (validation, 1,267), mmlu (first 40 test questions of each of 57 subjects = 2,280).
 - Target side (generative): gsm8k 5-shot (task default), first 300 test problems, strict-match and flexible-extract both recorded; ifeval 0-shot, first 200 prompts (installed via `lm-eval[ifeval]`).
 - 11,433 documents per checkpoint. Per-task limits are passed to the single log-likelihood call as `--samples` (doc indices 0..N−1, which is exactly what `--limit N` selects), because `--limit` is global to a call.
-- One lm_eval call per task group (log-likelihood, gsm8k, ifeval); a failed group does not stop the others and the array task exits non-zero.
+- One `lm_eval.simple_evaluate` call per task group (log-likelihood, gsm8k, ifeval), in one process per checkpoint with the model loaded once; a failed group does not stop the others and the array task exits non-zero. (The dry run used one CLI process per group; that spent ~6.5 min per call indexing every lm-eval task YAML with the GPU idle, so the driver now indexes only the 7 task directories it uses.)
 
 ## Definitions (fixed before the run)
 
@@ -66,7 +68,8 @@ How each expectation is scored (added 2026-10-14 in a separate commit, before an
 ## Confounds (stated before the run)
 
 - **Prompt format.** No chat template anywhere. Chat-tuned and reasoning models (Qwen3, R1-Distill) are scored off their native format, which lowers their generative scores (gsm8k, and ifeval in particular) and can look like forgetting on log-likelihood tasks. This is the price of identical prompting.
+- **Generation length.** gsm8k uses lm-eval's default cap of 256 new tokens for every model. Long chain-of-thought models (R1-Distill above all, and possibly SimpleRL-Zoo) can be cut off before their final answer, which understates their gsm8k gain. This is the cost of identical decoding; it is not corrected.
 - **Subsets.** hellaswag 2,000 of 10,042; mmlu 40 per subject; gsm8k 300 of 1,319; ifeval 200 of 541. The binomial standard error of gsm8k at n = 300 is about ±2.8 points.
 - **n = 12 checkpoints from different labs and recipes**, with family as a nuisance factor; two points (Qwen2.5-Math, R1-Distill) are continued pretraining and distillation on math, far from the others in Δbpb, and will carry leverage in Pearson r. Spearman and leave-one-out are reported for this reason.
 - **Contamination.** Public benchmarks (gsm8k, mmlu, arc) may be in some post-training sets, inflating "gain" and masking "forgetting" unevenly across recipes.
-- **Hardware.** Array tasks may land on different GPU types (T4, A10, L4, ...); fp16 kernels differ slightly. The GPU is recorded per checkpoint.
+- **Hardware.** All array tasks request an A10; the GPU is recorded per checkpoint. exp03's predictors came from a T4 (and exp01's from the Mac); benchmark and bpb hardware differ by design.
