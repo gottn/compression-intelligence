@@ -1,0 +1,4 @@
+{"model": "Qwen/Qwen2.5-1.5B", "corpus": "arxiv2026", "t1_vs_rescore_max_rel": "4.29e-07", "t1_vs_rescore_total_rel": "3.91e-07", "rescore_total_bits": 82431.322}
+{"model": "Qwen/Qwen2.5-1.5B", "corpus": "enwik8_ctrl", "t1_vs_rescore_max_rel": "1.01e-06", "t1_vs_rescore_total_rel": "5.85e-07", "rescore_total_bits": 69472.981}
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "corpus": "arxiv2026", "t1_vs_rescore_max_rel": "4.36e-07", "t1_vs_rescore_total_rel": "4.07e-07", "rescore_total_bits": 83131.053}
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "corpus": "enwik8_ctrl", "t1_vs_rescore_max_rel": "1.10e-06", "t1_vs_rescore_total_rel": "5.78e-07", "rescore_total_bits": 70571.01}

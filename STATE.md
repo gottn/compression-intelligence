@@ -37,6 +37,31 @@ Gotchas that are fixed but still worth knowing:
 - An in-process `model.half()` after an fp32 load keeps the fp32 copy alive on MPS. The fix is to run the fp32 reference in a subprocess, with one process per model.
 - The Wikipedia API returns 429 after about 3 quick anonymous calls; pace at 1 call per 6 s.
 - en.wikinews.org has been dead since May 2026.
+- `.half()` also casts the rotary `inv_freq` buffer to fp16. The 8 exp01 rows from the first run (Qwen2.5-1.5B and -Instruct × arxiv/enwik8) carry a drift of 2–3e-5 relative. They were kept and are flagged in exp01's RESULTS.
+
+## exp02_temperature: done (2026-10-14)
+
+The full write-up is `exp02_temperature/RESULTS.md`.
+
+**Question.** How much of the base → post fresh-text bpb gap does one scalar temperature undo?
+
+**Method.** RAW condition and the same windows as exp01. T* is fit on the even windows, with a 23-point grid over 0.50–1.60 plus a parabola in log T, and evaluated on the odd windows.
+
+**Verdict, against the rule stated before the run: mixed.** It is mostly not a calibration shift.
+
+| pair | T* post (base) | gap recovered | residual gap at own T* |
+|---|---|---|---|
+| Qwen2.5 → Instruct | 1.00–1.06 (1.00–1.05) | 15% | +0.9% |
+| SmolLM2 → Instruct | 1.04–1.08 (1.00–1.05) | 6% | +3.6% |
+| Qwen3-Base → Qwen3 | 1.22–1.28 (1.00–1.04) | **35%** (CIs 28–42%) | **+10.4%** |
+| Qwen2.5-Math → R1-Distill | 1.15–1.18 (1.02–1.07) | **19%** | **+12.7%** |
+
+- Each figure is the mean of the 3 fresh corpora.
+- Qwen3 and R1 are overconfident: T* is about 1.25 and 1.16, while every base model sits at 0.995–1.07.
+- Undoing that sharpening still leaves a 10–13% bpb penalty. So "forgetting/drift" survives and "only calibration" is weakened.
+- The caveat is that one global T is the crudest calibrator. The next step is entropy-binned T and a mixture with base or unigram.
+- T=1 matches exp01's per-token bits to ≤ 1.6e-6 per window (≤ 1.1e-6 after re-scoring the 4 stale `.half()` rows).
+- Total scoring time was 25 min.
 
 ## How to rerun
 
@@ -56,6 +81,7 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
   - `score_bpb.py audit ...`
   - `analyze_positions.py`
   - `plot_results.py`
+- exp02: `cd exp02_temperature && bash run_all.sh` (~30 min, resumable; needs the exp01 models in the HF cache and exp01's `results/tokens/`).
 
 ## Layout
 
@@ -64,6 +90,8 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
   - `results/`: CSVs, figure, sanity and position audits, per-token bits.
   - `data/`: corpora with provenance JSON.
   - `logs/`: run logs, `notes.txt` incident log, model cards.
+- `exp02_temperature/`: `RESULTS.md`; `results/` (runs.csv, windows.csv, grid/*.npy per-window bits on the T grid, summary.md, figure).
+- `cilab/`: shared helpers (pairs, text, score, stats, calib, io); `tests/`: pytest for them.
 
 ## Next (from RESULTS.md)
 
@@ -71,5 +99,5 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
    - OLMo-2-1B staged checkpoints;
    - RL-zero checkpoints from Qwen2.5-Math-1.5B vs R1-Distill;
    - about 3M characters per domain.
-2. Test calibration vs knowledge: fit a temperature per post-trained model and log entropy. Does T > 1 recover the 16%?
+2. ~~Test calibration vs knowledge with one temperature.~~ Done in exp02: T > 1 recovers 35% (Qwen3) and 19% (R1). Next: richer calibrators, and a per-token decomposition of the residual (see exp02 RESULTS).
 3. Run one benchmark harness across all models (cloze plus GSM8K / MATH-500), extend to 10–20 pairs, and test whether base bpb predicts post-trained scores.

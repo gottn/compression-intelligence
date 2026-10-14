@@ -1,6 +1,7 @@
 """Bits from a causal LM. `summarize` is pure; everything below the marker touches a model or device.
 
-Effect functions: pick_device, load_model, free_model, score_tokens, score_raw, score_chat, hf_loss_bits.
+Effect functions: pick_device, load_model, free_model, score_tokens, score_raw, score_chat, hf_loss_bits,
+target_logits.
 -log2 p is always computed from float32 logits, whatever dtype the weights are in.
 """
 from __future__ import annotations
@@ -34,6 +35,9 @@ def summarize(bits: np.ndarray, text: str, meta: Mapping[str, object]) -> dict[s
 
 # ----------------------------------------------------------------------------- effects: model and device
 def pick_device() -> str:
+    """cuda (cluster GPUs) if available, else mps (Apple silicon), else cpu."""
+    if torch.cuda.is_available():
+        return "cuda"
     return "mps" if torch.backends.mps.is_available() else "cpu"
 
 
@@ -84,3 +88,15 @@ def hf_loss_bits(model: PreTrainedModel, input_ids: list[int], device: str) -> f
     x = torch.tensor([input_ids], device=device)
     loss = model(input_ids=x, labels=x, use_cache=False).loss.float().item()
     return loss * (len(input_ids) - 1) / LN2
+
+
+@torch.no_grad()
+def target_logits(model: PreTrainedModel, input_ids: list[int], n_score: int,
+                  device: str) -> tuple[torch.Tensor, torch.Tensor]:
+    """(float32 logits (n_score, V), target ids (n_score,)) for the last n_score tokens, on device.
+
+    Same slice as score_tokens: row i predicts target i from everything before it."""
+    x = torch.tensor([input_ids], device=device)
+    logits = model(input_ids=x, use_cache=False).logits[0]
+    lo = len(input_ids) - n_score
+    return logits[lo - 1:-1].float(), x[0, lo:]

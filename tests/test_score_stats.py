@@ -3,7 +3,14 @@ from __future__ import annotations
 import numpy as np
 
 from cilab.score import summarize
-from cilab.stats import bootstrap_ci, bucket_stats, paired_pct_change, resample_indices, window_sums
+from cilab.stats import (
+    bootstrap_ci,
+    bucket_stats,
+    paired_pct_change,
+    resample_indices,
+    window_sums,
+    window_totals,
+)
 
 
 def test_summarize_bpb_is_bits_over_utf8_bytes() -> None:
@@ -23,6 +30,7 @@ def test_window_sums_and_bucket_stats() -> None:
     bits = np.array([4.0, 2.0, 1.0, 5.0, 3.0])
     pos = np.array([0, 1, 2, 0, 1])
     assert window_sums(bits, pos).tolist() == [7.0, 8.0]
+    assert window_totals(bits, [3, 2]).tolist() == [7.0, 8.0]
     st = bucket_stats(bits, pos)
     assert st["bpt_pos0-0"] == 4.5
     assert st["bpt_pos1-15"] == 2.0

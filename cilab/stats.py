@@ -26,6 +26,12 @@ def window_sums(bits: np.ndarray, pos: np.ndarray) -> np.ndarray:
     return np.add.reduceat(bits, starts)
 
 
+def window_totals(token_bits: np.ndarray, lengths: list[int]) -> np.ndarray:
+    """Per-window totals of consecutive per-token bits, given each window's token count."""
+    starts = np.cumsum([0, *lengths])[:-1]
+    return np.add.reduceat(token_bits, starts)
+
+
 def resample_indices(n: int, n_boot: int, seed: int) -> np.ndarray:
     """(n_boot, n) window indices drawn with replacement; a pure function of the seed."""
     return np.random.default_rng(seed).integers(0, n, size=(n_boot, n))

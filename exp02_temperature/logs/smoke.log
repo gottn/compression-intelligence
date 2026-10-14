@@ -1,0 +1,1 @@
+{"model": "Qwen/Qwen3-1.7B", "corpus": "wiki2026", "t_star": 1.27, "at_edge": false, "t1_vs_exp01_max_rel": "3.79e-07", "wall_s": 44.9}

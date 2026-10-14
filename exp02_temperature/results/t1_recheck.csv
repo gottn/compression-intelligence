@@ -1,0 +1,5 @@
+model,corpus,t1_vs_rescore_max_rel,t1_vs_rescore_total_rel,rescore_total_bits
+Qwen/Qwen2.5-1.5B,arxiv2026,4.29e-07,3.91e-07,82431.322
+Qwen/Qwen2.5-1.5B,enwik8_ctrl,1.01e-06,5.85e-07,69472.981
+Qwen/Qwen2.5-1.5B-Instruct,arxiv2026,4.36e-07,4.07e-07,83131.053
+Qwen/Qwen2.5-1.5B-Instruct,enwik8_ctrl,1.10e-06,5.78e-07,70571.01
