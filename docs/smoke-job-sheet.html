@@ -1,0 +1,345 @@
+<title>Smoke Job Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: an engineering drawing sheet. Rulers on four sides, six lettered panels in a 3x2 grid, title block bottom-right. */
+:root{
+  --paper:#eeeeea; --sheet:#fdfdfb; --ink:#1b1f26; --ink2:#454c5a; --muted:#767d8b;
+  --line:#1b1f26; --rule:#d6d9df; --tint:#edf2fb; --tint2:#f4f5f7;
+  --ann:#1f5fc4; --bad:#b93a2b; --good:#1e7f45; --warn:#9a6a12;
+  --bar:#d9731f; --bar2:#2a62c9; --track:#e6e8ec;
+  --badge-bg:#1b1f26; --badge-fg:#ffffff;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f1114; --sheet:#181b20; --ink:#e6e8ec; --ink2:#b9bec8; --muted:#8a919d;
+    --line:#cfd3da; --rule:#333942; --tint:#1e2a3d; --tint2:#20242b;
+    --ann:#7aa6ef; --bad:#ef8a7c; --good:#5fc98a; --warn:#e0b35a;
+    --bar:#c9752e; --bar2:#5b8ee6; --track:#2a2f37;
+    --badge-bg:#e6e8ec; --badge-fg:#181b20;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f1114; --sheet:#181b20; --ink:#e6e8ec; --ink2:#b9bec8; --muted:#8a919d;
+  --line:#cfd3da; --rule:#333942; --tint:#1e2a3d; --tint2:#20242b;
+  --ann:#7aa6ef; --bad:#ef8a7c; --good:#5fc98a; --warn:#e0b35a;
+  --bar:#c9752e; --bar2:#5b8ee6; --track:#2a2f37;
+  --badge-bg:#e6e8ec; --badge-fg:#181b20;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:13px;line-height:1.45;padding-block:20px;padding-inline:16px;margin:0}
+.sheet{max-width:1560px;margin:0 auto;background:var(--sheet);border:1.5px solid var(--line);display:grid;grid-template-columns:22px minmax(0,1fr) 22px;grid-template-rows:22px auto 22px;font-variant-numeric:tabular-nums}
+.ruler{display:flex;font:11px var(--mono);color:var(--muted)}
+.ruler.h{flex-direction:row}
+.ruler.v{flex-direction:column}
+.ruler span{flex:1;display:grid;place-items:center;border-color:var(--rule);border-style:solid;border-width:0}
+.ruler.h span{border-right-width:1px}
+.ruler.h span:last-child{border-right-width:0}
+.ruler.v span{border-bottom-width:1px}
+.ruler.v span:last-child{border-bottom-width:0}
+.ruler.top{border-bottom:1.5px solid var(--line)}
+.ruler.bottom{border-top:1.5px solid var(--line)}
+.ruler.left{border-right:1.5px solid var(--line)}
+.ruler.right{border-left:1.5px solid var(--line)}
+.corner{border-color:var(--line);border-style:solid;border-width:0}
+.c-tl{border-right-width:1.5px;border-bottom-width:1.5px}
+.c-tr{border-left-width:1.5px;border-bottom-width:1.5px}
+.c-bl{border-right-width:1.5px;border-top-width:1.5px}
+.c-br{border-left-width:1.5px;border-top-width:1.5px}
+.frame{padding:18px;display:grid;gap:18px;grid-template-columns:1.05fr 1.3fr 0.85fr;grid-template-areas:"a b e" "c d d" "f d d"}
+.panel{border:1.5px solid var(--line);background:var(--sheet);display:flex;flex-direction:column;min-width:0}
+.pa{grid-area:a}.pb{grid-area:b}.pc{grid-area:c}.pd{grid-area:d}.pe{grid-area:e}.pf{grid-area:f}
+.ph{display:flex;align-items:center;gap:10px;border-bottom:1.5px solid var(--line);padding-right:10px}
+.badge{width:30px;height:30px;flex:none;background:var(--badge-bg);color:var(--badge-fg);display:grid;place-items:center;font:600 14px var(--sans)}
+.ph h2{margin:0;flex:1;font:600 15px/1.2 var(--sans);text-wrap:balance}
+.ph .cap{font:11px var(--mono);color:var(--muted);white-space:nowrap}
+.pbody{padding:12px 12px 10px;display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+.foot{margin-top:auto;padding-top:8px;border-top:1px solid var(--rule);font:italic 11px/1.4 var(--sans);color:var(--muted)}
+.foot b{font-style:normal;font-weight:600;color:var(--ink2)}
+.kw{font-family:var(--mono);font-weight:500}
+/* A: tree */
+.tree{display:flex;flex-direction:column;gap:0;align-items:stretch}
+.root{align-self:center;background:var(--tint);border:1.5px solid var(--line);padding:8px 16px;text-align:center;min-width:60%}
+.root b{display:block;font-size:14px}
+.root span{font-size:11px;color:var(--ink2)}
+.stem{width:1.5px;height:14px;background:var(--line);align-self:center}
+.branches{display:grid;grid-template-columns:1fr 1fr;gap:14px;position:relative;padding-top:14px}
+.branches::before{content:"";position:absolute;top:0;left:25%;right:25%;height:1.5px;background:var(--line)}
+.branch{position:relative;min-width:0}
+.branch::before{content:"";position:absolute;top:-14px;left:50%;width:1.5px;height:14px;background:var(--line)}
+.bhead{border:1.5px solid var(--line);padding:5px 8px;font-weight:600;font-size:12px;text-align:center}
+.bhead small{display:block;font-weight:400;color:var(--ink2);font-size:11px}
+.steps{list-style:none;margin:0;padding:8px 0 0 10px;border-left:1px solid var(--ink2);margin-left:10px}
+.steps li{position:relative;display:grid;grid-template-columns:44px 1fr;gap:6px;padding:3px 0 3px 8px;font-size:12px;line-height:1.35}
+.steps li::before{content:"";position:absolute;left:-10px;top:12px;width:10px;height:1px;background:var(--ink2)}
+.steps li .n{font:11px var(--mono);color:var(--muted)}
+.steps li .t{color:var(--ink)}
+.steps li .t em{font-style:normal;color:var(--ann)}
+.thesis{margin-top:12px;background:var(--tint2);border:1px solid var(--rule);padding:8px 10px;font-size:12px}
+.thesis b{display:block;font-size:12.5px}
+.thesis span{color:var(--ink2)}
+/* B: annotated examples */
+.ex{display:flex;flex-direction:column;gap:6px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.ex:last-of-type{border-bottom:0}
+.exlabel{font-weight:600;font-size:12px}
+.exlabel small{font-weight:400;color:var(--muted);font-family:var(--mono);font-size:11px;margin-left:6px}
+.claim{font-size:13px;color:var(--ink2)}
+.claim .no{color:var(--bad);font-weight:500}
+.claim .pre{font:11px var(--mono);color:var(--muted);display:block;margin-bottom:2px}
+.segrow{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:flex-start}
+.seg{display:flex;flex-direction:column;gap:3px;min-width:0}
+.seg code{font:500 13.5px var(--mono);border-bottom:2px solid var(--ann);padding-bottom:2px;white-space:nowrap}
+.seg i{font:11px/1.25 var(--sans);font-style:normal;color:var(--ann);max-width:15ch}
+.seg.q code{border-bottom-color:var(--ink2)}
+.seg.q i{color:var(--ink2)}
+.exnote{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:11px var(--mono);color:var(--muted)}
+.exnote b{color:var(--ink2);font-weight:500}
+/* tables */
+.tw{overflow-x:auto;min-width:0}
+.pc table{min-width:720px}
+.pd table{min-width:640px}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th{font:500 11px var(--mono);color:var(--muted);text-align:left;padding:4px 8px 6px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.m{font-family:var(--mono);white-space:nowrap}
+td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
+.pair{font-weight:600}
+.pair small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+.bp{font-family:var(--mono);white-space:nowrap}
+.bp b{font-weight:600}
+.dcell{display:flex;align-items:center;gap:8px;min-width:120px}
+.dbar{flex:1;height:8px;background:var(--track);position:relative;border-radius:0 4px 4px 0;overflow:hidden}
+.dbar::after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--w);background:var(--bar);border-radius:0 4px 4px 0}
+.dval{font:600 12px var(--mono);min-width:5.5ch;text-align:right}
+.st{white-space:nowrap;font-weight:500}
+.st.ok{color:var(--good)}.st.no{color:var(--bad)}.st.half{color:var(--warn)}
+.alt{color:var(--ann);font-weight:500}
+.redt{color:var(--bad)}
+/* E: gauges */
+.g{display:flex;flex-direction:column;gap:3px}
+.gh{display:flex;justify-content:space-between;gap:10px;font-size:12px}
+.gh b{font:600 11px var(--mono);color:var(--ann);white-space:nowrap}
+.track{height:12px;background:var(--track);border:1px solid var(--rule);position:relative}
+.fill{position:absolute;left:0;top:0;bottom:0;background:var(--bar);width:var(--w);min-width:1px}
+.fill.b2{background:var(--bar2)}
+.tick{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);left:var(--x)}
+.axis{display:flex;justify-content:space-between;font:10px var(--mono);color:var(--muted)}
+.rules{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:12px}
+.rules li{padding-left:14px;position:relative}
+.rules li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;background:var(--ink)}
+/* F: timeline + title block */
+.tl{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;position:relative}
+.tl::before{content:"";position:absolute;left:10%;right:10%;top:8px;height:1.5px;background:var(--ink)}
+.tl li{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;font-size:11px;line-height:1.3;color:var(--ink2);min-width:0}
+.tl li i{width:11px;height:11px;border-radius:50%;background:var(--sheet);border:2px solid var(--ink);flex:none;margin-top:3px}
+.tl li b{font:600 13px var(--sans);color:var(--ink)}
+.tl li.next i{background:var(--ann);border-color:var(--ann)}
+.tl li.next b{color:var(--ann)}
+.tb{margin-top:auto;border-top:1.5px solid var(--line);display:grid;grid-template-columns:1fr 1fr}
+.tb div{padding:6px 10px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule);min-width:0}
+.tb div:nth-child(2n){border-right:0}
+.tb div.full{grid-column:1/-1;border-right:0}
+.tb div:nth-last-child(-n+2){border-bottom:0}
+.tb small{display:block;font:11px var(--mono);color:var(--muted)}
+.tb span{font-weight:600;font-size:13px}
+.tb span.sm{font-weight:500;font-size:12px}
+@media (max-width:1100px){
+  .frame{grid-template-columns:1fr 1fr;grid-template-areas:"a b" "c c" "d d" "e f"}
+}
+@media (max-width:760px){
+  .sheet{grid-template-columns:minmax(0,1fr);grid-template-rows:auto}
+  .ruler,.corner{display:none}
+  .frame{grid-template-columns:1fr;grid-template-areas:"a" "b" "c" "d" "e" "f";padding:12px;gap:12px}
+  .branches{grid-template-columns:1fr}
+  .branches::before{display:none}
+  .branch::before{display:none}
+  .tl{grid-template-columns:1fr;gap:10px}
+  .tl::before{display:none}
+  .tl li{flex-direction:row;text-align:left;align-items:flex-start}
+  .ph .cap{display:none}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="sheet">
+  <div class="corner c-tl"></div>
+  <div class="ruler h top"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+  <div class="corner c-tr"></div>
+  <div class="ruler v left"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+
+  <div class="frame">
+
+    <section class="panel pa">
+      <div class="ph"><div class="badge">A</div><h2>Job structure</h2><span class="cap">infra/slurm/smoke.sbatch</span></div>
+      <div class="pbody">
+        <div class="tree">
+          <div class="root"><b>ci-smoke</b><span>one GPU, 30 minutes, proves the pipeline end to end</span></div>
+          <div class="stem"></div>
+          <div class="branches">
+            <div class="branch">
+              <div class="bhead">Part 1: Front end<small>file operations only, no compute</small></div>
+              <ol class="steps">
+                <li><span class="n">Step 1</span><span class="t"><em>git pull --ff-only</em> on the checkout</span></li>
+                <li><span class="n">Step 2</span><span class="t">Refuse if any tracked file is modified</span></li>
+                <li><span class="n">Step 3</span><span class="t">Record the commit hash in a new run folder</span></li>
+                <li><span class="n">Step 4</span><span class="t"><em>sbatch</em> the script; log goes to the run folder</span></li>
+              </ol>
+            </div>
+            <div class="branch">
+              <div class="bhead">Part 2: Compute node<small>holds the GPU from here to exit</small></div>
+              <ol class="steps">
+                <li><span class="n">Step 5</span><span class="t">Copy the corpora into the run folder</span></li>
+                <li><span class="n">Step 6</span><span class="t"><em>singularity exec --nv</em> the shared PyTorch image</span></li>
+                <li><span class="n">Step 7</span><span class="t">Venv on top of the image; pip is cached after v1</span></li>
+                <li><span class="n">Step 8</span><span class="t">Print torch, CUDA, GPU name, transformers</span></li>
+                <li><span class="n">Step 9</span><span class="t"><em>cilab.smoke</em>: GPT-2 on enwik8 → smoke.json</span></li>
+                <li><span class="n">Step 10</span><span class="t">Exit; Slurm releases the GPU</span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="thesis"><b>What it proves</b><span>Code from one commit runs on a compute node inside the approved container, sees the GPU, downloads a model into the shared cache, and reproduces the Mac reference of 1.243 bits per byte within 0.01. Nothing else.</span></div>
+        </div>
+        <div class="foot">Steps 1 to 4 touch no compute. Any failure in steps 5 to 10 ends the job because of <b>set -euo pipefail</b>, which releases the GPU.</div>
+      </div>
+    </section>
+
+    <section class="panel pb">
+      <div class="ph"><div class="badge">B</div><h2>Anatomy of the job script</h2><span class="cap">annotated lines</span></div>
+      <div class="pbody">
+        <div class="ex">
+          <div class="claim"><span class="pre">Not allowed on this cluster: forbidden forms in red</span><span class="no">srun --pty bash</span> on a GPU to try things, or <span class="no">pip install</span> and <span class="no">python score.py</span> on the front end.</div>
+        </div>
+        <div class="ex">
+          <div class="exlabel">1 Resource header <small>#SBATCH lines, the contract with Slurm</small></div>
+          <div class="segrow">
+            <div class="seg"><code>--partition=prioritized</code><i>default GPU partition, QoS normal</i></div>
+            <div class="seg"><code>--gres=gpu:1</code><i>one GPU; quota is 12</i></div>
+            <div class="seg"><code>--cpus-per-task=8</code><i>tokenizing and loading</i></div>
+            <div class="seg"><code>--mem=32G</code><i>GPT-2 needs far less; room for pip</i></div>
+            <div class="seg"><code>--time=00:30:00</code><i>hard stop; v1 had 20:00 and timed out</i></div>
+          </div>
+          <div class="exnote"><span>Slurm placed v1 on <b>a256-t4-02</b>, Tesla T4 15 GB, within seconds.</span></div>
+        </div>
+        <div class="ex">
+          <div class="exlabel">2 The compute line <small>the only line that holds the GPU</small></div>
+          <div class="segrow">
+            <div class="seg"><code>srun</code><i>a job step, accounted by Slurm</i></div>
+            <div class="seg"><code>singularity exec --nv</code><i>GPU driver passed into the container</i></div>
+            <div class="seg"><code>pytorch_25.09.sif</code><i>shared NGC image: torch 2.9, CUDA 12.9, Python 3.12</i></div>
+            <div class="seg"><code>bash -c "…"</code><i>not -l: login profiles choke on CUDA version strings</i></div>
+          </div>
+          <div class="exnote"><span>Inside: venv with <b>--system-site-packages</b> so torch comes from the image and only transformers, numpy, pandas are added.</span></div>
+        </div>
+        <div class="ex">
+          <div class="exlabel">3 The measurement <small>cilab/smoke.py</small></div>
+          <div class="segrow">
+            <div class="seg"><code>python -m cilab.smoke</code><i>pure helpers from the repo</i></div>
+            <div class="seg"><code>GPT-2 124M</code><i>500 MB, cached in ~/hf_cache</i></div>
+            <div class="seg"><code>enwik8_ctrl</code><i>100,000 bytes, 2006 Wikipedia</i></div>
+            <div class="seg"><code>--device cuda</code><i>explicit; the Mac default is mps</i></div>
+            <div class="seg q"><code>→ smoke.json</code><i>bpb, wall time, verdict</i></div>
+          </div>
+          <div class="exnote"><span>Pass: <b>1.243 ± 0.01 bpb</b>, the Mac reference. Fail: exit code 2 and the job ends red.</span><span>Log streams line by line; no pipe to tail</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel pe">
+      <div class="ph"><div class="badge">E</div><h2>Limits and what v1 used</h2><span class="cap">against the quota</span></div>
+      <div class="pbody">
+        <div class="g"><div class="gh"><span>Walltime v1 · used 20:29 of 20:00</span><b class="redt">TIMEOUT</b></div><div class="track"><span class="fill" style="--w:100%"></span><span class="tick" style="--x:100%"></span></div><div class="axis"><i>0</i><i>5</i><i>10</i><i>15</i><i>20 min</i></div></div>
+        <div class="g"><div class="gh"><span>Walltime v2 · limit 30 min; venv cached</span><b>expect &lt; 8 min</b></div><div class="track"><span class="fill b2" style="--w:26%"></span><span class="tick" style="--x:100%"></span></div><div class="axis"><i>0</i><i>10</i><i>20</i><i>30 min</i></div></div>
+        <div class="g"><div class="gh"><span>pip install inside the image, v1</span><b>14 of 20 min</b></div><div class="track"><span class="fill" style="--w:70%"></span></div></div>
+        <div class="g"><div class="gh"><span>GPUs held · quota 12 per user</span><b>1</b></div><div class="track"><span class="fill b2" style="--w:8.3%"></span></div><div class="axis"><i>0</i><i>6</i><i>12</i></div></div>
+        <div class="g"><div class="gh"><span>Simultaneous jobs · quota 12</span><b>1</b></div><div class="track"><span class="fill b2" style="--w:8.3%"></span></div></div>
+        <div class="g"><div class="gh"><span>Memory requested · node has 244 GB</span><b>32 GB</b></div><div class="track"><span class="fill b2" style="--w:13%"></span></div></div>
+        <ul class="rules">
+          <li>Front end: git and sbatch only.</li>
+          <li>Every job sets its own short --time.</li>
+          <li>Outputs go to ~/runs/ci, never into the checkout.</li>
+          <li>Models cache once in ~/hf_cache; results are copied back and deleted.</li>
+          <li>Long jobs are scheduled off-peak with --begin.</li>
+        </ul>
+        <div class="foot">Max walltime on the cluster is 6 days. The smoke job uses half an hour of it.</div>
+      </div>
+    </section>
+
+    <section class="panel pc">
+      <div class="ph"><div class="badge">C</div><h2>Run modes</h2><span class="cap">fair-usage page</span></div>
+      <div class="pbody">
+        <div class="tw">
+        <table>
+          <thead><tr><th>Form</th><th>Example</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Batch script</td><td class="m">sbatch infra/slurm/smoke.sbatch</td><td class="st ok">✓ Approved</td></tr>
+            <tr><td>Job step inside a batch script</td><td class="m">srun singularity exec --nv …</td><td class="st ok">✓ Approved</td></tr>
+            <tr><td>CPU partition for analysis</td><td class="m">--partition=cpu</td><td class="st ok">✓ Approved</td></tr>
+            <tr><td>Off-peak scheduling</td><td class="m">--begin=22:00</td><td class="st ok">✓ Approved</td></tr>
+            <tr><td>Short test with srun</td><td class="m">srun -t 2 nvidia-smi</td><td class="st half">◐ Briefly only</td></tr>
+            <tr><td>Interactive GPU shell</td><td class="m">srun --gres=gpu:1 --pty bash</td><td class="st no">✗ Not approved</td></tr>
+            <tr><td>Compute on the front end</td><td class="m">python score.py on ai-fe02</td><td class="st no">✗ Not approved</td></tr>
+            <tr><td>Idle allocation</td><td class="m">GPU held while thinking</td><td class="st no">✗ Not approved</td></tr>
+            <tr><td>Editor over SSH on the front end</td><td class="m">VS Code Remote</td><td class="st half">◐ Discouraged</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="foot">Jobs must have a defined start and stop and release resources when the script ends. Violations are discussed with CLAAUDIA first; misuse under the terms means a permanent ban.</div>
+      </div>
+    </section>
+
+    <section class="panel pd">
+      <div class="ph"><div class="badge">D</div><h2>Job vocabulary</h2><span class="cap">infra/cluster and infra/slurm</span></div>
+      <div class="pbody">
+        <div class="tw">
+        <table>
+          <thead><tr><th>Term</th><th>Status</th><th>Meaning</th><th>Approved example</th><th>Not approved</th></tr></thead>
+          <tbody>
+            <tr><td class="m">submit.sh &lt;job&gt;</td><td class="st ok">✓ Approved</td><td>The only entry point; pulls, checks, records, submits</td><td class="m">infra/cluster/submit.sh smoke</td><td class="redt">sbatch by hand from a dirty checkout</td></tr>
+            <tr><td class="m">CI_OUT</td><td class="st ok">✓ Approved</td><td>Run folder outside the repo, named by time and commit</td><td class="m">~/runs/ci/smoke/20261014-191556-ed8c85b</td><td class="redt">writing results into ~/projects/…</td></tr>
+            <tr><td class="m">HF_HOME</td><td class="st ok">✓ Approved</td><td>One shared model cache</td><td class="m">~/hf_cache</td><td class="redt">a cache per run folder</td></tr>
+            <tr><td class="m">--system-site-packages</td><td class="st ok">✓ Approved</td><td>Venv inherits the image's torch and CUDA</td><td class="m">python -m venv --system-site-packages</td><td class="redt">pip install torch into the venv</td></tr>
+            <tr><td class="m">--nv</td><td class="st ok">✓ Approved</td><td>GPU driver visible inside the container</td><td class="m">singularity exec --nv image.sif</td><td class="redt">singularity exec without --nv, then cuda False</td></tr>
+            <tr><td class="m">set -euo pipefail</td><td class="st ok">✓ Approved</td><td>First failure ends the job and frees the GPU</td><td class="m">first line after the header</td><td class="redt">a script that keeps the GPU after an error</td></tr>
+            <tr><td class="m">bash -lc</td><td class="st no">✗ Not approved</td><td class="alt">bash -c</td><td class="m">bash -c "set -euo pipefail; …"</td><td class="redt">bash -lc: profile errors on CUDA version strings</td></tr>
+            <tr><td class="m">| tail -25</td><td class="st no">✗ Not approved</td><td class="alt">stream the log</td><td class="m">python -m cilab.smoke … (no pipe)</td><td class="redt">output hidden until exit; v1 showed nothing</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="foot">Convention: a term keeps one meaning across every job script. <b>CI_OUT</b>, <b>CI_SHA</b> and <b>CI_ROOT</b> are exported by submit.sh and read by every sbatch script.</div>
+      </div>
+    </section>
+
+    <section class="panel pf">
+      <div class="ph"><div class="badge">F</div><h2>History</h2><span class="cap">2026-10-14</span></div>
+      <div class="pbody">
+        <ul class="tl">
+          <li><i></i><b>19:15:56</b>v1 submitted at commit ed8c85b</li>
+          <li><i></i><b>19:16</b>allocated a256-t4-02, Tesla T4</li>
+          <li><i></i><b>19:30</b>torch 2.9, cuda True, transformers 5.19</li>
+          <li><i></i><b>19:36:41</b>killed: time limit, 20:29 elapsed</li>
+          <li class="next"><i></i><b>v2</b>job 1080233, 30 min, GPT-2 only</li>
+        </ul>
+        <div class="tb">
+          <div class="full"><small>Title</small><span>Cluster smoke job: overview</span></div>
+          <div><small>Job</small><span class="sm">v1 1080110 → v2 1080233</span></div>
+          <div><small>Node, v1</small><span class="sm">a256-t4-02 · Tesla T4 15 GB</span></div>
+          <div><small>Partition</small><span class="sm">prioritized · QoS normal</span></div>
+          <div><small>Script</small><span class="sm">infra/slurm/smoke.sbatch</span></div>
+          <div><small>Output</small><span class="sm">~/runs/ci/smoke/&lt;time&gt;-&lt;sha&gt;/</span></div>
+          <div><small>Sheet</small><span class="sm">1 of 1 · 2026-10-14</span></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="ruler v right"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+  <div class="corner c-bl"></div>
+  <div class="ruler h bottom"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+  <div class="corner c-br"></div>
+</div>
