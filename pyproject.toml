@@ -1,0 +1,18 @@
+[project]
+name = "compression-intelligence"
+version = "0.1.0"
+description = "Does fresh-text compression track post-training drift and forgetting? Experiments on small open LLMs."
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = [".venv", "exp01_posttraining_bpc/data", "exp01_posttraining_bpc/results"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "I", "UP", "PLW0603", "PLW0602", "B006", "B008", "RUF"]
+ignore = ["E501", "RUF001", "RUF002", "RUF003"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

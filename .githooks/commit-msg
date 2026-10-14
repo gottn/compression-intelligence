@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Enforce the commit format in STYLE.md.
+msg_file="$1"
+subject="$(grep -v '^#' "$msg_file" | sed -n '1p')"
+types='feat|fix|exp|data|refactor|test|docs|chore|perf|ci'
+if ! printf '%s' "$subject" | grep -Eq "^($types)(\([a-z0-9._-]+\))?!?: [^ ].*"; then
+  echo "commit-msg: subject must match '<type>(<scope>): <summary>' with type in {$types}" >&2
+  echo "  got: $subject" >&2; exit 1
+fi
+if [ "${#subject}" -gt 100 ]; then
+  echo "commit-msg: subject is ${#subject} chars, limit 100" >&2; exit 1
+fi
+if printf '%s' "$subject" | grep -Eq '\.$'; then
+  echo "commit-msg: no trailing period in subject" >&2; exit 1
+fi
+if printf '%s' "$subject" | grep -Eq '^(exp|feat)' && ! printf '%s' "$subject" | grep -q ' — '; then
+  echo "commit-msg: exp/feat subjects state the measured effect after ' — ' (see STYLE.md)" >&2; exit 1
+fi
+exit 0
