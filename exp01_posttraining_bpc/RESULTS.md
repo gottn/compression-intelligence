@@ -238,6 +238,10 @@ The change does **not** track capability:
   - Fix: the fp32 reference now runs in a subprocess, with one process per model.
   - The affected Qwen3-1.7B-Base rows were deleted and recomputed.
   - An accidental concurrent run (a queuing bug) produced one row under contention. It was deleted and recomputed; the bpb was identical and only the wall time had been wrong.
+  - Found on 2026-10-14 during the cilab refactor: 8 rows from that first run were kept (Qwen2.5-1.5B and -Instruct × arxiv2026 and enwik8_ctrl × RAW and CHAT).
+    - `.half()` also casts the rotary `inv_freq` buffer to fp16; a direct fp16 load keeps it in fp32.
+    - Re-scoring the base rows with today's code shifts total bits by 2–3e-5 relative (enwik8 RAW: 69,474.408 → 69,472.981). The Instruct rows were not re-scored.
+    - That is far below every delta reported here, so the rows were left in place.
 - **Bug caught in audit.** SmolLM2-1.7B-Instruct's unk token is `<|endoftext|>`, so the first version of the doc-start logic fell back to `<|im_end|>` for that model only.
   - Fixed and re-run.
   - The old rows are kept as an ablation in `results/ablation_smollm2_instruct_imend_docstart.csv`. With `<|im_end|>`, enwik8 scored 0.724 instead of 0.932, and the fresh corpora moved by 0.5–2%.

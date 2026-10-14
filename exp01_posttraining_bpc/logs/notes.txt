@@ -1,3 +1,4 @@
 NOTE Tue Oct 13 19:49:01 CEST 2026: accidental concurrent part-2 run killed; its Qwen2.5-1.5B raw wiki2026 row (bpb 0.71867, wall 336.5 s under contention) deleted for clean rerun
 NOTE Tue Oct 13 19:59:47 CEST 2026: run killed during Qwen3-1.7B-Base (fp32 copy not released after .half(): 12 GB RSS, 12 GB swap, chat arxiv took 1505 s). Qwen3-Base rows deleted; switched to fp32 reference in a subprocess + one process per model.
 NOTE Tue Oct 13 20:44:00 CEST 2026: SmolLM2-1.7B-Instruct raw had used <|im_end|> as doc-start (unk_token==<|endoftext|> tripped the unk check). Fixed doc_start_token; old rows moved to results/ablation_smollm2_instruct_imend_docstart.csv; rerunning raw.
+NOTE Wed Oct 14 2026: cilab refactor check found the 8 run_part1 rows (Qwen2.5-1.5B/-Instruct x arxiv2026, enwik8_ctrl x raw, chat) were scored after .half(), i.e. with fp16 rotary inv_freq; direct-fp16 rescoring moves base totals by 2-3e-5 relative. Kept.
