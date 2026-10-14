@@ -9,7 +9,9 @@ from exp04_benchmarks.run_eval import (
     neutral_generation_config,
     samples_spec,
     summarize_results,
+    summary_name,
     task_lines,
+    thinking_switch,
 )
 
 
@@ -26,7 +28,7 @@ def test_model_and_eval_kwargs_are_identical_across_models_except_the_id() -> No
     assert {k: v for k, v in a.items() if k != "pretrained"} == {k: v for k, v in b.items() if k != "pretrained"}
     assert a == {"pretrained": "o/base", "dtype": "float16", "max_length": 2048, "batch_size": "auto",
                  "device": "cuda"}
-    loglik, gsm8k, ifeval = GROUPS
+    loglik, gsm8k, ifeval, gsm8k_chat, ifeval_chat = GROUPS
     g = eval_kwargs(gsm8k, None)
     assert g["tasks"] == ["gsm8k"] and g["limit"] == 300 and "samples" not in g and "num_fewshot" not in g
     assert g["apply_chat_template"] is False and g["log_samples"] is False
@@ -36,6 +38,18 @@ def test_model_and_eval_kwargs_are_identical_across_models_except_the_id() -> No
     assert "limit" not in ll and len(ll["samples"]) == 58
     assert ll["tasks"] == ["arc_easy", "arc_challenge", "hellaswag", "piqa", "winogrande", "mmlu"]
     assert eval_kwargs(ifeval, None)["limit"] == 200
+    gc = eval_kwargs(gsm8k_chat, None)
+    assert gc["apply_chat_template"] is True and gc["fewshot_as_multiturn"] is True
+    assert {k: v for k, v in gc.items() if k not in ("apply_chat_template", "fewshot_as_multiturn")} == \
+        {k: v for k, v in g.items() if k not in ("apply_chat_template", "fewshot_as_multiturn")}
+    assert eval_kwargs(ifeval_chat, None)["limit"] == 200 and g["fewshot_as_multiturn"] is False
+
+
+def test_chat_helpers() -> None:
+    assert thinking_switch("{% if enable_thinking is defined and enable_thinking is false %}") == {"enable_thinking": False}
+    assert thinking_switch("{{ messages }}") == {} and thinking_switch(None) == {}
+    raw, chat = [g for g in GROUPS if not g.chat], [g for g in GROUPS if g.chat]
+    assert summary_name(raw) == "summary.json" and summary_name(chat) == "summary_chat.json"
 
 
 def test_task_dirs_name_one_directory_per_task_family() -> None:

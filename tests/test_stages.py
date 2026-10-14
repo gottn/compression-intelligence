@@ -12,6 +12,7 @@ from cilab.stages import (
     comparisons,
     family_base,
     model_at,
+    post_trained_indices,
     stage_of,
     tokenizer_groups,
 )
@@ -116,3 +117,9 @@ def test_pending_corpora_and_rows() -> None:
     meta = stage_meta(TOY[2])
     assert (meta["pair"], meta["role"], meta["parent"]) == ("f", "dpo", "o/sft")
     assert stage_meta(TOY[0])["parent"] == ""
+
+
+def test_post_trained_indices_skip_the_six_bases() -> None:
+    idx = post_trained_indices()
+    assert idx == [1, 2, 3, 5, 6, 8, 9, 10, 11, 13, 15, 17]
+    assert all(STAGES[i].parent is not None for i in idx) and post_trained_indices(TOY) == [1, 2, 3]

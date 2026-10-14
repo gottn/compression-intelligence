@@ -2,6 +2,7 @@
 
     python exp04_benchmarks/run_eval.py prefetch                      # setup job: datasets + nltk data
     python exp04_benchmarks/run_eval.py run --index I --out DIR [--groups loglik,gsm8k,ifeval]
+    python exp04_benchmarks/run_eval.py run --index I --out DIR --groups gsm8k_chat,ifeval_chat   # chat addendum
 
 `run` maps the Slurm array index to a model (cilab.stages.model_at), loads it once (lm-eval HFLM) and calls
 `lm_eval.simple_evaluate` once per task group, each in its own try/except:
@@ -25,6 +26,11 @@ top_p, repetition_penalty). The driver replaces it with a config holding only th
 (neutral_generation_config), so every model decodes greedily under the harness's own limits.
 max_length 2048: lm-eval's auto batch size for generation probes a forward pass at the model's max length
 (131072 for Qwen2.5-1.5B), which would force batch 1; 2048 fits every prompt here (ifeval: ctx + 1280 gen).
+
+Chat condition (addendum, post-trained checkpoints only): gsm8k_chat and ifeval_chat repeat the two generative
+groups with the model's own chat template and the few-shot examples as separate turns
+(apply_chat_template, fewshot_as_multiturn); limits, seeds and generation caps are unchanged. Templates that
+read `enable_thinking` (Qwen3) get enable_thinking=False. Its summary is summary_chat.json.
 
 Outputs under DIR/<model slug>/: <group>/results.json (lm-eval's results dict), <group>/done.json,
 loglik_samples.json, summary.json. A group with a done.json is skipped (resumable after a Slurm requeue).
@@ -74,13 +80,17 @@ class Group:
     name: str
     tasks: tuple[str, ...]
     limit: int | None  # docs per task; None = full task (or the samples file, for loglik)
+    chat: bool = False  # apply the model's chat template, few-shot as multi-turn
 
 
 GROUPS: tuple[Group, ...] = (
     Group("loglik", ("arc_easy", "arc_challenge", "hellaswag", "piqa", "winogrande", "mmlu"), None),
     Group("gsm8k", ("gsm8k",), 300),
     Group("ifeval", ("ifeval",), 200),
+    Group("gsm8k_chat", ("gsm8k",), 300, chat=True),
+    Group("ifeval_chat", ("ifeval",), 200, chat=True),
 )
+DEFAULT_GROUPS = "loglik,gsm8k,ifeval"
 # Metrics printed per task as the group finishes (all metrics are kept in summary.json).
 HEADLINE: dict[str, tuple[str, ...]] = {
     "arc_easy": ("acc_norm,none",), "arc_challenge": ("acc_norm,none",), "hellaswag": ("acc_norm,none",),
@@ -116,10 +126,20 @@ def neutral_generation_config(diff: Mapping[str, object]) -> tuple[dict[str, obj
     return kept, dropped
 
 
+def thinking_switch(chat_template: str | None) -> dict[str, object]:
+    """Chat-template kwargs that turn thinking mode off where the template has the switch (Qwen3)."""
+    return {"enable_thinking": False} if chat_template and "enable_thinking" in chat_template else {}
+
+
+def summary_name(groups: Sequence[Group]) -> str:
+    """summary.json for the main run; summary_chat.json when only chat groups run, so the two never collide."""
+    return "summary_chat.json" if groups and all(g.chat for g in groups) else "summary.json"
+
+
 def eval_kwargs(group: Group, samples: Mapping[str, list[int]] | None) -> dict[str, object]:
     """simple_evaluate arguments of one task group (no chat template, no sample logging, fixed seeds)."""
-    kw: dict[str, object] = {"tasks": list(group.tasks), "log_samples": False, "apply_chat_template": False,
-                             **SEEDS}
+    kw: dict[str, object] = {"tasks": list(group.tasks), "log_samples": False, "apply_chat_template": group.chat,
+                             "fewshot_as_multiturn": group.chat, **SEEDS}
     if group.limit is not None:
         kw["limit"] = group.limit
     elif samples is not None:
@@ -267,6 +287,7 @@ def cmd_run(args: argparse.Namespace) -> int:
     todo = [g for g in wanted if not (root / g.name / "done.json").exists()]
     gen_kept: dict[str, object] = {}
     gen_dropped: dict[str, object] = {}
+    chat_info: dict[str, object] = {}
     recs = {g.name: json.loads((root / g.name / "done.json").read_text()) for g in wanted if g not in todo}
     for name, rec in recs.items():
         print(f"skip {name}: done.json exists ({rec.get('status')})", flush=True)
@@ -281,6 +302,11 @@ def cmd_run(args: argparse.Namespace) -> int:
             print(f"[{time.strftime('%H:%M:%S')}] model loaded in {time.time() - t0:.0f} s", flush=True)
             gen_kept, gen_dropped = set_neutral_generation_config(lm)
             print(f"generation config: kept {gen_kept}, dropped {gen_dropped}", flush=True)
+            if any(g.chat for g in todo):
+                template = getattr(lm.tokenizer, "chat_template", None)
+                lm.chat_template_args = {**(lm.chat_template_args or {}), **thinking_switch(template)}
+                chat_info = {"has_chat_template": bool(template), "chat_template_args": lm.chat_template_args}
+                print(f"chat: {chat_info}", flush=True)
         except Exception:
             err = traceback.format_exc()
             print(f"FAILED {model} model load:\n{err}", flush=True)
@@ -291,9 +317,9 @@ def cmd_run(args: argparse.Namespace) -> int:
                 recs[g.name] = run_group(lm, tm, model, g, root)
     summary = {"model": model, "index": args.index, "host": platform.node(), "gpu": gpu_name(),
                "versions": env_versions(), "model_kwargs": model_kwargs(model),
-               "generation_config_kept": gen_kept, "generation_config_dropped": gen_dropped,
+               "generation_config_kept": gen_kept, "generation_config_dropped": gen_dropped, "chat": chat_info,
                "groups": {g.name: recs[g.name] for g in wanted}}
-    (root / "summary.json").write_text(json.dumps(summary, indent=1, default=str))
+    (root / summary_name(wanted)).write_text(json.dumps(summary, indent=1, default=str))
     bad = [g.name for g in wanted if recs[g.name].get("status") != "ok"]
     print(f"exp04 index {args.index} {model}: groups ok {[g.name for g in wanted if g.name not in bad]}, "
           f"failed {bad}", flush=True)
@@ -317,7 +343,7 @@ def main() -> None:
     r = sub.add_parser("run")
     r.add_argument("--index", type=int, required=True, help="Slurm array index into cilab.stages.STAGES")
     r.add_argument("--out", required=True, help="results root, e.g. $CI_OUT/results")
-    r.add_argument("--groups", default=",".join(g.name for g in GROUPS))
+    r.add_argument("--groups", default=DEFAULT_GROUPS)
     sub.add_parser("prefetch")
     args = ap.parse_args()
     sys.exit({"run": cmd_run, "prefetch": cmd_prefetch}[args.cmd](args))

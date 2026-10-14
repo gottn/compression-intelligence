@@ -76,6 +76,11 @@ def model_at(index: int, stages: tuple[Stage, ...] = STAGES) -> str:
     return stages[index].model
 
 
+def post_trained_indices(stages: tuple[Stage, ...] = STAGES) -> list[int]:
+    """Array indices (table rows) of every non-base checkpoint, for a Slurm --array list."""
+    return [i for i, s in enumerate(stages) if s.parent is not None]
+
+
 def family_base(family: str, stages: tuple[Stage, ...] = STAGES) -> str:
     """Model id of the family's root (the one stage without a parent)."""
     roots = [s.model for s in stages if s.family == family and s.parent is None]
