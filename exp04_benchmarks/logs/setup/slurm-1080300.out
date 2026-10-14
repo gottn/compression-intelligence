@@ -1,0 +1,216 @@
+commit abc08d9 on a512-mi100-01.srv.aau.dk at 2026-10-14T21:02:45+02:00, out=/home/id.aau.dk/pr04wm/runs/ci/exp04_setup/20261014-210237-abc08d9
+15:4: not a valid test operator:  
+15:4: not a valid test operator: 13.0
+21:4: not a valid test operator: (
+21:4: not a valid test operator: 
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+lm_eval 0.4.13 transformers 5.19.0 torch 2.9.0a0+50eac811a6.nv25.09 datasets 5.1.0
+/usr/local/lib/python3.12/dist-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.5.0) or chardet (6.0.0.post1)/charset_normalizer (3.4.3) doesn't match a supported version!
+  warnings.warn(
+usage: lm-eval [-h] COMMAND ...
+lm-eval: error: unrecognized arguments: --version
+lm_eval CLI has no --version flag; version printed above
+/usr/local/lib/python3.12/dist-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.5.0) or chardet (6.0.0.post1)/charset_normalizer (3.4.3) doesn't match a supported version!
+  warnings.warn(
+/home/id.aau.dk/pr04wm/projects/compression-intelligence/exp04_benchmarks/run_eval.py:242: DeprecationWarning: get_task_dict is deprecated. Use TaskManager.load() instead.
+  tasks = get_task_dict(names, TaskManager())
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Generating train split:   0%|          | 0/2251 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 2251/2251 [00:00<00:00, 5547.96 examples/s]
+Generating test split:   0%|          | 0/2376 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 2376/2376 [00:00<00:00, 19816.40 examples/s]
+Generating validation split:   0%|          | 0/570 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 570/570 [00:00<00:00, 20837.36 examples/s]
+Generating train split:   0%|          | 0/1119 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 1119/1119 [00:00<00:00, 2545.08 examples/s]
+Generating test split:   0%|          | 0/1172 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 1172/1172 [00:00<00:00, 5755.83 examples/s]
+Generating validation split:   0%|          | 0/299 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 299/299 [00:00<00:00, 5402.03 examples/s]
+Generating train split:   0%|          | 0/39905 [00:00<?, ? examples/s]Generating train split:  20%|██        | 8000/39905 [00:00<00:00, 58578.13 examples/s]Generating train split:  38%|███▊      | 15000/39905 [00:00<00:00, 56737.44 examples/s]Generating train split:  53%|█████▎    | 21000/39905 [00:01<00:01, 16039.99 examples/s]Generating train split:  68%|██████▊   | 27000/39905 [00:01<00:00, 17852.58 examples/s]Generating train split:  75%|███████▌  | 30000/39905 [00:01<00:00, 18244.39 examples/s]Generating train split:  83%|████████▎ | 33000/39905 [00:01<00:00, 18989.94 examples/s]Generating train split:  90%|█████████ | 36000/39905 [00:01<00:00, 20466.28 examples/s]Generating train split:  98%|█████████▊| 39000/39905 [00:02<00:00, 10965.31 examples/s]Generating train split: 100%|██████████| 39905/39905 [00:02<00:00, 15671.23 examples/s]
+Generating test split:   0%|          | 0/10003 [00:00<?, ? examples/s]Generating test split:  60%|█████▉    | 6000/10003 [00:00<00:00, 30839.90 examples/s]Generating test split: 100%|██████████| 10003/10003 [00:00<00:00, 33664.96 examples/s]Generating test split: 100%|██████████| 10003/10003 [00:00<00:00, 15515.90 examples/s]
+Generating validation split:   0%|          | 0/10042 [00:00<?, ? examples/s]Generating validation split:  50%|████▉     | 5000/10042 [00:00<00:00, 14674.16 examples/s]Generating validation split:  80%|███████▉  | 8000/10042 [00:00<00:00, 15184.34 examples/s]Generating validation split: 100%|██████████| 10042/10042 [00:00<00:00, 10669.61 examples/s]
+Map:   0%|          | 0/39905 [00:00<?, ? examples/s]Map:   3%|▎         | 1006/39905 [00:00<00:03, 9975.93 examples/s]Map:   5%|▌         | 2132/39905 [00:00<00:03, 10726.19 examples/s]Map:   9%|▉         | 3621/39905 [00:00<00:05, 7037.34 examples/s] Map:  12%|█▏        | 4767/39905 [00:00<00:04, 8214.46 examples/s]Map:  15%|█▌        | 6159/39905 [00:00<00:05, 6673.82 examples/s]Map:  18%|█▊        | 7323/39905 [00:00<00:04, 7723.69 examples/s]Map:  21%|██        | 8470/39905 [00:01<00:03, 8592.02 examples/s]Map:  24%|██▍       | 9655/39905 [00:01<00:04, 6627.49 examples/s]Map:  27%|██▋       | 10794/39905 [00:01<00:03, 7578.92 examples/s]Map:  30%|██▉       | 11926/39905 [00:01<00:03, 8409.98 examples/s]Map:  33%|███▎      | 13000/39905 [00:01<00:04, 5530.21 examples/s]Map:  35%|███▍      | 13881/39905 [00:02<00:05, 5101.54 examples/s]Map:  37%|███▋      | 14962/39905 [00:02<00:04, 6088.32 examples/s]Map:  40%|████      | 15986/39905 [00:02<00:03, 6909.52 examples/s]Map:  43%|████▎     | 17034/39905 [00:02<00:04, 5677.44 examples/s]Map:  45%|████▌     | 18000/39905 [00:02<00:04, 4467.79 examples/s]Map:  48%|████▊     | 19000/39905 [00:03<00:04, 4605.43 examples/s]Map:  50%|█████     | 20054/39905 [00:03<00:03, 5570.56 examples/s]Map:  53%|█████▎    | 21000/39905 [00:03<00:03, 5464.88 examples/s]Map:  55%|█████▌    | 22025/39905 [00:03<00:02, 6370.03 examples/s]Map:  58%|█████▊    | 23000/39905 [00:03<00:03, 5284.16 examples/s]Map:  60%|██████    | 24000/39905 [00:04<00:03, 4150.46 examples/s]Map:  63%|██████▎   | 25000/39905 [00:04<00:03, 4168.78 examples/s]Map:  65%|██████▌   | 26000/39905 [00:04<00:03, 4387.65 examples/s]Map:  68%|██████▊   | 27021/39905 [00:04<00:02, 5308.57 examples/s]Map:  70%|███████   | 28000/39905 [00:04<00:02, 5370.65 examples/s]Map:  73%|███████▎  | 29000/39905 [00:04<00:02, 5396.35 examples/s]Map:  75%|███████▌  | 30040/39905 [00:05<00:01, 6336.45 examples/s]Map:  78%|███████▊  | 31000/39905 [00:05<00:01, 5816.16 examples/s]Map:  80%|████████  | 32026/39905 [00:05<00:01, 6704.23 examples/s]Map:  83%|████████▎ | 33000/39905 [00:05<00:01, 5308.96 examples/s]Map:  85%|████████▌ | 34000/39905 [00:05<00:01, 4912.66 examples/s]Map:  88%|████████▊ | 35000/39905 [00:06<00:01, 4677.96 examples/s]Map:  90%|█████████ | 36000/39905 [00:06<00:00, 4607.92 examples/s]Map:  93%|█████████▎| 37041/39905 [00:06<00:00, 5565.14 examples/s]Map:  95%|█████████▌| 38000/39905 [00:06<00:00, 5031.96 examples/s]Map:  98%|█████████▊| 39000/39905 [00:06<00:00, 4846.41 examples/s]Map: 100%|██████████| 39905/39905 [00:07<00:00, 3018.43 examples/s]Map: 100%|██████████| 39905/39905 [00:07<00:00, 5313.91 examples/s]
+Map:   0%|          | 0/10042 [00:00<?, ? examples/s]Map:  10%|▉         | 1000/10042 [00:00<00:02, 3405.04 examples/s]Map:  21%|██        | 2120/10042 [00:00<00:01, 5954.85 examples/s]Map:  32%|███▏      | 3253/10042 [00:00<00:00, 7666.33 examples/s]Map:  46%|████▌     | 4617/10042 [00:00<00:01, 5302.70 examples/s]Map:  56%|█████▋    | 5669/10042 [00:00<00:00, 6339.39 examples/s]Map:  66%|██████▌   | 6607/10042 [00:01<00:00, 5462.54 examples/s]Map:  76%|███████▌  | 7641/10042 [00:01<00:00, 6425.73 examples/s]Map:  86%|████████▌ | 8623/10042 [00:01<00:00, 5161.27 examples/s]Map:  96%|█████████▌| 9615/10042 [00:01<00:00, 4855.11 examples/s]Map: 100%|██████████| 10042/10042 [00:01<00:00, 5100.12 examples/s]
+Generating train split:   0%|          | 0/16113 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 16113/16113 [00:00<00:00, 42080.54 examples/s]
+Generating validation split:   0%|          | 0/1838 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 1838/1838 [00:00<00:00, 37387.94 examples/s]
+Generating test split:   0%|          | 0/3084 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 3084/3084 [00:00<00:00, 76936.36 examples/s]
+Generating train split:   0%|          | 0/40398 [00:00<?, ? examples/s]Generating train split:  82%|████████▏ | 33000/40398 [00:00<00:00, 123165.61 examples/s]Generating train split: 100%|██████████| 40398/40398 [00:00<00:00, 115543.31 examples/s]
+Generating test split:   0%|          | 0/1767 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 1767/1767 [00:00<00:00, 23895.82 examples/s]
+Generating validation split:   0%|          | 0/1267 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 1267/1267 [00:00<00:00, 54215.85 examples/s]
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 12064.73 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 2472.79 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 50.85 examples/s]
+Generating test split:   0%|          | 0/135 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 135/135 [00:00<00:00, 16241.60 examples/s]
+Generating validation split:   0%|          | 0/14 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 14/14 [00:00<00:00, 3209.28 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 870.08 examples/s]
+Generating test split:   0%|          | 0/152 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 152/152 [00:00<00:00, 2477.37 examples/s]
+Generating validation split:   0%|          | 0/16 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 16/16 [00:00<00:00, 1220.41 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 153.48 examples/s]
+Generating test split:   0%|          | 0/144 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 144/144 [00:00<00:00, 16254.37 examples/s]
+Generating validation split:   0%|          | 0/16 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 16/16 [00:00<00:00, 2447.26 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 699.70 examples/s]
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 398.59 examples/s]
+Generating validation split:   0%|          | 0/8 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 8/8 [00:00<00:00, 249.81 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 850.67 examples/s]
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 10341.75 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 244.81 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 788.55 examples/s]
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 3718.22 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 1600.05 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 677.07 examples/s]
+Generating test split:   0%|          | 0/102 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 102/102 [00:00<00:00, 13827.38 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 1835.80 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 605.41 examples/s]
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 11639.85 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 1828.24 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1154.06 examples/s]
+Generating test split:   0%|          | 0/235 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 235/235 [00:00<00:00, 26576.29 examples/s]
+Generating validation split:   0%|          | 0/26 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 26/26 [00:00<00:00, 3587.35 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 48.93 examples/s]
+Generating test split:   0%|          | 0/145 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 145/145 [00:00<00:00, 20918.14 examples/s]
+Generating validation split:   0%|          | 0/16 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 16/16 [00:00<00:00, 3650.00 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1192.24 examples/s]
+Generating test split:   0%|          | 0/378 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 378/378 [00:00<00:00, 1221.40 examples/s]
+Generating validation split:   0%|          | 0/41 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 41/41 [00:00<00:00, 6944.77 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1101.45 examples/s]
+Generating test split:   0%|          | 0/310 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 310/310 [00:00<00:00, 11102.49 examples/s]
+Generating validation split:   0%|          | 0/32 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 32/32 [00:00<00:00, 2076.20 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 927.66 examples/s]
+Generating test split:   0%|          | 0/203 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 203/203 [00:00<00:00, 7566.98 examples/s]
+Generating validation split:   0%|          | 0/22 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 22/22 [00:00<00:00, 1009.59 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 14.29 examples/s]
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 10972.39 examples/s]
+Generating validation split:   0%|          | 0/9 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 9/9 [00:00<00:00, 1530.64 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 225.91 examples/s]
+Generating test split:   0%|          | 0/270 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 270/270 [00:00<00:00, 11132.47 examples/s]
+Generating validation split:   0%|          | 0/29 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 29/29 [00:00<00:00, 5120.82 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 106.25 examples/s]
+Generating test split:   0%|          | 0/151 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 151/151 [00:00<00:00, 8410.55 examples/s]
+Generating validation split:   0%|          | 0/17 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 17/17 [00:00<00:00, 2805.66 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 485.89 examples/s]
+Generating test split:   0%|          | 0/216 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 216/216 [00:00<00:00, 4623.43 examples/s]
+Generating validation split:   0%|          | 0/23 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 23/23 [00:00<00:00, 3320.11 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 56.95 examples/s]
+Generating test split:   0%|          | 0/112 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 112/112 [00:00<00:00, 1050.46 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 1809.80 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 652.79 examples/s]
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 2010.71 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 94.27 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 667.84 examples/s]
+Generating test split:   0%|          | 0/265 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 265/265 [00:00<00:00, 2239.15 examples/s]
+Generating validation split:   0%|          | 0/29 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 29/29 [00:00<00:00, 6038.86 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 98.43 examples/s]
+Generating test split:   0%|          | 0/173 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 173/173 [00:00<00:00, 8214.07 examples/s]
+Generating validation split:   0%|          | 0/22 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 22/22 [00:00<00:00, 242.33 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1181.29 examples/s]
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 17562.62 examples/s]
+Generating validation split:   0%|          | 0/10 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 10/10 [00:00<00:00, 2173.21 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1127.74 examples/s]
+Generating test split:   0%|          | 0/223 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 223/223 [00:00<00:00, 33302.35 examples/s]
+Generating validation split:   0%|          | 0/23 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 23/23 [00:00<00:00, 569.22 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 846.21 examples/s]
+Generating test split:   0%|          | 0/103 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 103/103 [00:00<00:00, 1921.41 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 170.57 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 361.55 examples/s]
+Generating test split:   0%|          | 0/234 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 234/234 [00:00<00:00, 7757.22 examples/s]
+Generating validation split:   0%|          | 0/25 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 25/25 [00:00<00:00, 4360.35 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 897.18 examples/s]
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 12873.86 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 2066.34 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 191.31 examples/s]
+Generating test split:   0%|          | 0/783 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 783/783 [00:00<00:00, 7382.68 examples/s]
+Generating validation split:   0%|          | 0/86 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 86/86 [00:00<00:00, 429.74 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 831.84 examples/s]
+Generating test split:   0%|          | 0/306 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 306/306 [00:00<00:00, 3789.17 examples/s]
+Generating validation split:   0%|          | 0/33 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 33/33 [00:00<00:00, 6912.65 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1049.84 examples/s]
+Generating test split:   0%|          | 0/282 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 282/282 [00:00<00:00, 3815.32 examples/s]
+Generating validation split:   0%|          | 0/31 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 31/31 [00:00<00:00, 4037.37 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 19.09 examples/s]
+Generating test split:   0%|          | 0/272 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 272/272 [00:00<00:00, 10866.59 examples/s]
+Generating validation split:   0%|          | 0/31 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 31/31 [00:00<00:00, 2996.07 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1136.54 examples/s]
+Generating test split:   0%|          | 0/166 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 166/166 [00:00<00:00, 3143.45 examples/s]
+Generating validation split:   0%|          | 0/18 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 18/18 [00:00<00:00, 4088.90 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1261.90 examples/s]
+Generating test split:   0%|          | 0/114 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 114/114 [00:00<00:00, 715.20 examples/s]
+Generating validation split:   0%|          | 0/12 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 12/12 [00:00<00:00, 1711.20 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 924.06 examples/s]
+Generating test split:   0%|          | 0/198 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 198/198 [00:00<00:00, 469.49 examples/s]
+Generating validation split:   0%|          | 0/22 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 22/22 [00:00<00:00, 3923.91 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 67.37 examples/s]
+Generating test split:   0%|          | 0/193 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 193/193 [00:00<00:00, 8258.95 examples/s]
+Generating validation split:   0%|          | 0/21 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 21/21 [00:00<00:00, 4455.25 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00,  9.89 examples/s]
+Generating test split:   0%|          | 0/390 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 390/390 [00:00<00:00, 8256.09 examples/s]
+Generating validation split:   0%|          | 0/43 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 43/43 [00:00<00:00, 980.12 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 791.56 examples/s]
+Generating test split:   0%|          | 0/238 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 238/238 [00:00<00:00, 1081.78 examples/s]
+Generating validation split:   0%|          | 0/26 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 26/26 [00:00<00:00, 2142.39 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 876.81 examples/s]
+Generating test split:   0%|          | 0/545 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 545/545 [00:00<00:00, 1563.34 examples/s]
+Generating validation split:   0%|          | 0/60 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 60/60 [00:00<00:00, 10166.37 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 501.50 examples/s]
+Generating test split:   0%|          | 0/131 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 131/131 [00:00<00:00, 16015.79 examples/s]
+Generating validation split:   0%|          | 0/12 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 12/12 [00:00<00:00, 442.20 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 48.78 examples/s]
+Generating test split:   0%|          | 0/612 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 612/612 [00:00<00:00, 25854.78 examples/s]
+Generating validation split:   0%|          | 0/69 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 69/69 [00:00<00:00, 9316.17 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 28.64 examples/s]
+Generating test split:   0%|          | 0/110 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 110/110 [00:00<00:00, 11300.42 examples/s]
+Generating validation split:   0%|          | 0/12 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 12/12 [00:01<00:00, 10.27 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 606.96 examples/s]
+Generating test split:   0%|          | 0/245 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 245/245 [00:00<00:00, 5750.35 examples/s]
+Generating validation split:   0%|          | 0/27 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 27/27 [00:00<00:00, 4763.05 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 10.12 examples/s]
+Generating test split:   0%|          | 0/201 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 201/201 [00:00<00:00, 5157.66 examples/s]
+Generating validation split:   0%|          | 0/22 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 22/22 [00:00<00:00, 3469.36 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 97.29 examples/s]
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 9445.99 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 18.89 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 857.03 examples/s]
+Generating test split:   0%|          | 0/126 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 126/126 [00:00<00:00, 2139.93 examples/s]
+Generating validation split:   0%|          | 0/14 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 14/14 [00:00<00:00, 1077.59 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 252.36 examples/s]
+Generating test split:   0%|          | 0/165 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 165/165 [00:00<00:00, 3084.61 examples/s]
+Generating validation split:   0%|          | 0/18 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 18/18 [00:00<00:00, 1688.00 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 822.19 examples/s]
+Generating test split:   0%|          | 0/204 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 204/204 [00:00<00:00, 5456.42 examples/s]
+Generating validation split:   0%|          | 0/22 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 22/22 [00:00<00:00, 75.37 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 103.87 examples/s]
+Generating test split:   0%|          | 0/237 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 237/237 [00:00<00:00, 5397.17 examples/s]
+Generating validation split:   0%|          | 0/26 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 26/26 [00:00<00:00, 3126.22 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1070.41 examples/s]
+Generating test split:   0%|          | 0/121 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 121/121 [00:00<00:00, 13514.52 examples/s]
+Generating validation split:   0%|          | 0/13 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 13/13 [00:00<00:00, 83.98 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 454.15 examples/s]
+Generating test split:   0%|          | 0/108 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 108/108 [00:00<00:00, 5448.00 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 233.85 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 942.46 examples/s]
+Generating test split:   0%|          | 0/163 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 163/163 [00:00<00:00, 20220.99 examples/s]
+Generating validation split:   0%|          | 0/18 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 18/18 [00:00<00:00, 82.42 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00,  5.03 examples/s]
+Generating test split:   0%|          | 0/346 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 346/346 [00:00<00:00, 2120.66 examples/s]
+Generating validation split:   0%|          | 0/38 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 38/38 [00:00<00:00, 4445.10 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 833.39 examples/s]
+Generating test split:   0%|          | 0/895 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 895/895 [00:00<00:00, 33068.49 examples/s]
+Generating validation split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 100/100 [00:00<00:00, 10919.82 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 190.36 examples/s]
+Generating test split:   0%|          | 0/311 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 311/311 [00:00<00:00, 22776.82 examples/s]
+Generating validation split:   0%|          | 0/34 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 34/34 [00:00<00:00, 3282.99 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 59.90 examples/s]
+Generating test split:   0%|          | 0/324 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 324/324 [00:00<00:00, 8138.57 examples/s]
+Generating validation split:   0%|          | 0/35 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 35/35 [00:00<00:00, 4978.32 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 740.26 examples/s]
+Generating test split:   0%|          | 0/1534 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 1534/1534 [00:00<00:00, 1734.78 examples/s]
+Generating validation split:   0%|          | 0/170 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 170/170 [00:00<00:00, 8723.91 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00,  6.06 examples/s]
+Generating test split:   0%|          | 0/171 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 171/171 [00:00<00:00, 21091.16 examples/s]
+Generating validation split:   0%|          | 0/19 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 19/19 [00:00<00:00, 1662.29 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 798.15 examples/s]
+Generating train split:   0%|          | 0/7473 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 7473/7473 [00:00<00:00, 32809.30 examples/s]
+Generating test split:   0%|          | 0/1319 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 1319/1319 [00:00<00:00, 2070.41 examples/s]
+[nltk_data] Downloading package punkt_tab to
+[nltk_data]     /home/id.aau.dk/pr04wm/nltk_data...
+[nltk_data]   Unzipping tokenizers/punkt_tab.zip.
+Downloaded punkt_tab on rank 0
+Generating train split:   0%|          | 0/541 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 541/541 [00:00<00:00, 8837.27 examples/s]
+prefetched 8 task entries for ['arc_easy', 'arc_challenge', 'hellaswag', 'piqa', 'winogrande', 'mmlu', 'gsm8k', 'ifeval']
+nltk punkt_tab ok; versions {'python': '3.12.3', 'lm_eval': '0.4.13', 'transformers': '5.19.0', 'torch': '2.9.0a0+50eac811a6.nv25.9', 'datasets': '5.1.0', 'accelerate': '1.15.0', 'nltk': '3.10.3'}
+exp04_setup done at 2026-10-14T21:31:16+02:00

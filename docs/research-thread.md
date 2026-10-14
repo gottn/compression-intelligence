@@ -50,3 +50,10 @@ What is already published, and what it changes:
 Revised order: exp02 (calibration-corrected bpb, running) → exp03 staged checkpoints on the Mac (OLMo-2-1B base/SFT/DPO/RLVR, SimpleRL-Zoo 0.5B/1.5B, plus pre-cutoff control text) → exp04 benchmarks on AAU for all checkpoints (Harmon-style forgetting metric) → exp05 anchor during CoT distillation on AAU.
 
 exp03 done (2026-10-14, AAU job 1080281, `exp03_staged_drift/RESULTS.md`): OLMo-2-1B SFT +7.0%, DPO +6.6% on top, RLVR +0.5% on top; pure GRPO (SimpleRL-Zoo) +0.1–0.2%; no RL stage lowers bpb, and the enwik8 control drifts more than fresh text.
+
+exp04 done (2026-10-15, AAU array 1080344, `exp04_benchmarks/RESULTS.md`).
+- **Gate 1 passes as written but on leverage.** Pearson r(Δbpb_fresh, forgetting) = 0.89 [−0.01, 0.98] and Spearman 0.67, n = 12; without Qwen2.5-Math and R1-Distill, r = 0.32.
+- **Drift is a threshold alarm, not a ranking.** 8 of 12 checkpoints are within noise, including OLMo-2 DPO/RLVR at +14–15%; all 3 above +15% forget (Qwen3 −4.7%, Math −13.9%, R1 −21.6%). SmolLM2-Instruct loses 3.8% at +3.6%, so recipe is the missing variable.
+- **enwik8 predicts as well** (r = 0.95), so "fresh" adds nothing for this outcome.
+- **One-sidedness is not shown.** The gain r is +0.38 under base prompting, which is invalid for chat models; the chat-condition gsm8k/ifeval addendum is pending.
+- **Consequence for the chain.** Step 1 needs recipe-controlled fine-tunes (one base, several recipes, several checkpoints each) before the meter can be called predictive within the sub-15% range.

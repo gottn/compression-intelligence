@@ -1,0 +1,2 @@
+abc08d99e22e24a64028cb31d3bf6b6e690aa3b3
+feat(exp04): lm-eval array job and pre-registered rules — 11,433 docs per checkpoint, argv parses

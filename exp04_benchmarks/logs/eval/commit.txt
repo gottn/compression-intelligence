@@ -1,0 +1,2 @@
+9f22ff0c42c25dbdfc8c0a766814e70191a27cc5
+fix(exp04): one process per checkpoint, neutral generation config, A10 — no 2048-token gsm8k runs

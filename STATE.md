@@ -4,7 +4,7 @@
 
 ## Next thread
 
-See `docs/research-thread.md` (2026-10-14): fresh-text bpb as a forgetting meter for post-training. exp03 (staged public checkpoints, AAU) is done; next is exp04 (benchmarks for the same checkpoints on AAU).
+See `docs/research-thread.md` (2026-10-14): fresh-text bpb as a forgetting meter for post-training. exp03 (staged public checkpoints) and exp04 (benchmarks for the same 18 checkpoints) are done on AAU. exp04 says drift is a threshold alarm, not a ranking, and the recipe matters. The exp04 chat-condition addendum (gain measured with chat templates) is next, then recipe-controlled fine-tunes (thread step 1).
 
 ## Status (2026-10-13)
 
@@ -92,6 +92,41 @@ The full write-up is `exp03_staged_drift/RESULTS.md`.
 - **Control.** Against the base, the enwik8 control drifts 1.3–3× more than fresh text.
 - **Reproduction.** exp01's 4 shared models reproduce on the T4 within 5e-5 bpb.
 
+## exp04_benchmarks: done (2026-10-15; chat-condition addendum pending)
+
+The full write-up is `exp04_benchmarks/RESULTS.md`.
+
+**Question.** Does fresh-text Δbpb (vs the family base) predict general-benchmark forgetting but not target-task gain?
+
+**Setup.**
+- 12 post-trained checkpoints (exp03's 10 plus SmolLM2 and Qwen3 from exp01) and their 6 bases.
+- lm-eval 0.4.13 on AAU A10s, no chat template, greedy decoding at harness defaults.
+- General tasks: ARC-e/c, HellaSwag (2,000), PIQA, WinoGrande, MMLU (40 per subject).
+- Target tasks: gsm8k (300) and ifeval (200).
+- Array job 1080344, 6.2 GPU-hours, no failures.
+
+**Verdict.** Gate 1 passes as written, but on leverage: drift is a threshold alarm, not a ranking.
+
+| reading | Pearson r | Spearman ρ |
+|---|---|---|
+| Gate 1, n = 12, 95% CI | 0.89 [−0.01, 0.98] | 0.67 [0.06, 0.96] |
+| without Qwen2.5-Math and R1-Distill, n = 10 | 0.32 | 0.43 |
+| enwik8 control as the predictor | 0.95 | 0.68 |
+
+- **Threshold.** 8 of 12 checkpoints are inside the benchmark noise floor (about ±2% of base), including OLMo-2 DPO/RLVR at Δbpb +14–15%. Everything above +15% forgets:
+  - Qwen3 −4.7%;
+  - Qwen2.5-Math −13.9%;
+  - R1-Distill −21.6%.
+- **Recipe.** SmolLM2-Instruct (SmolTalk SFT + DPO) loses 3.8% at only +3.6% drift, mostly on ARC. Recipe is the missing variable.
+- **Gain.** Gain under base prompting has r = +0.38, so one-sidedness is not shown. That measure is invalid for chat-tuned models (format failures: SmolLM2-Instruct gsm8k 0.0), so the chat-condition addendum re-measures it.
+- **R1-Distill** is not "big drift, modest loss". It forgets the most, and −9.0% against its Math parent.
+- **Cost.** A benchmark pass takes a median 18 min on an A10. The drift score takes a median 19 s on a T4, at least 67× cheaper.
+
+Gotchas:
+- transformers 5 merges the checkpoint's `generation_config.json` (Qwen: `max_new_tokens 2048`; Instruct: sampling and repetition penalty) into lm-eval's `generate()` calls. The driver resets it to token ids only.
+- Each lm-eval CLI call indexes every task YAML (about 6.5 min over the network file system), so the driver calls `simple_evaluate` in-process with a TaskManager limited to 7 directories.
+- `--limit` is global to one call; per-task limits go in `samples`.
+
 ## How to rerun
 
 ```bash
@@ -116,6 +151,12 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
   - Analysis runs on the Mac: `bash exp03_staged_drift/run_all.sh analyze`.
   - Mac preflight: `run_all.sh preflight`.
 
+- exp04 (all on AAU, see `exp04_benchmarks/run_all.sh`):
+  - `submit.sh exp04_setup`: CPU, about 30 min; pip lm-eval plus the dataset prefetch.
+  - `submit.sh exp04_eval --array=0-17%4`: A10s, about 1 h 40 min wall.
+  - `RUN=<run dir> bash exp04_benchmarks/run_all.sh fetch`.
+  - Mac: `bash exp04_benchmarks/run_all.sh analyze`.
+
 ## Layout
 
 - `exp01_posttraining_bpc/`:
@@ -125,7 +166,8 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
   - `logs/`: run logs, `notes.txt` incident log, model cards.
 - `exp02_temperature/`: `RESULTS.md`; `results/` (runs.csv, windows.csv, grid/*.npy per-window bits on the T grid, summary.md, figure).
 - `exp03_staged_drift/`: `RESULTS.md`; `results/` (bpb.csv, windows.csv, tokens/*.npy from the AAU job; stage_deltas.csv, summary.md, fig_stages.png from the analysis); `logs/` (Slurm log, Mac preflight).
-- `infra/`: cluster submit script and Slurm jobs (`smoke`, `exp03`); rules in `docs/cluster-rules.md`.
+- `exp04_benchmarks/`: `RESULTS.md`; `run_eval.py` (cluster driver); `analyze_forgetting.py`; `results/` (`lm_eval/<model>/` per-model lm-eval JSON and summaries, scores.csv, correlations.csv, summary.md, fig_forgetting.png); `logs/` (setup, dry runs, array Slurm logs).
+- `infra/`: cluster submit script and Slurm jobs (`smoke`, `exp03`, `exp04_setup`, `exp04_eval`); rules in `docs/cluster-rules.md`.
 - `cilab/`: shared helpers (pairs, stages, text, score, stats, calib, io); `tests/`: pytest for them.
 
 ## Next (from RESULTS.md)
@@ -133,4 +175,5 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
 1. ~~Separate the effect of each stage and of RL vs distillation.~~ Done in exp03: DPO is as large a step as SFT; pure RL is +0.1–0.5%.
    - Still open: larger corpora (about 3M characters per domain), and a pre-cutoff same-domain control to separate "fresh" from "old text with markup".
 2. ~~Test calibration vs knowledge with one temperature.~~ Done in exp02: T > 1 recovers 35% (Qwen3) and 19% (R1). Next: richer calibrators, and a per-token decomposition of the residual (see exp02 RESULTS).
-3. Run one benchmark harness across all models (cloze plus GSM8K / MATH-500), extend to 10–20 pairs, and test whether base bpb predicts post-trained scores.
+3. ~~Run one benchmark harness across all models.~~ Done in exp04 for 18 checkpoints: drift is a threshold alarm (all 3 checkpoints above +15% forget; 1 of 9 below does), Pearson 0.89 rests on the 2 math-line points.
+   - Next: gain in the chat condition (addendum), then recipe-controlled fine-tunes to separate "how far" from "what was trained".

@@ -1,0 +1,350 @@
+{
+ "model": "HuggingFaceTB/SmolLM2-1.7B",
+ "index": 14,
+ "host": "i256-a10-10.srv.aau.dk",
+ "gpu": "NVIDIA A10",
+ "versions": {
+  "python": "3.12.3",
+  "lm_eval": "0.4.13",
+  "transformers": "5.19.0",
+  "torch": "2.9.0a0+50eac811a6.nv25.9",
+  "datasets": "5.1.0",
+  "accelerate": "1.15.0",
+  "nltk": "3.10.3"
+ },
+ "model_kwargs": {
+  "pretrained": "HuggingFaceTB/SmolLM2-1.7B",
+  "dtype": "float16",
+  "max_length": 2048,
+  "batch_size": "auto",
+  "device": "cuda"
+ },
+ "generation_config_kept": {
+  "bos_token_id": 0,
+  "eos_token_id": 0
+ },
+ "generation_config_dropped": {
+  "_from_model_config": true
+ },
+ "groups": {
+  "loglik": {
+   "group": "loglik",
+   "kwargs": {
+    "tasks": [
+     "arc_easy",
+     "arc_challenge",
+     "hellaswag",
+     "piqa",
+     "winogrande",
+     "mmlu"
+    ],
+    "log_samples": false,
+    "apply_chat_template": false,
+    "random_seed": 0,
+    "numpy_random_seed": 1234,
+    "torch_random_seed": 1234,
+    "fewshot_random_seed": 1234
+   },
+   "samples_file": "loglik_samples.json",
+   "status": "ok",
+   "wall_s": 169.2,
+   "results_file": "loglik/results.json",
+   "tasks": {
+    "arc_easy": {
+     "metrics": {
+      "acc,none": 0.7773569023569024,
+      "acc_stderr,none": 0.008536562816619955,
+      "acc_norm,none": 0.7348484848484849,
+      "acc_norm_stderr,none": 0.009057621139172679
+     },
+     "version": 1.0,
+     "leaf_versions": [
+      "1.0"
+     ],
+     "n_shot": [
+      0
+     ],
+     "n_effective": 2376,
+     "n_original": 2376,
+     "n_leaves": 1
+    },
+    "arc_challenge": {
+     "metrics": {
+      "acc,none": 0.44368600682593856,
+      "acc_stderr,none": 0.014518421825670504,
+      "acc_norm,none": 0.47440273037542663,
+      "acc_norm_stderr,none": 0.01459223088529913
+     },
+     "version": 1.0,
+     "leaf_versions": [
+      "1.0"
+     ],
+     "n_shot": [
+      0
+     ],
+     "n_effective": 1172,
+     "n_original": 1172,
+     "n_leaves": 1
+    },
+    "hellaswag": {
+     "metrics": {
+      "acc,none": 0.475,
+      "acc_stderr,none": 0.011169148353275139,
+      "acc_norm,none": 0.6135,
+      "acc_norm_stderr,none": 0.010891197550868592
+     },
+     "version": 1.0,
+     "leaf_versions": [
+      "1.0"
+     ],
+     "n_shot": [
+      0
+     ],
+     "n_effective": 2000,
+     "n_original": 10042,
+     "n_leaves": 1
+    },
+    "piqa": {
+     "metrics": {
+      "acc,none": 0.7714907508161044,
+      "acc_stderr,none": 0.00979631351182939,
+      "acc_norm,none": 0.7763873775843307,
+      "acc_norm_stderr,none": 0.009721489519176141
+     },
+     "version": 1.0,
+     "leaf_versions": [
+      "1.0"
+     ],
+     "n_shot": [
+      0
+     ],
+     "n_effective": 1838,
+     "n_original": 1838,
+     "n_leaves": 1
+    },
+    "winogrande": {
+     "metrics": {
+      "acc,none": 0.6629834254143646,
+      "acc_stderr,none": 0.013284955769395205
+     },
+     "version": 1.0,
+     "leaf_versions": [
+      "1.0"
+     ],
+     "n_shot": [
+      0
+     ],
+     "n_effective": 1267,
+     "n_original": 1267,
+     "n_leaves": 1
+    },
+    "mmlu": {
+     "metrics": {
+      "acc,none": 0.4986842105263158,
+      "acc_stderr,none": 0.010204878147425569
+     },
+     "version": "2",
+     "leaf_versions": [
+      "1.0"
+     ],
+     "n_shot": [
+      0
+     ],
+     "n_effective": 2280,
+     "n_original": 14042,
+     "n_leaves": 57,
+     "leaf_effective": {
+      "mmlu_abstract_algebra": 40,
+      "mmlu_anatomy": 40,
+      "mmlu_astronomy": 40,
+      "mmlu_business_ethics": 40,
+      "mmlu_clinical_knowledge": 40,
+      "mmlu_college_biology": 40,
+      "mmlu_college_chemistry": 40,
+      "mmlu_college_computer_science": 40,
+      "mmlu_college_mathematics": 40,
+      "mmlu_college_medicine": 40,
+      "mmlu_college_physics": 40,
+      "mmlu_computer_security": 40,
+      "mmlu_conceptual_physics": 40,
+      "mmlu_econometrics": 40,
+      "mmlu_electrical_engineering": 40,
+      "mmlu_elementary_mathematics": 40,
+      "mmlu_formal_logic": 40,
+      "mmlu_global_facts": 40,
+      "mmlu_high_school_biology": 40,
+      "mmlu_high_school_chemistry": 40,
+      "mmlu_high_school_computer_science": 40,
+      "mmlu_high_school_european_history": 40,
+      "mmlu_high_school_geography": 40,
+      "mmlu_high_school_government_and_politics": 40,
+      "mmlu_high_school_macroeconomics": 40,
+      "mmlu_high_school_mathematics": 40,
+      "mmlu_high_school_microeconomics": 40,
+      "mmlu_high_school_physics": 40,
+      "mmlu_high_school_psychology": 40,
+      "mmlu_high_school_statistics": 40,
+      "mmlu_high_school_us_history": 40,
+      "mmlu_high_school_world_history": 40,
+      "mmlu_human_aging": 40,
+      "mmlu_human_sexuality": 40,
+      "mmlu_international_law": 40,
+      "mmlu_jurisprudence": 40,
+      "mmlu_logical_fallacies": 40,
+      "mmlu_machine_learning": 40,
+      "mmlu_management": 40,
+      "mmlu_marketing": 40,
+      "mmlu_medical_genetics": 40,
+      "mmlu_miscellaneous": 40,
+      "mmlu_moral_disputes": 40,
+      "mmlu_moral_scenarios": 40,
+      "mmlu_nutrition": 40,
+      "mmlu_philosophy": 40,
+      "mmlu_prehistory": 40,
+      "mmlu_professional_accounting": 40,
+      "mmlu_professional_law": 40,
+      "mmlu_professional_medicine": 40,
+      "mmlu_professional_psychology": 40,
+      "mmlu_public_relations": 40,
+      "mmlu_security_studies": 40,
+      "mmlu_sociology": 40,
+      "mmlu_us_foreign_policy": 40,
+      "mmlu_virology": 40,
+      "mmlu_world_religions": 40
+     }
+    }
+   },
+   "config": {
+    "batch_size": null,
+    "batch_sizes": [
+     40
+    ],
+    "model_dtype": "torch.float16",
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234,
+    "limit": null,
+    "model_num_parameters": 1711376384
+   },
+   "lm_eval_version": "0.4.13",
+   "transformers_version": "5.19.0",
+   "max_length": 2048,
+   "chat_template": null
+  },
+  "gsm8k": {
+   "group": "gsm8k",
+   "kwargs": {
+    "tasks": [
+     "gsm8k"
+    ],
+    "log_samples": false,
+    "apply_chat_template": false,
+    "random_seed": 0,
+    "numpy_random_seed": 1234,
+    "torch_random_seed": 1234,
+    "fewshot_random_seed": 1234,
+    "limit": 300
+   },
+   "samples_file": null,
+   "status": "ok",
+   "wall_s": 272.2,
+   "results_file": "gsm8k/results.json",
+   "tasks": {
+    "gsm8k": {
+     "metrics": {
+      "exact_match,strict-match": 0.29333333333333333,
+      "exact_match_stderr,strict-match": 0.02633009449057437,
+      "exact_match,flexible-extract": 0.2966666666666667,
+      "exact_match_stderr,flexible-extract": 0.026416749751055336
+     },
+     "version": 3.0,
+     "leaf_versions": [
+      "3.0"
+     ],
+     "n_shot": [
+      5
+     ],
+     "n_effective": 300,
+     "n_original": 1319,
+     "n_leaves": 1
+    }
+   },
+   "config": {
+    "batch_size": null,
+    "batch_sizes": [
+     40
+    ],
+    "model_dtype": "torch.float16",
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234,
+    "limit": 300,
+    "model_num_parameters": 1711376384
+   },
+   "lm_eval_version": "0.4.13",
+   "transformers_version": "5.19.0",
+   "max_length": 2048,
+   "chat_template": null
+  },
+  "ifeval": {
+   "group": "ifeval",
+   "kwargs": {
+    "tasks": [
+     "ifeval"
+    ],
+    "log_samples": false,
+    "apply_chat_template": false,
+    "random_seed": 0,
+    "numpy_random_seed": 1234,
+    "torch_random_seed": 1234,
+    "fewshot_random_seed": 1234,
+    "limit": 200
+   },
+   "samples_file": null,
+   "status": "ok",
+   "wall_s": 508.3,
+   "results_file": "ifeval/results.json",
+   "tasks": {
+    "ifeval": {
+     "metrics": {
+      "prompt_level_strict_acc,none": 0.165,
+      "prompt_level_strict_acc_stderr,none": 0.02631229148928473,
+      "inst_level_strict_acc,none": 0.330188679245283,
+      "prompt_level_loose_acc,none": 0.17,
+      "prompt_level_loose_acc_stderr,none": 0.026627903149340413,
+      "inst_level_loose_acc,none": 0.330188679245283
+     },
+     "version": 4.0,
+     "leaf_versions": [
+      "4.0"
+     ],
+     "n_shot": [
+      0
+     ],
+     "n_effective": 200,
+     "n_original": 541,
+     "n_leaves": 1
+    }
+   },
+   "config": {
+    "batch_size": null,
+    "batch_sizes": [
+     40
+    ],
+    "model_dtype": "torch.float16",
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234,
+    "limit": 200,
+    "model_num_parameters": 1711376384
+   },
+   "lm_eval_version": "0.4.13",
+   "transformers_version": "5.19.0",
+   "max_length": 2048,
+   "chat_template": null
+  }
+ }
+}
