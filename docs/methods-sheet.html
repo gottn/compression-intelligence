@@ -1,0 +1,352 @@
+<title>Methods Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: an engineering drawing sheet. Rulers on four sides, six lettered panels in a 3x2 grid, title block bottom-right. */
+:root{
+  --paper:#eeeeea; --sheet:#fdfdfb; --ink:#1b1f26; --ink2:#454c5a; --muted:#767d8b;
+  --line:#1b1f26; --rule:#d6d9df; --tint:#edf2fb; --tint2:#f4f5f7;
+  --ann:#1f5fc4; --bad:#b93a2b; --good:#1e7f45; --warn:#9a6a12;
+  --bar:#d9731f; --bar2:#2a62c9; --track:#e6e8ec;
+  --badge-bg:#1b1f26; --badge-fg:#ffffff;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f1114; --sheet:#181b20; --ink:#e6e8ec; --ink2:#b9bec8; --muted:#8a919d;
+    --line:#cfd3da; --rule:#333942; --tint:#1e2a3d; --tint2:#20242b;
+    --ann:#7aa6ef; --bad:#ef8a7c; --good:#5fc98a; --warn:#e0b35a;
+    --bar:#c9752e; --bar2:#5b8ee6; --track:#2a2f37;
+    --badge-bg:#e6e8ec; --badge-fg:#181b20;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f1114; --sheet:#181b20; --ink:#e6e8ec; --ink2:#b9bec8; --muted:#8a919d;
+  --line:#cfd3da; --rule:#333942; --tint:#1e2a3d; --tint2:#20242b;
+  --ann:#7aa6ef; --bad:#ef8a7c; --good:#5fc98a; --warn:#e0b35a;
+  --bar:#c9752e; --bar2:#5b8ee6; --track:#2a2f37;
+  --badge-bg:#e6e8ec; --badge-fg:#181b20;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:13px;line-height:1.45;padding-block:20px;padding-inline:16px;margin:0}
+.sheet{max-width:1560px;margin:0 auto;background:var(--sheet);border:1.5px solid var(--line);display:grid;grid-template-columns:22px minmax(0,1fr) 22px;grid-template-rows:22px auto 22px;font-variant-numeric:tabular-nums}
+.ruler{display:flex;font:11px var(--mono);color:var(--muted)}
+.ruler.h{flex-direction:row}
+.ruler.v{flex-direction:column}
+.ruler span{flex:1;display:grid;place-items:center;border-color:var(--rule);border-style:solid;border-width:0}
+.ruler.h span{border-right-width:1px}
+.ruler.h span:last-child{border-right-width:0}
+.ruler.v span{border-bottom-width:1px}
+.ruler.v span:last-child{border-bottom-width:0}
+.ruler.top{border-bottom:1.5px solid var(--line)}
+.ruler.bottom{border-top:1.5px solid var(--line)}
+.ruler.left{border-right:1.5px solid var(--line)}
+.ruler.right{border-left:1.5px solid var(--line)}
+.corner{border-color:var(--line);border-style:solid;border-width:0}
+.c-tl{border-right-width:1.5px;border-bottom-width:1.5px}
+.c-tr{border-left-width:1.5px;border-bottom-width:1.5px}
+.c-bl{border-right-width:1.5px;border-top-width:1.5px}
+.c-br{border-left-width:1.5px;border-top-width:1.5px}
+.frame{padding:18px;display:grid;gap:18px;grid-template-columns:1.05fr 1.3fr 0.85fr;grid-template-areas:"a b e" "c d d" "f d d"}
+.panel{border:1.5px solid var(--line);background:var(--sheet);display:flex;flex-direction:column;min-width:0}
+.pa{grid-area:a}.pb{grid-area:b}.pc{grid-area:c}.pd{grid-area:d}.pe{grid-area:e}.pf{grid-area:f}
+.ph{display:flex;align-items:center;gap:10px;border-bottom:1.5px solid var(--line);padding-right:10px}
+.badge{width:30px;height:30px;flex:none;background:var(--badge-bg);color:var(--badge-fg);display:grid;place-items:center;font:600 14px var(--sans)}
+.ph h2{margin:0;flex:1;font:600 15px/1.2 var(--sans);text-wrap:balance}
+.ph .cap{font:11px var(--mono);color:var(--muted);white-space:nowrap}
+.pbody{padding:12px 12px 10px;display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+.foot{margin-top:auto;padding-top:8px;border-top:1px solid var(--rule);font:italic 11px/1.4 var(--sans);color:var(--muted)}
+.foot b{font-style:normal;font-weight:600;color:var(--ink2)}
+.kw{font-family:var(--mono);font-weight:500}
+/* A: tree */
+.tree{display:flex;flex-direction:column;gap:0;align-items:stretch}
+.root{align-self:center;background:var(--tint);border:1.5px solid var(--line);padding:8px 16px;text-align:center;min-width:60%}
+.root b{display:block;font-size:14px}
+.root span{font-size:11px;color:var(--ink2)}
+.stem{width:1.5px;height:14px;background:var(--line);align-self:center}
+.branches{display:grid;grid-template-columns:1fr 1fr;gap:14px;position:relative;padding-top:14px}
+.branches::before{content:"";position:absolute;top:0;left:25%;right:25%;height:1.5px;background:var(--line)}
+.branch{position:relative;min-width:0}
+.branch::before{content:"";position:absolute;top:-14px;left:50%;width:1.5px;height:14px;background:var(--line)}
+.bhead{border:1.5px solid var(--line);padding:5px 8px;font-weight:600;font-size:12px;text-align:center}
+.bhead small{display:block;font-weight:400;color:var(--ink2);font-size:11px}
+.steps{list-style:none;margin:0;padding:8px 0 0 10px;border-left:1px solid var(--ink2);margin-left:10px}
+.steps li{position:relative;display:grid;grid-template-columns:44px 1fr;gap:6px;padding:3px 0 3px 8px;font-size:12px;line-height:1.35}
+.steps li::before{content:"";position:absolute;left:-10px;top:12px;width:10px;height:1px;background:var(--ink2)}
+.steps li .n{font:11px var(--mono);color:var(--muted)}
+.steps li .t{color:var(--ink)}
+.steps li .t em{font-style:normal;color:var(--ann)}
+.thesis{margin-top:12px;background:var(--tint2);border:1px solid var(--rule);padding:8px 10px;font-size:12px}
+.thesis b{display:block;font-size:12.5px}
+.thesis span{color:var(--ink2)}
+/* B: annotated examples */
+.ex{display:flex;flex-direction:column;gap:6px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.ex:last-of-type{border-bottom:0}
+.exlabel{font-weight:600;font-size:12px}
+.exlabel small{font-weight:400;color:var(--muted);font-family:var(--mono);font-size:11px;margin-left:6px}
+.claim{font-size:13px;color:var(--ink2)}
+.claim .no{color:var(--bad);font-weight:500}
+.claim .pre{font:11px var(--mono);color:var(--muted);display:block;margin-bottom:2px}
+.segrow{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:flex-start}
+.seg{display:flex;flex-direction:column;gap:3px;min-width:0}
+.seg code{font:500 13.5px var(--mono);border-bottom:2px solid var(--ann);padding-bottom:2px;white-space:nowrap}
+.seg i{font:11px/1.25 var(--sans);font-style:normal;color:var(--ann);max-width:15ch}
+.seg.q code{border-bottom-color:var(--ink2)}
+.seg.q i{color:var(--ink2)}
+.exnote{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:11px var(--mono);color:var(--muted)}
+.exnote b{color:var(--ink2);font-weight:500}
+/* tables */
+.tw{overflow-x:auto;min-width:0}
+.pc table{min-width:0}
+.pc td.m{white-space:normal}
+.pd table{min-width:640px}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th{font:500 11px var(--mono);color:var(--muted);text-align:left;padding:4px 8px 6px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.m{font-family:var(--mono);white-space:nowrap}
+td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
+.pair{font-weight:600}
+.pair small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+.bp{font-family:var(--mono);white-space:nowrap}
+.bp b{font-weight:600}
+.dcell{display:flex;align-items:center;gap:8px;min-width:120px}
+.dbar{flex:1;height:8px;background:var(--track);position:relative;border-radius:0 4px 4px 0;overflow:hidden}
+.dbar::after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--w);background:var(--bar);border-radius:0 4px 4px 0}
+.dval{font:600 12px var(--mono);min-width:5.5ch;text-align:right}
+.st{white-space:nowrap;font-weight:500}
+.st.ok{color:var(--good)}.st.no{color:var(--bad)}.st.half{color:var(--warn)}
+.alt{color:var(--ann);font-weight:500}
+.redt{color:var(--bad)}
+/* E: gauges */
+.g{display:flex;flex-direction:column;gap:3px}
+.gh{display:flex;justify-content:space-between;gap:10px;font-size:12px}
+.gh b{font:600 11px var(--mono);color:var(--ann);white-space:nowrap}
+.track{height:12px;background:var(--track);border:1px solid var(--rule);position:relative}
+.fill{position:absolute;left:0;top:0;bottom:0;background:var(--bar);width:var(--w);min-width:1px}
+.fill.b2{background:var(--bar2)}
+.tick{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);left:var(--x)}
+.axis{display:flex;justify-content:space-between;font:10px var(--mono);color:var(--muted)}
+.rules{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:12px}
+.rules li{padding-left:14px;position:relative}
+.rules li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;background:var(--ink)}
+/* F: timeline + title block */
+.tl{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;position:relative}
+.tl::before{content:"";position:absolute;left:10%;right:10%;top:8px;height:1.5px;background:var(--ink)}
+.tl li{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;font-size:11px;line-height:1.3;color:var(--ink2);min-width:0}
+.tl li i{width:11px;height:11px;border-radius:50%;background:var(--sheet);border:2px solid var(--ink);flex:none;margin-top:3px}
+.tl li b{font:600 13px var(--sans);color:var(--ink)}
+.tl li.next i{background:var(--ann);border-color:var(--ann)}
+.tl li.next b{color:var(--ann)}
+.tb{margin-top:auto;border-top:1.5px solid var(--line);display:grid;grid-template-columns:1fr 1fr}
+.tb div{padding:6px 10px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule);min-width:0}
+.tb div:nth-child(2n){border-right:0}
+.tb div.full{grid-column:1/-1;border-right:0}
+.tb div:nth-last-child(-n+2){border-bottom:0}
+.tb small{display:block;font:11px var(--mono);color:var(--muted)}
+.tb span{font-weight:600;font-size:13px}
+.tb span.sm{font-weight:500;font-size:12px}
+@media (max-width:1100px){
+  .frame{grid-template-columns:1fr 1fr;grid-template-areas:"a b" "c c" "d d" "e f"}
+}
+@media (max-width:760px){
+  .sheet{grid-template-columns:minmax(0,1fr);grid-template-rows:auto}
+  .ruler,.corner{display:none}
+  .frame{grid-template-columns:1fr;grid-template-areas:"a" "b" "c" "d" "e" "f";padding:12px;gap:12px}
+  .branches{grid-template-columns:1fr}
+  .branches::before{display:none}
+  .branch::before{display:none}
+  .tl{grid-template-columns:1fr;gap:10px}
+  .tl::before{display:none}
+  .tl li{flex-direction:row;text-align:left;align-items:flex-start}
+  .ph .cap{display:none}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="sheet">
+  <div class="corner c-tl"></div>
+  <div class="ruler h top"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+  <div class="corner c-tr"></div>
+  <div class="ruler v left"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+
+  <div class="frame">
+
+    <section class="panel pa">
+      <div class="ph"><div class="badge">A</div><h2>Method structure</h2><span class="cap">cilab/ and exp01 to exp04</span></div>
+      <div class="pbody">
+        <div class="tree">
+          <div class="root"><b>One measurement</b><span>bits per byte of a model on fixed text, then the delta against its family base</span></div>
+          <div class="stem"></div>
+          <div class="branches">
+            <div class="branch">
+              <div class="bhead">Part 1: Scoring pipeline<small>cilab/text.py, score.py, stats.py</small></div>
+              <ol class="steps">
+                <li><span class="n">Step 1</span><span class="t">Tokenize the corpus with no special tokens; pick the doc-start token from the tokenizer config</span></li>
+                <li><span class="n">Step 2</span><span class="t">Cut into <em>1024-token windows</em>; move a boundary left if it would split a UTF-8 character</span></li>
+                <li><span class="n">Step 3</span><span class="t">One fp16 forward pass per window; <em>−log₂ p</em> of every token from an fp32 log-softmax</span></li>
+                <li><span class="n">Step 4</span><span class="t">Σ bits ÷ bytes = bpb; Δ % against the family base; <em>5000 paired window resamples</em> for the 95 % CI</span></li>
+              </ol>
+            </div>
+            <div class="branch">
+              <div class="bhead">Part 2: Experiments on top<small>same code on both machines</small></div>
+              <ol class="steps">
+                <li><span class="n">exp01</span><span class="t">4 pairs, RAW and chat-template conditions, Mac M2 Pro on MPS</span></li>
+                <li><span class="n">exp02</span><span class="t">Temperature grid 0.50 to 1.60 in 23 steps; fit on even windows, score odd windows</span></li>
+                <li><span class="n">exp03</span><span class="t">14 checkpoints in one AAU job; Δ per stage against the family base</span></li>
+                <li><span class="n">exp04</span><span class="t">18 checkpoints through lm-evaluation-harness, <em>11,433 docs each</em>; correlate Δbpb with loss and gain</span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="thesis"><b>What never changes between experiments</b><span>The four corpus snapshots, the window rule, the doc-start rule, the bootstrap, and the scoring code. Only the model list and the question change, so every number is comparable with every other.</span></div>
+        </div>
+        <div class="foot">Deltas are taken only within a tokenizer family, on identical token ids, so bytes and tokens cancel and the delta is a change in KL divergence.</div>
+      </div>
+    </section>
+
+    <section class="panel pb">
+      <div class="ph"><div class="badge">B</div><h2>Anatomy of one score</h2><span class="cap">a real row, annotated</span></div>
+      <div class="pbody">
+        <div class="ex">
+          <div class="claim"><span class="pre">Not done anywhere: shortcuts in red</span>No <span class="no">perplexity per token</span> across tokenizers, no <span class="no">chat template</span> in the main condition, no <span class="no">sliding-window overlap</span>, no <span class="no">dropped first tokens</span>: every byte is coded once.</div>
+        </div>
+        <div class="ex">
+          <div class="exlabel">1 Score <small>exp01, results/bpb.csv</small></div>
+          <div class="segrow">
+            <div class="seg"><code>Qwen/Qwen2.5-1.5B</code><i>fp16 on MPS or CUDA</i></div>
+            <div class="seg"><code>wiki2026</code><i>101,843 bytes, 17 pages</i></div>
+            <div class="seg"><code>22,435 tokens</code><i>Qwen2.5 tokenizer, 151k vocab</i></div>
+            <div class="seg"><code>22 windows</code><i>≤ 1024 tokens, UTF-8-safe cuts</i></div>
+            <div class="seg"><code>[&lt;|endoftext|&gt;] + window</code><i>doc-start; BOS only when the config adds one</i></div>
+            <div class="seg"><code>Σ −log₂ p = 73,191 bits</code><i>fp32 log-softmax</i></div>
+            <div class="seg q"><code>→ 0.719 bpb</code><i>bits ÷ bytes</i></div>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="exlabel">2 Delta <small>the only number we interpret</small></div>
+          <div class="segrow">
+            <div class="seg"><code>Qwen2.5-1.5B-Instruct</code><i>same text, identical token ids</i></div>
+            <div class="seg"><code>73,674 bits</code><i>+483 bits</i></div>
+            <div class="seg"><code>Δ = +0.7 %</code><i>of the base's bits</i></div>
+            <div class="seg q"><code>[+0.5, +0.8]</code><i>5000 paired resamples of windows, seed 0</i></div>
+          </div>
+          <div class="exnote"><span>Paired: each resample draws the same windows for base and post, so corpus difficulty cancels inside the interval.</span></div>
+        </div>
+        <div class="ex">
+          <div class="exlabel">3 Checks <small>run before any main result is trusted</small></div>
+          <div class="segrow">
+            <div class="seg"><code>Σ bits = HF loss × n ÷ ln 2</code><i>to 1e-7</i></div>
+            <div class="seg"><code>run twice</code><i>bit-identical</i></div>
+            <div class="seg"><code>fp16 vs fp32</code><i>≤ 2e-4 relative</i></div>
+            <div class="seg"><code>GPT-2 on enwik8</code><i>1.243 Mac, 1.2426 cluster</i></div>
+            <div class="seg q"><code>Mac vs AAU, 16 rows</code><i>≤ 5e-5 bpb</i></div>
+          </div>
+          <div class="exnote"><span>Round-trip: decoding the windows reproduces the corpus byte for byte, or the scorer raises.</span><span>Tokenizer identity verified per family on every corpus</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel pe">
+      <div class="ph"><div class="badge">E</div><h2>Benchmarks and budgets</h2><span class="cap">exp04, per checkpoint</span></div>
+      <div class="pbody">
+        <div class="g"><div class="gh"><span>arc_easy · full</span><b>2,376</b></div><div class="track"><span class="fill b2" style="--w:100%"></span></div></div>
+        <div class="g"><div class="gh"><span>arc_challenge · full</span><b>1,172</b></div><div class="track"><span class="fill b2" style="--w:100%"></span></div></div>
+        <div class="g"><div class="gh"><span>hellaswag · first 2,000 of 10,042</span><b>2,000</b></div><div class="track"><span class="fill b2" style="--w:19.9%"></span></div></div>
+        <div class="g"><div class="gh"><span>piqa · full</span><b>1,838</b></div><div class="track"><span class="fill b2" style="--w:100%"></span></div></div>
+        <div class="g"><div class="gh"><span>winogrande · full</span><b>1,267</b></div><div class="track"><span class="fill b2" style="--w:100%"></span></div></div>
+        <div class="g"><div class="gh"><span>mmlu · 40 of each of 57 subjects</span><b>2,280</b></div><div class="track"><span class="fill b2" style="--w:16.2%"></span></div></div>
+        <div class="g"><div class="gh"><span>gsm8k · 5-shot, generative, first 300 of 1,319</span><b>300</b></div><div class="track"><span class="fill" style="--w:22.7%"></span></div></div>
+        <div class="g"><div class="gh"><span>ifeval · 0-shot, generative, first 200 of 541</span><b>200</b></div><div class="track"><span class="fill" style="--w:37%"></span></div><div class="axis"><i>0</i><i>share of the full task</i><i>100 %</i></div></div>
+        <ul class="rules">
+          <li>Blue: log-likelihood, scored by normalized accuracy; the forgetting side.</li>
+          <li>Orange: generative; the gain side. GSM8K flexible-extract is the headline, strict is recorded.</li>
+          <li>Same prompting for base and post-trained: no chat template, harness few-shot defaults.</li>
+          <li>fp16, batch auto, context cap 2048, datasets read offline from the prefetched cache, hash seed 0.</li>
+          <li>One GPU per task, 2 h 30 cap, 4 tasks at a time, resumable on requeue.</li>
+        </ul>
+        <div class="foot">11,433 docs per checkpoint, 18 checkpoints, about 15 GPU-hours in total. The versions of the harness and of every task are written into RESULTS.md by the run.</div>
+      </div>
+    </section>
+
+    <section class="panel pc">
+      <div class="ph"><div class="badge">C</div><h2>Corpora</h2><span class="cap">dated snapshots, data/*.prov.json</span></div>
+      <div class="pbody">
+        <div class="tw">
+        <table>
+          <thead><tr><th>Name</th><th>Bytes</th><th>Docs</th><th>Dates</th><th>Source and role</th></tr></thead>
+          <tbody>
+            <tr><td class="m">wiki2026</td><td class="num">101,843</td><td class="num">17</td><td>created 5 to 13 Oct 2026</td><td>MediaWiki API, newest page creations with ≥ 600 chars of prose; references dropped. Fresh general text.</td></tr>
+            <tr><td class="m">arxiv2026</td><td class="num">100,041</td><td class="num">80</td><td>published 9 Oct 2026</td><td>arXiv API, 40 cs.LG and 40 math.AP title-plus-abstract blocks, interleaved. Fresh technical text.</td></tr>
+            <tr><td class="m">gutenberg2026</td><td class="num">106,023</td><td class="num">4</td><td>released 12 to 13 Oct 2026</td><td>Project Gutenberg, 26 KB from each book past the front matter. Fresh scans of old books, so possibly seen in other scans.</td></tr>
+            <tr><td class="m">enwik8_ctrl</td><td class="num">100,000</td><td class="num">1</td><td>2006</td><td>enwik8 bytes 1,000,000 to 1,100,000. Old Wikipedia every model has seen. Control.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="foot">All post-date the latest training cutoff among the models, Qwen3 at end 2024, except the control, which is the point of the control. Never re-collected in place: a new collection gets a new name.</div>
+      </div>
+    </section>
+
+    <section class="panel pd">
+      <div class="ph"><div class="badge">D</div><h2>Models</h2><span class="cap">cilab/stages.py, 18 checkpoints</span></div>
+      <div class="pbody">
+        <div class="tw">
+        <table>
+          <thead><tr><th>Model</th><th>Size</th><th>Stage</th><th>Recipe</th><th>Parent</th><th>Used in</th></tr></thead>
+          <tbody>
+            <tr><td class="m">allenai/OLMo-2-0425-1B</td><td>1B</td><td>base</td><td>Pretraining, OLMo-mix + Dolmino mid-training; public data</td><td class="m">—</td><td class="m">03 04</td></tr>
+            <tr><td class="m">OLMo-2-0425-1B-SFT</td><td>1B</td><td>sft</td><td>Tülu 3 SFT mix</td><td class="m">OLMo-2 base</td><td class="m">03 04</td></tr>
+            <tr><td class="m">OLMo-2-0425-1B-DPO</td><td>1B</td><td>dpo</td><td>Tülu 3 on-policy preference DPO</td><td class="m">OLMo-2 SFT</td><td class="m">03 04</td></tr>
+            <tr><td class="m">OLMo-2-0425-1B-Instruct</td><td>1B</td><td>rlvr</td><td>GRPO on verifiable math and instruction rewards</td><td class="m">OLMo-2 DPO</td><td class="m">03 04</td></tr>
+            <tr><td class="m">Qwen/Qwen2.5-0.5B</td><td>0.5B</td><td>base</td><td>Pretraining, 18T tokens</td><td class="m">—</td><td class="m">03 04</td></tr>
+            <tr><td class="m">Qwen2.5-0.5B-Instruct</td><td>0.5B</td><td>instruct</td><td>SFT ≈ 1M examples, offline DPO, online GRPO</td><td class="m">Qwen2.5-0.5B</td><td class="m">03 04</td></tr>
+            <tr><td class="m">hkust-nlp/Qwen-2.5-0.5B-SimpleRL-Zoo</td><td>0.5B</td><td>rl-zero</td><td>GRPO straight from the base on GSM8K and MATH, rule-based reward</td><td class="m">Qwen2.5-0.5B</td><td class="m">03 04</td></tr>
+            <tr><td class="m">Qwen/Qwen2.5-1.5B</td><td>1.5B</td><td>base</td><td>Pretraining, 18T tokens</td><td class="m">—</td><td class="m">01 02 03 04</td></tr>
+            <tr><td class="m">Qwen2.5-1.5B-Instruct</td><td>1.5B</td><td>instruct</td><td>SFT ≈ 1M examples, offline DPO, online GRPO</td><td class="m">Qwen2.5-1.5B</td><td class="m">01 02 03 04</td></tr>
+            <tr><td class="m">hkust-nlp/Qwen-2.5-1.5B-SimpleRL-Zoo</td><td>1.5B</td><td>rl-zero</td><td>GRPO straight from the base on GSM8K and MATH, rule-based reward</td><td class="m">Qwen2.5-1.5B</td><td class="m">03 04</td></tr>
+            <tr><td class="m">Qwen/Qwen2.5-Math-1.5B</td><td>1.5B</td><td>math-cpt</td><td>Continued pretraining on Qwen Math Corpus v2</td><td class="m">Qwen2.5-1.5B</td><td class="m">01 02 03 04</td></tr>
+            <tr><td class="m">deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B</td><td>1.5B</td><td>r1-distill</td><td>SFT on about 800k DeepSeek-R1 reasoning traces</td><td class="m">Qwen2.5-Math-1.5B</td><td class="m">01 02 03 04</td></tr>
+            <tr><td class="m">Qwen/Qwen2.5-3B</td><td>3B</td><td>base</td><td>Pretraining, 18T tokens</td><td class="m">—</td><td class="m">03 04</td></tr>
+            <tr><td class="m">Qwen2.5-3B-Instruct</td><td>3B</td><td>instruct</td><td>SFT ≈ 1M examples, offline DPO, online GRPO</td><td class="m">Qwen2.5-3B</td><td class="m">03 04</td></tr>
+            <tr><td class="m">HuggingFaceTB/SmolLM2-1.7B</td><td>1.7B</td><td>base</td><td>Pretraining, 11T tokens</td><td class="m">—</td><td class="m">01 02 04</td></tr>
+            <tr><td class="m">SmolLM2-1.7B-Instruct</td><td>1.7B</td><td>instruct</td><td>SFT on SmolTalk, then DPO on UltraFeedback</td><td class="m">SmolLM2-1.7B</td><td class="m">01 02 04</td></tr>
+            <tr><td class="m">Qwen/Qwen3-1.7B-Base</td><td>1.7B</td><td>base</td><td>Pretraining, 36T tokens</td><td class="m">—</td><td class="m">01 02 04</td></tr>
+            <tr><td class="m">Qwen/Qwen3-1.7B</td><td>1.7B</td><td>instruct</td><td>Strong-to-weak distillation from the RL-trained Qwen3 flagships; thinking and non-thinking modes</td><td class="m">Qwen3-1.7B-Base</td><td class="m">01 02 04</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="foot">Four tokenizer families: <b>olmo2</b> (100k vocab), <b>qwen2.5</b> (151k; shared by the SimpleRL, Math and R1 models), <b>smollm2</b> (49k), <b>qwen3</b> (151k). Six family bases. All weights public, none gated. No pair tests RL applied directly to a base except the two SimpleRL-Zoo models, which is why they are here.</div>
+      </div>
+    </section>
+
+    <section class="panel pf">
+      <div class="ph"><div class="badge">F</div><h2>Where things ran</h2><span class="cap">same code, two machines</span></div>
+      <div class="pbody">
+        <ul class="tl">
+          <li><i></i><b>exp01</b>Mac M2 Pro, MPS fp16, 8 models, about 1 h</li>
+          <li><i></i><b>cilab</b>refactor proven bit-identical on 4 rows, 54 tests</li>
+          <li><i></i><b>smoke</b>AAU A10, 1 min 57 s, GPT-2 matches the Mac</li>
+          <li><i></i><b>exp03</b>AAU T4, 14 models, 18 min 42 s, one job</li>
+          <li class="next"><i></i><b>exp04</b>AAU array, 18 tasks, 4 at a time, running</li>
+        </ul>
+        <div class="tb">
+          <div class="full"><small>Title</small><span>Methods: models, corpora, scoring, benchmarks</span></div>
+          <div><small>Scoring code</small><span class="sm">cilab/text.py, score.py, stats.py, io.py</span></div>
+          <div><small>Window · dtype</small><span class="sm">1024 tokens · fp16 pass, fp32 log-softmax</span></div>
+          <div><small>Uncertainty</small><span class="sm">paired window bootstrap, 5000 resamples, seed 0</span></div>
+          <div><small>Container</small><span class="sm">pytorch_25.09.sif · torch 2.9 · transformers 5.19</span></div>
+          <div><small>Harness</small><span class="sm">lm-evaluation-harness, version pinned by exp04</span></div>
+          <div><small>Sheet</small><span class="sm">1 of 1 · 2026-10-14</span></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="ruler v right"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+  <div class="corner c-bl"></div>
+  <div class="ruler h bottom"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+  <div class="corner c-br"></div>
+</div>
