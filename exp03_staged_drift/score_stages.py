@@ -1,4 +1,4 @@
-"""exp03: fresh-text bits per byte of every post-training stage (cilab.stages.STAGES), RAW condition.
+"""exp03: fresh-text bits per byte of every post-training stage (cilab.stages.EXP03_STAGES), RAW condition.
 
   python exp03_staged_drift/score_stages.py tokcheck [--data D] [--results R]
   python exp03_staged_drift/score_stages.py run [--models ...] [--corpora ...] [--device cuda] [--data D] [--results R]
@@ -44,7 +44,7 @@ from transformers import AutoTokenizer
 from cilab.io import append_rows, existing_keys, load_corpora, read_tokenizer_config, token_bits_path
 from cilab.pairs import CORPORA
 from cilab.score import load_model, pick_device, release_device_memory, score_raw, score_tokens, summarize
-from cilab.stages import STAGES, Stage, stage_of, tokenizer_groups
+from cilab.stages import EXP03_STAGES, Stage, stage_of, tokenizer_groups
 from cilab.text import Window, adds_bos, decode, doc_start_token, encode, make_windows
 
 WINDOW = 1024
@@ -180,7 +180,7 @@ def run_model(stage: Stage, corpora: dict[str, str], out: Path, device: str) -> 
 def cmd_run(args: argparse.Namespace) -> int:
     out = Path(args.results)
     out.mkdir(parents=True, exist_ok=True)
-    models = args.models or [s.model for s in STAGES]
+    models = args.models or [s.model for s in EXP03_STAGES]
     if len(models) > 1:  # one child process per model: weights are guaranteed freed between models
         failed = []
         for mid in models:
@@ -208,7 +208,7 @@ def cmd_tokcheck(args: argparse.Namespace) -> int:
     corpora = load_corpora(Path(args.data), args.corpora, None)
     report: dict[str, object] = {"corpora": {n: {"bytes": len(t.encode("utf-8")), "chars": len(t)}
                                              for n, t in corpora.items()}, "groups": {}}
-    for group, models in tokenizer_groups().items():
+    for group, models in tokenizer_groups(EXP03_STAGES).items():
         ref: dict[str, list[int]] = {}
         per_model = {}
         for mid in models:

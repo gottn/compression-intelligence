@@ -34,7 +34,9 @@ from matplotlib.patches import Patch
 
 from cilab.io import load_token_bits
 from cilab.pairs import CORPORA, FRESH_CORPORA
-from cilab.stages import FAMILIES, RL_STAGES, STAGES, comparisons, family_base, stage_of
+from cilab.stages import EXP03_FAMILIES as FAMILIES
+from cilab.stages import EXP03_STAGES as STAGES
+from cilab.stages import RL_STAGES, comparisons, family_base, stage_of
 from cilab.stats import bootstrap_ci, paired_pct_change, resample_indices, stratified_mean_ci, window_totals
 
 N_BOOT, SEED = 5000, 0
@@ -319,7 +321,7 @@ def main() -> None:
     args = ap.parse_args()
     res = Path(args.results)
     d = load_inputs(res, Path(args.exp01_results))
-    deltas = delta_table(d["wbits"], d["lengths"], comparisons())
+    deltas = delta_table(d["wbits"], d["lengths"], comparisons(STAGES))
     exps, rl = expectation_table(deltas), rl_headline(deltas)
     repro = reproduction_table(d["bpb"], d["exp01_bpb"], d["repro_tokens"])
     deltas.to_csv(res / "stage_deltas.csv", index=False, float_format="%.5f")

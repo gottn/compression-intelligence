@@ -2,7 +2,7 @@
 # exp03: how far does each post-training stage move a model from its pretraining distribution?
 #
 # Δbpb on fresh 2026 text of every stage versus its family base (and versus its parent), RAW condition,
-# exp01's corpora, windows and doc-start rule. Stage table: cilab/stages.py (14 models, 4 families:
+# exp01's corpora, windows and doc-start rule. Stage table: cilab/stages.py EXP03_STAGES (14 models, 4 families:
 # OLMo-2-0425-1B base/SFT/DPO/RLVR; Qwen2.5-0.5B, -1.5B, -3B with Instruct, SimpleRL-Zoo (pure GRPO from
 # the base), Qwen2.5-Math and R1-Distill). All 14 models are scored in ONE AAU job (one GPU, fp16) so every
 # number comes from the same machine. Analysis and figure run on the Mac.

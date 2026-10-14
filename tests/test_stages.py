@@ -4,11 +4,14 @@ import numpy as np
 import pytest
 
 from cilab.stages import (
+    EXP03_FAMILIES,
+    EXP03_STAGES,
     FAMILIES,
     STAGES,
     Stage,
     comparisons,
     family_base,
+    model_at,
     stage_of,
     tokenizer_groups,
 )
@@ -32,8 +35,12 @@ TOY = (
 
 def test_stage_table_is_well_formed() -> None:
     models = [s.model for s in STAGES]
-    assert len(models) == len(set(models)) == 14
+    assert len(models) == len(set(models)) == 18
     assert {s.family for s in STAGES} == set(FAMILIES)
+    assert len(EXP03_STAGES) == 14 and EXP03_STAGES == STAGES[:14]
+    assert {s.family for s in EXP03_STAGES} == set(EXP03_FAMILIES)
+    assert family_base("qwen3") == "Qwen/Qwen3-1.7B-Base"
+    assert stage_of("HuggingFaceTB/SmolLM2-1.7B-Instruct").parent == "HuggingFaceTB/SmolLM2-1.7B"
     for s in STAGES:
         assert s.parent is None or stage_of(s.parent).family == s.family
     assert family_base("olmo2-1b") == "allenai/OLMo-2-0425-1B"
@@ -56,9 +63,20 @@ def test_family_base_and_stage_of_reject_ambiguity() -> None:
 
 
 def test_tokenizer_groups() -> None:
-    g = tokenizer_groups()
+    g = tokenizer_groups(EXP03_STAGES)
     assert list(g) == ["olmo2", "qwen2.5"]
     assert len(g["olmo2"]) == 4 and len(g["qwen2.5"]) == 10
+    assert list(tokenizer_groups()) == ["olmo2", "qwen2.5", "qwen3", "smollm2"]
+
+
+def test_model_at_maps_array_index_to_table_order() -> None:
+    assert model_at(0) == "allenai/OLMo-2-0425-1B"
+    assert model_at(4) == "Qwen/Qwen2.5-0.5B"
+    assert model_at(17) == "Qwen/Qwen3-1.7B"
+    assert [model_at(i, TOY) for i in range(4)] == [s.model for s in TOY]
+    for bad in (-1, 18):
+        with pytest.raises(IndexError):
+            model_at(bad)
 
 
 def test_stratified_mean_ci_point_is_mean_of_strata() -> None:
