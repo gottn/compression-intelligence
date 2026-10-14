@@ -2,6 +2,10 @@
 
 **Goal.** Test empirically whether "compression = intelligence" survives post-training. Concretely: does bits-per-byte (bpb) on fresh, post-cutoff text track capability across base and post-trained LLMs? Huang et al. 2024 found r ≈ −0.93, but only across base models.
 
+## Next thread
+
+See `docs/research-thread.md` (2026-10-14): fresh-text bpb as a forgetting meter for post-training; first AAU run planned (4 recipes × 5 checkpoints on Qwen2.5-1.5B).
+
 ## Status (2026-10-13)
 
 **exp01_posttraining_bpc: done.** The full write-up is `exp01_posttraining_bpc/RESULTS.md`.
