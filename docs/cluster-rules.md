@@ -38,3 +38,7 @@ https://hpc.aau.dk/ai-cloud/getting-started/run-jobs, and `scontrol`/`sacctmgr` 
 - `infra/cluster/submit.sh <job>`: pulls fast-forward, refuses local edits, records the commit SHA, submits `infra/slurm/<job>.sbatch` with output under `~/runs/ci/<job>/<timestamp>-<sha>/`.
 - Every job: explicit `--time`, `--mem`, `--cpus-per-task`, one GPU, `HF_HOME=~/hf_cache`, container from `/home/container`, `set -euo pipefail`, exits when done.
 - Results come back with `rsync` to the Mac and are committed there; the cluster copy is deleted after.
+
+## Validated (2026-10-14)
+
+Smoke job v2 (job 1080233, commit c9242c3) completed in 1 min 57 s on an NVIDIA A10: container `pytorch_25.09.sif`, venv on top, GPT-2 scored enwik8_ctrl at 1.2426 bpb against the Mac's 1.243, verdict ok. v1 (job 1080110) timed out at 20 min because pip took 14 min and the sanity command also fetched a 3.5 GB model. The four "not a valid test operator" lines at container start come from the image's own startup scripts and are harmless.

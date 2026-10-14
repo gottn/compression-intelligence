@@ -232,7 +232,7 @@ td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
             <div class="seg"><code>srun</code><i>a job step, accounted by Slurm</i></div>
             <div class="seg"><code>singularity exec --nv</code><i>GPU driver passed into the container</i></div>
             <div class="seg"><code>pytorch_25.09.sif</code><i>shared NGC image: torch 2.9, CUDA 12.9, Python 3.12</i></div>
-            <div class="seg"><code>bash -c "…"</code><i>not -l: login profiles choke on CUDA version strings</i></div>
+            <div class="seg"><code>bash -c "…"</code><i>no login shell needed; the image prints 4 harmless "test operator" lines at start</i></div>
           </div>
           <div class="exnote"><span>Inside: venv with <b>--system-site-packages</b> so torch comes from the image and only transformers, numpy, pandas are added.</span></div>
         </div>
@@ -245,7 +245,7 @@ td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
             <div class="seg"><code>--device cuda</code><i>explicit; the Mac default is mps</i></div>
             <div class="seg q"><code>→ smoke.json</code><i>bpb, wall time, verdict</i></div>
           </div>
-          <div class="exnote"><span>Pass: <b>1.243 ± 0.01 bpb</b>, the Mac reference. Fail: exit code 2 and the job ends red.</span><span>Log streams line by line; no pipe to tail</span></div>
+          <div class="exnote"><span>Pass: <b>1.243 ± 0.01 bpb</b>, the Mac reference; v2 measured <b>1.2426</b> in 2.3 s on the GPU. Fail: exit code 2 and the job ends red.</span><span>Log streams line by line; no pipe to tail</span></div>
         </div>
       </div>
     </section>
@@ -254,7 +254,7 @@ td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
       <div class="ph"><div class="badge">E</div><h2>Limits and what v1 used</h2><span class="cap">against the quota</span></div>
       <div class="pbody">
         <div class="g"><div class="gh"><span>Walltime v1 · used 20:29 of 20:00</span><b class="redt">TIMEOUT</b></div><div class="track"><span class="fill" style="--w:100%"></span><span class="tick" style="--x:100%"></span></div><div class="axis"><i>0</i><i>5</i><i>10</i><i>15</i><i>20 min</i></div></div>
-        <div class="g"><div class="gh"><span>Walltime v2 · limit 30 min; venv cached</span><b>expect &lt; 8 min</b></div><div class="track"><span class="fill b2" style="--w:26%"></span><span class="tick" style="--x:100%"></span></div><div class="axis"><i>0</i><i>10</i><i>20</i><i>30 min</i></div></div>
+        <div class="g"><div class="gh"><span>Walltime v2 · used 1:57 of 30:00; venv cached</span><b>COMPLETED</b></div><div class="track"><span class="fill b2" style="--w:6.5%"></span><span class="tick" style="--x:100%"></span></div><div class="axis"><i>0</i><i>10</i><i>20</i><i>30 min</i></div></div>
         <div class="g"><div class="gh"><span>pip install inside the image, v1</span><b>14 of 20 min</b></div><div class="track"><span class="fill" style="--w:70%"></span></div></div>
         <div class="g"><div class="gh"><span>GPUs held · quota 12 per user</span><b>1</b></div><div class="track"><span class="fill b2" style="--w:8.3%"></span></div><div class="axis"><i>0</i><i>6</i><i>12</i></div></div>
         <div class="g"><div class="gh"><span>Simultaneous jobs · quota 12</span><b>1</b></div><div class="track"><span class="fill b2" style="--w:8.3%"></span></div></div>
@@ -306,7 +306,7 @@ td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
             <tr><td class="m">--system-site-packages</td><td class="st ok">✓ Approved</td><td>Venv inherits the image's torch and CUDA</td><td class="m">python -m venv --system-site-packages</td><td class="redt">pip install torch into the venv</td></tr>
             <tr><td class="m">--nv</td><td class="st ok">✓ Approved</td><td>GPU driver visible inside the container</td><td class="m">singularity exec --nv image.sif</td><td class="redt">singularity exec without --nv, then cuda False</td></tr>
             <tr><td class="m">set -euo pipefail</td><td class="st ok">✓ Approved</td><td>First failure ends the job and frees the GPU</td><td class="m">first line after the header</td><td class="redt">a script that keeps the GPU after an error</td></tr>
-            <tr><td class="m">bash -lc</td><td class="st no">✗ Not approved</td><td class="alt">bash -c</td><td class="m">bash -c "set -euo pipefail; …"</td><td class="redt">bash -lc: profile errors on CUDA version strings</td></tr>
+            <tr><td class="m">bash -lc</td><td class="st half">◐ Unneeded</td><td class="alt">bash -c</td><td class="m">bash -c "set -euo pipefail; …"</td><td class="redt">-l adds nothing; the 4 "test operator" lines come from the image itself and are harmless</td></tr>
             <tr><td class="m">| tail -25</td><td class="st no">✗ Not approved</td><td class="alt">stream the log</td><td class="m">python -m cilab.smoke … (no pipe)</td><td class="redt">output hidden until exit; v1 showed nothing</td></tr>
           </tbody>
         </table>
@@ -323,12 +323,12 @@ td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
           <li><i></i><b>19:16</b>allocated a256-t4-02, Tesla T4</li>
           <li><i></i><b>19:30</b>torch 2.9, cuda True, transformers 5.19</li>
           <li><i></i><b>19:36:41</b>killed: time limit, 20:29 elapsed</li>
-          <li class="next"><i></i><b>v2</b>job 1080233, 30 min, GPT-2 only</li>
+          <li class="next"><i></i><b>19:42</b>v2 job 1080233 done in 1:57 on an A10: 1.2426 bpb, verdict ok</li>
         </ul>
         <div class="tb">
           <div class="full"><small>Title</small><span>Cluster smoke job: overview</span></div>
-          <div><small>Job</small><span class="sm">v1 1080110 → v2 1080233</span></div>
-          <div><small>Node, v1</small><span class="sm">a256-t4-02 · Tesla T4 15 GB</span></div>
+          <div><small>Job</small><span class="sm">v1 1080110 timeout → v2 1080233 ok</span></div>
+          <div><small>Nodes</small><span class="sm">v1 Tesla T4 · v2 NVIDIA A10</span></div>
           <div><small>Partition</small><span class="sm">prioritized · QoS normal</span></div>
           <div><small>Script</small><span class="sm">infra/slurm/smoke.sbatch</span></div>
           <div><small>Output</small><span class="sm">~/runs/ci/smoke/&lt;time&gt;-&lt;sha&gt;/</span></div>
