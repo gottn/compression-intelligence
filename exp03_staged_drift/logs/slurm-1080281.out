@@ -1,0 +1,322 @@
+commit 9562f71 on a256-t4-02.srv.aau.dk at 2026-10-14T20:23:21+02:00, gpu=Tesla T4, out=/home/id.aau.dk/pr04wm/runs/ci/exp03/20261014-202319-9562f71
+15:4: not a valid test operator:  
+15:4: not a valid test operator: 13.0
+21:4: not a valid test operator: (
+21:4: not a valid test operator: 580.178.04
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+torch 2.9.0a0+50eac811a6.nv25.09 cuda True Tesla T4
+transformers 5.19.0
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+{"group": "olmo2", "models": 4, "all_identical": true, "doc_starts": ["<|endoftext|> (100257)"]}
+{"group": "qwen2.5", "models": 10, "all_identical": true, "doc_starts": ["<|endoftext|> (151643)", "<｜begin▁of▁sentence｜> (151646)"]}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "allenai/OLMo-2-0425-1B", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 4.90531265088717e-06, "load_s": 2.9}
+{"model": "allenai/OLMo-2-0425-1B", "corpus": "wiki2026", "tokens": 21633, "bpb": 0.70727, "dtype": "float16", "wall_s": 3.4}
+{"model": "allenai/OLMo-2-0425-1B", "corpus": "arxiv2026", "tokens": 20620, "bpb": 0.89626, "dtype": "float16", "wall_s": 3.2}
+{"model": "allenai/OLMo-2-0425-1B", "corpus": "gutenberg2026", "tokens": 24634, "bpb": 0.86865, "dtype": "float16", "wall_s": 3.9}
+{"model": "allenai/OLMo-2-0425-1B", "corpus": "enwik8_ctrl", "tokens": 29255, "bpb": 0.72637, "dtype": "float16", "wall_s": 4.6}
+{"model": "allenai/OLMo-2-0425-1B", "family": "olmo2-1b", "stage": "base", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 100257, "adds_bos": false, "vocab": 100278, "window0_tokens": 1024, "fp32_bits": 3132.431152023096, "fp32_error": "", "fp16_bits": 3132.4465, "deterministic": true, "fp16_vs_fp32_rel": 4.90531265088717e-06, "dtype": "float16", "fp32_load_and_window_s": 29.5, "load_s": 2.9, "fp32_fallback_corpora": [], "total_model_s": 50.0}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "allenai/OLMo-2-0425-1B-SFT", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 3.2541015138265133e-06, "load_s": 2.6}
+{"model": "allenai/OLMo-2-0425-1B-SFT", "corpus": "wiki2026", "tokens": 21633, "bpb": 0.754, "dtype": "float16", "wall_s": 3.4}
+{"model": "allenai/OLMo-2-0425-1B-SFT", "corpus": "arxiv2026", "tokens": 20620, "bpb": 0.96053, "dtype": "float16", "wall_s": 3.2}
+{"model": "allenai/OLMo-2-0425-1B-SFT", "corpus": "gutenberg2026", "tokens": 24634, "bpb": 0.93119, "dtype": "float16", "wall_s": 3.8}
+{"model": "allenai/OLMo-2-0425-1B-SFT", "corpus": "enwik8_ctrl", "tokens": 29255, "bpb": 0.79428, "dtype": "float16", "wall_s": 4.6}
+{"model": "allenai/OLMo-2-0425-1B-SFT", "family": "olmo2-1b", "stage": "sft", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 100257, "adds_bos": false, "vocab": 100278, "window0_tokens": 1024, "fp32_bits": 3360.9528641071656, "fp32_error": "", "fp16_bits": 3360.9638, "deterministic": true, "fp16_vs_fp32_rel": 3.2541015138265133e-06, "dtype": "float16", "fp32_load_and_window_s": 20.4, "load_s": 2.6, "fp32_fallback_corpora": [], "total_model_s": 40.6}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "allenai/OLMo-2-0425-1B-DPO", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 3.6690077590892305e-05, "load_s": 2.6}
+{"model": "allenai/OLMo-2-0425-1B-DPO", "corpus": "wiki2026", "tokens": 21633, "bpb": 0.80864, "dtype": "float16", "wall_s": 3.4}
+{"model": "allenai/OLMo-2-0425-1B-DPO", "corpus": "arxiv2026", "tokens": 20620, "bpb": 1.02024, "dtype": "float16", "wall_s": 3.2}
+{"model": "allenai/OLMo-2-0425-1B-DPO", "corpus": "gutenberg2026", "tokens": 24634, "bpb": 0.99148, "dtype": "float16", "wall_s": 3.9}
+{"model": "allenai/OLMo-2-0425-1B-DPO", "corpus": "enwik8_ctrl", "tokens": 29255, "bpb": 0.86607, "dtype": "float16", "wall_s": 4.6}
+{"model": "allenai/OLMo-2-0425-1B-DPO", "family": "olmo2-1b", "stage": "dpo", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 100257, "adds_bos": false, "vocab": 100278, "window0_tokens": 1024, "fp32_bits": 3562.3902729159877, "fp32_error": "", "fp16_bits": 3562.521, "deterministic": true, "fp16_vs_fp32_rel": 3.6690077590892305e-05, "dtype": "float16", "fp32_load_and_window_s": 21.1, "load_s": 2.6, "fp32_fallback_corpora": [], "total_model_s": 41.8}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "allenai/OLMo-2-0425-1B-Instruct", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 8.447099305401299e-05, "load_s": 2.0}
+{"model": "allenai/OLMo-2-0425-1B-Instruct", "corpus": "wiki2026", "tokens": 21633, "bpb": 0.8112, "dtype": "float16", "wall_s": 3.4}
+{"model": "allenai/OLMo-2-0425-1B-Instruct", "corpus": "arxiv2026", "tokens": 20620, "bpb": 1.02869, "dtype": "float16", "wall_s": 3.2}
+{"model": "allenai/OLMo-2-0425-1B-Instruct", "corpus": "gutenberg2026", "tokens": 24634, "bpb": 0.99478, "dtype": "float16", "wall_s": 3.8}
+{"model": "allenai/OLMo-2-0425-1B-Instruct", "corpus": "enwik8_ctrl", "tokens": 29255, "bpb": 0.86915, "dtype": "float16", "wall_s": 4.6}
+{"model": "allenai/OLMo-2-0425-1B-Instruct", "family": "olmo2-1b", "stage": "rlvr", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 100257, "adds_bos": false, "vocab": 100278, "window0_tokens": 1024, "fp32_bits": 3574.5362805492086, "fp32_error": "", "fp16_bits": 3574.2343, "deterministic": true, "fp16_vs_fp32_rel": 8.447099305401299e-05, "dtype": "float16", "fp32_load_and_window_s": 15.1, "load_s": 2.0, "fp32_fallback_corpora": [], "total_model_s": 34.5}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "Qwen/Qwen2.5-0.5B", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 0.000135978435044724, "load_s": 0.8}
+{"model": "Qwen/Qwen2.5-0.5B", "corpus": "wiki2026", "tokens": 22435, "bpb": 0.81309, "dtype": "float16", "wall_s": 3.5}
+{"model": "Qwen/Qwen2.5-0.5B", "corpus": "arxiv2026", "tokens": 20702, "bpb": 0.91272, "dtype": "float16", "wall_s": 3.3}
+{"model": "Qwen/Qwen2.5-0.5B", "corpus": "gutenberg2026", "tokens": 24979, "bpb": 0.96411, "dtype": "float16", "wall_s": 4.0}
+{"model": "Qwen/Qwen2.5-0.5B", "corpus": "enwik8_ctrl", "tokens": 30521, "bpb": 0.83936, "dtype": "float16", "wall_s": 4.8}
+{"model": "Qwen/Qwen2.5-0.5B", "family": "qwen2.5-0.5b", "stage": "base", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 151643, "adds_bos": false, "vocab": 151665, "window0_tokens": 1024, "fp32_bits": 3583.001920965791, "fp32_error": "", "fp16_bits": 3582.5147, "deterministic": true, "fp16_vs_fp32_rel": 0.000135978435044724, "dtype": "float16", "fp32_load_and_window_s": 11.2, "load_s": 0.8, "fp32_fallback_corpora": [], "total_model_s": 32.0}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "Qwen/Qwen2.5-0.5B-Instruct", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 6.8717284958008e-05, "load_s": 0.8}
+{"model": "Qwen/Qwen2.5-0.5B-Instruct", "corpus": "wiki2026", "tokens": 22435, "bpb": 0.82392, "dtype": "float16", "wall_s": 3.5}
+{"model": "Qwen/Qwen2.5-0.5B-Instruct", "corpus": "arxiv2026", "tokens": 20702, "bpb": 0.92605, "dtype": "float16", "wall_s": 3.3}
+{"model": "Qwen/Qwen2.5-0.5B-Instruct", "corpus": "gutenberg2026", "tokens": 24979, "bpb": 0.98372, "dtype": "float16", "wall_s": 3.9}
+{"model": "Qwen/Qwen2.5-0.5B-Instruct", "corpus": "enwik8_ctrl", "tokens": 30521, "bpb": 0.86251, "dtype": "float16", "wall_s": 4.8}
+{"model": "Qwen/Qwen2.5-0.5B-Instruct", "family": "qwen2.5-0.5b", "stage": "instruct", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 151643, "adds_bos": false, "vocab": 151665, "window0_tokens": 1024, "fp32_bits": 3629.74150375494, "fp32_error": "", "fp16_bits": 3629.4921, "deterministic": true, "fp16_vs_fp32_rel": 6.8717284958008e-05, "dtype": "float16", "fp32_load_and_window_s": 9.3, "load_s": 0.8, "fp32_fallback_corpora": [], "total_model_s": 28.2}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "hkust-nlp/Qwen-2.5-0.5B-SimpleRL-Zoo", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 3.558274521206792e-05, "load_s": 1.6}
+{"model": "hkust-nlp/Qwen-2.5-0.5B-SimpleRL-Zoo", "corpus": "wiki2026", "tokens": 22435, "bpb": 0.81458, "dtype": "float16", "wall_s": 3.6}
+{"model": "hkust-nlp/Qwen-2.5-0.5B-SimpleRL-Zoo", "corpus": "arxiv2026", "tokens": 20702, "bpb": 0.91518, "dtype": "float16", "wall_s": 3.3}
+{"model": "hkust-nlp/Qwen-2.5-0.5B-SimpleRL-Zoo", "corpus": "gutenberg2026", "tokens": 24979, "bpb": 0.96506, "dtype": "float16", "wall_s": 4.0}
+{"model": "hkust-nlp/Qwen-2.5-0.5B-SimpleRL-Zoo", "corpus": "enwik8_ctrl", "tokens": 30521, "bpb": 0.84273, "dtype": "float16", "wall_s": 4.8}
+{"model": "hkust-nlp/Qwen-2.5-0.5B-SimpleRL-Zoo", "family": "qwen2.5-0.5b", "stage": "rl-zero", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 151643, "adds_bos": false, "vocab": 151665, "window0_tokens": 1024, "fp32_bits": 3587.9752213614192, "fp32_error": "", "fp16_bits": 3588.1029, "deterministic": true, "fp16_vs_fp32_rel": 3.558274521206792e-05, "dtype": "float16", "fp32_load_and_window_s": 16.6, "load_s": 1.6, "fp32_fallback_corpora": [], "total_model_s": 36.1}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "Qwen/Qwen2.5-1.5B", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 0.00015001928814567192, "load_s": 2.2}
+{"model": "Qwen/Qwen2.5-1.5B", "corpus": "wiki2026", "tokens": 22435, "bpb": 0.71865, "dtype": "float16", "wall_s": 6.3}
+{"model": "Qwen/Qwen2.5-1.5B", "corpus": "arxiv2026", "tokens": 20702, "bpb": 0.82397, "dtype": "float16", "wall_s": 5.8}
+{"model": "Qwen/Qwen2.5-1.5B", "corpus": "gutenberg2026", "tokens": 24979, "bpb": 0.86233, "dtype": "float16", "wall_s": 7.0}
+{"model": "Qwen/Qwen2.5-1.5B", "corpus": "enwik8_ctrl", "tokens": 30521, "bpb": 0.69475, "dtype": "float16", "wall_s": 8.6}
+{"model": "Qwen/Qwen2.5-1.5B", "family": "qwen2.5-1.5b", "stage": "base", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 151643, "adds_bos": false, "vocab": 151665, "window0_tokens": 1024, "fp32_bits": 3227.452314686183, "fp32_error": "", "fp16_bits": 3226.9681, "deterministic": true, "fp16_vs_fp32_rel": 0.00015001928814567192, "dtype": "float16", "fp32_load_and_window_s": 15.9, "load_s": 2.2, "fp32_fallback_corpora": [], "total_model_s": 48.3}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 6.959455483023405e-05, "load_s": 2.0}
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "corpus": "wiki2026", "tokens": 22435, "bpb": 0.7234, "dtype": "float16", "wall_s": 6.2}
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "corpus": "arxiv2026", "tokens": 20702, "bpb": 0.83097, "dtype": "float16", "wall_s": 5.8}
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "corpus": "gutenberg2026", "tokens": 24979, "bpb": 0.87285, "dtype": "float16", "wall_s": 7.0}
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "corpus": "enwik8_ctrl", "tokens": 30521, "bpb": 0.70572, "dtype": "float16", "wall_s": 8.6}
+{"model": "Qwen/Qwen2.5-1.5B-Instruct", "family": "qwen2.5-1.5b", "stage": "instruct", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 151643, "adds_bos": false, "vocab": 151665, "window0_tokens": 1024, "fp32_bits": 3248.7459737621202, "fp32_error": "", "fp16_bits": 3248.9721, "deterministic": true, "fp16_vs_fp32_rel": 6.959455483023405e-05, "dtype": "float16", "fp32_load_and_window_s": 32.6, "load_s": 2.0, "fp32_fallback_corpora": [], "total_model_s": 65.0}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "hkust-nlp/Qwen-2.5-1.5B-SimpleRL-Zoo", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 0.00011743679382874784, "load_s": 3.9}
+{"model": "hkust-nlp/Qwen-2.5-1.5B-SimpleRL-Zoo", "corpus": "wiki2026", "tokens": 22435, "bpb": 0.71941, "dtype": "float16", "wall_s": 6.3}
+{"model": "hkust-nlp/Qwen-2.5-1.5B-SimpleRL-Zoo", "corpus": "arxiv2026", "tokens": 20702, "bpb": 0.82553, "dtype": "float16", "wall_s": 5.8}
+{"model": "hkust-nlp/Qwen-2.5-1.5B-SimpleRL-Zoo", "corpus": "gutenberg2026", "tokens": 24979, "bpb": 0.86281, "dtype": "float16", "wall_s": 7.0}
+{"model": "hkust-nlp/Qwen-2.5-1.5B-SimpleRL-Zoo", "corpus": "enwik8_ctrl", "tokens": 30521, "bpb": 0.69671, "dtype": "float16", "wall_s": 8.6}
+{"model": "hkust-nlp/Qwen-2.5-1.5B-SimpleRL-Zoo", "family": "qwen2.5-1.5b", "stage": "rl-zero", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 151643, "adds_bos": false, "vocab": 151665, "window0_tokens": 1024, "fp32_bits": 3226.726550812973, "fp32_error": "", "fp16_bits": 3226.3476, "deterministic": true, "fp16_vs_fp32_rel": 0.00011743679382874784, "dtype": "float16", "fp32_load_and_window_s": 30.6, "load_s": 3.9, "fp32_fallback_corpora": [], "total_model_s": 65.0}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "Qwen/Qwen2.5-Math-1.5B", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 0.00015756255718434487, "load_s": 2.2}
+{"model": "Qwen/Qwen2.5-Math-1.5B", "corpus": "wiki2026", "tokens": 22435, "bpb": 0.96259, "dtype": "float16", "wall_s": 6.3}
+{"model": "Qwen/Qwen2.5-Math-1.5B", "corpus": "arxiv2026", "tokens": 20702, "bpb": 0.87078, "dtype": "float16", "wall_s": 5.8}
+{"model": "Qwen/Qwen2.5-Math-1.5B", "corpus": "gutenberg2026", "tokens": 24979, "bpb": 1.13745, "dtype": "float16", "wall_s": 7.0}
+{"model": "Qwen/Qwen2.5-Math-1.5B", "corpus": "enwik8_ctrl", "tokens": 30521, "bpb": 1.10269, "dtype": "float16", "wall_s": 8.6}
+{"model": "Qwen/Qwen2.5-Math-1.5B", "family": "qwen2.5-1.5b", "stage": "math-cpt", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 151643, "adds_bos": false, "vocab": 151665, "window0_tokens": 1024, "fp32_bits": 4181.540544729152, "fp32_error": "", "fp16_bits": 4180.8817, "deterministic": true, "fp16_vs_fp32_rel": 0.00015756255718434487, "dtype": "float16", "fp32_load_and_window_s": 17.5, "load_s": 2.2, "fp32_fallback_corpora": [], "total_model_s": 50.1}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", "gpu": "Tesla T4", "doc_start": "<｜begin▁of▁sentence｜>", "dtype": "float16", "fp16_vs_fp32_rel": 0.00014432826749659903, "load_s": 2.3}
+{"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", "corpus": "wiki2026", "tokens": 22435, "bpb": 1.08565, "dtype": "float16", "wall_s": 6.3}
+{"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", "corpus": "arxiv2026", "tokens": 20702, "bpb": 1.05259, "dtype": "float16", "wall_s": 5.8}
+{"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", "corpus": "gutenberg2026", "tokens": 24979, "bpb": 1.29388, "dtype": "float16", "wall_s": 7.0}
+{"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", "corpus": "enwik8_ctrl", "tokens": 30521, "bpb": 1.21091, "dtype": "float16", "wall_s": 8.6}
+{"model": "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B", "family": "qwen2.5-1.5b", "stage": "r1-distill", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<｜begin▁of▁sentence｜>", "doc_start_id": 151646, "adds_bos": true, "vocab": 151665, "window0_tokens": 1024, "fp32_bits": 4791.049684770409, "fp32_error": "", "fp16_bits": 4791.7412, "deterministic": true, "fp16_vs_fp32_rel": 0.00014432826749659903, "dtype": "float16", "fp32_load_and_window_s": 18.8, "load_s": 2.3, "fp32_fallback_corpora": [], "total_model_s": 51.3}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "Qwen/Qwen2.5-3B", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 0.00012261734182415554, "load_s": 22.8}
+{"model": "Qwen/Qwen2.5-3B", "corpus": "wiki2026", "tokens": 22435, "bpb": 0.72242, "dtype": "float16", "wall_s": 10.8}
+{"model": "Qwen/Qwen2.5-3B", "corpus": "arxiv2026", "tokens": 20702, "bpb": 0.80801, "dtype": "float16", "wall_s": 10.0}
+{"model": "Qwen/Qwen2.5-3B", "corpus": "gutenberg2026", "tokens": 24979, "bpb": 0.83758, "dtype": "float16", "wall_s": 12.1}
+{"model": "Qwen/Qwen2.5-3B", "corpus": "enwik8_ctrl", "tokens": 30521, "bpb": 0.69603, "dtype": "float16", "wall_s": 14.9}
+{"model": "Qwen/Qwen2.5-3B", "family": "qwen2.5-3b", "stage": "base", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 151643, "adds_bos": false, "vocab": 151665, "window0_tokens": 1024, "fp32_bits": 3129.1284630580412, "fp32_error": "", "fp16_bits": 3129.5121, "deterministic": true, "fp16_vs_fp32_rel": 0.00012261734182415554, "dtype": "float16", "fp32_load_and_window_s": 38.2, "load_s": 22.8, "fp32_fallback_corpora": [], "total_model_s": 112.9}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:283: UserWarning: 
+    Found GPU0 Tesla T4 which is of cuda capability 7.5.
+    Minimum and Maximum cuda capability supported by this version of PyTorch is
+    (7.5) - (12.0)
+    
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:304: UserWarning: 
+    Please install PyTorch with a following CUDA
+    configurations:  12.6 12.8 12.9 following instructions at
+    https://pytorch.org/get-started/locally/
+    
+  warnings.warn(matched_cuda_warn.format(matched_arches))
+{"model": "Qwen/Qwen2.5-3B-Instruct", "gpu": "Tesla T4", "doc_start": "<|endoftext|>", "dtype": "float16", "fp16_vs_fp32_rel": 0.00010802170578027193, "load_s": 10.8}
+{"model": "Qwen/Qwen2.5-3B-Instruct", "corpus": "wiki2026", "tokens": 22435, "bpb": 0.74115, "dtype": "float16", "wall_s": 10.7}
+{"model": "Qwen/Qwen2.5-3B-Instruct", "corpus": "arxiv2026", "tokens": 20702, "bpb": 0.82555, "dtype": "float16", "wall_s": 9.9}
+{"model": "Qwen/Qwen2.5-3B-Instruct", "corpus": "gutenberg2026", "tokens": 24979, "bpb": 0.85005, "dtype": "float16", "wall_s": 12.1}
+{"model": "Qwen/Qwen2.5-3B-Instruct", "corpus": "enwik8_ctrl", "tokens": 30521, "bpb": 0.73904, "dtype": "float16", "wall_s": 14.8}
+{"model": "Qwen/Qwen2.5-3B-Instruct", "family": "qwen2.5-3b", "stage": "instruct", "gpu": "Tesla T4", "torch": "2.9.0a0+50eac811a6.nv25.09", "transformers": "5.19.0", "doc_start": "<|endoftext|>", "doc_start_id": 151643, "adds_bos": false, "vocab": 151665, "window0_tokens": 1024, "fp32_bits": 3208.7848361619767, "fp32_error": "", "fp16_bits": 3208.4382, "deterministic": true, "fp16_vs_fp32_rel": 0.00010802170578027193, "dtype": "float16", "fp32_load_and_window_s": 64.2, "load_s": 10.8, "fp32_fallback_corpora": [], "total_model_s": 126.2}
+{"models": 14, "failed": []}
+exp03 done at 2026-10-14T20:42:02+02:00

@@ -48,3 +48,5 @@ What is already published, and what it changes:
 - **One-sidedness** (drift predicts loss, not gain) is not in the literature. It is now the headline claim of step 2 and needs a formal test: regress loss and gain separately on Δbpb across ≥ 10 pairs.
 
 Revised order: exp02 (calibration-corrected bpb, running) → exp03 staged checkpoints on the Mac (OLMo-2-1B base/SFT/DPO/RLVR, SimpleRL-Zoo 0.5B/1.5B, plus pre-cutoff control text) → exp04 benchmarks on AAU for all checkpoints (Harmon-style forgetting metric) → exp05 anchor during CoT distillation on AAU.
+
+exp03 done (2026-10-14, AAU job 1080281, `exp03_staged_drift/RESULTS.md`): OLMo-2-1B SFT +7.0%, DPO +6.6% on top, RLVR +0.5% on top; pure GRPO (SimpleRL-Zoo) +0.1–0.2%; no RL stage lowers bpb, and the enwik8 control drifts more than fresh text.
