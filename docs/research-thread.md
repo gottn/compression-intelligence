@@ -35,3 +35,16 @@ A post-training sweep of 20 configs × 5 checkpoints = 100 full evals ≈ 200–
 
 - Verify HF ids for staged RL checkpoints (OLMo-2-0425-1B SFT/DPO/Instruct; hkust-nlp SimpleRL-Zoo 0.5B/1.5B) — using them would skip step 1's training for the RL arm.
 - Decide eval subset sizes to keep eval under 60 GPU-hours.
+
+## Adjustments after the prior-art search (2026-10-14, see docs/prior-art.md)
+
+What is already published, and what it changes:
+
+- **Yang 2026** (alphaXiv, 12 Oct 2026) has a 14-pair base→instruct loss table on DCLM web text, including our Qwen2.5-1.5B and SmolLM2-1.7B pairs, and finds temperature plus a per-token bias recovers at most 36% of the increase (≈6% for Qwen2.5-1.5B-Instruct). exp02 therefore replicates rather than discovers; keep it as the calibration-corrected bpb that reviewers will ask for, and cite Yang.
+- **RL's Razor** validates KL-to-base on *task* data as the forgetting predictor (R² = 0.71). Our claim must be comparative: fresh *general* text, no task samples, same or better prediction. Step 1 becomes a head-to-head of three predictors on the same checkpoints: fresh-text Δbpb, task-data KL, and pre-cutoff-text Δbpb.
+- **Harmon et al. (ICLR 2026)** find only low-to-moderate benchmark forgetting after reasoning SFT/RL from base. The pair with the largest bpb tax (R1-Distill, +15.8%) may show little benchmark loss. The |r| > 0.8 gate stays, but the outcome variable is Harmon's forgetting metric, and a null result there is itself informative (bpb tax without forgetting = calibration or style, not knowledge).
+- **Qwen2.5-Math-1.5B is already drifted** from web text. Score R1-Distill against plain Qwen2.5-1.5B as well as against its math base.
+- **Marek et al. 2605.26097** show a pretraining-text KL anchor nearly removes forgetting during SFT and continued pretraining. The anchor experiment (step 3) is only new if run during R1-style CoT distillation or RLVR, and must be plotted on a Pareto front against Marek, Riemer 2512.22337, Béthune 2502.06042, LoRA and weight averaging.
+- **One-sidedness** (drift predicts loss, not gain) is not in the literature. It is now the headline claim of step 2 and needs a formal test: regress loss and gain separately on Δbpb across ≥ 10 pairs.
+
+Revised order: exp02 (calibration-corrected bpb, running) → exp03 staged checkpoints on the Mac (OLMo-2-1B base/SFT/DPO/RLVR, SimpleRL-Zoo 0.5B/1.5B, plus pre-cutoff control text) → exp04 benchmarks on AAU for all checkpoints (Harmon-style forgetting metric) → exp05 anchor during CoT distillation on AAU.
