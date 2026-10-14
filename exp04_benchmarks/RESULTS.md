@@ -56,6 +56,13 @@ Every post-trained checkpoint is compared with its **family base** (R1-Distill a
 - E3: the enwik8 predictor does as well as or slightly better than fresh text (exp03: the control drifts 1.3–3× more).
 - E4: R1-Distill has the largest drift (+43% vs Qwen2.5-1.5B) but only modest general loss, i.e. it sits below the fitted line.
 
+How each expectation is scored (added 2026-10-14 in a separate commit, before any benchmark result existed; Pearson r throughout):
+- E1 met if 0.6 ≤ r(Δbpb_fresh, forgetting) < 0.8.
+- E2 met if r(Δbpb_fresh, gsm8k gain) < 0.3 (near zero or negative).
+- E3 met if r(Δbpb_enwik8, forgetting) ≥ r(Δbpb_fresh, forgetting) − 0.05.
+- E4 met if R1-Distill has the largest Δbpb_fresh of the 12 and a negative residual from the OLS line of forgetting on Δbpb_fresh fitted to all 12.
+- "Chat-style" for the ifeval gain = stages sft, dpo, rlvr and instruct (9 checkpoints); ifeval gain is also reported over all 12.
+
 ## Confounds (stated before the run)
 
 - **Prompt format.** No chat template anywhere. Chat-tuned and reasoning models (Qwen3, R1-Distill) are scored off their native format, which lowers their generative scores (gsm8k, and ifeval in particular) and can look like forgetting on log-likelihood tasks. This is the price of identical prompting.
