@@ -1,7 +1,7 @@
 """Bits from a causal LM. `summarize` is pure; everything below the marker touches a model or device.
 
-Effect functions: pick_device, load_model, free_model, score_tokens, score_raw, score_chat, hf_loss_bits,
-target_logits.
+Effect functions: pick_device, load_model, free_model, release_device_memory, score_tokens, score_raw,
+score_chat, hf_loss_bits, target_logits.
 -log2 p is always computed from float32 logits, whatever dtype the weights are in.
 """
 from __future__ import annotations
@@ -50,7 +50,14 @@ def load_model(model_id: str, dtype: torch.dtype, device: str) -> PreTrainedMode
 def free_model(model: PreTrainedModel) -> None:
     """Drop this reference and release cached device memory; callers must drop theirs too."""
     del model
+    release_device_memory()
+
+
+def release_device_memory() -> None:
+    """Collect garbage and return cached allocator blocks on CUDA and MPS."""
     gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
     if torch.backends.mps.is_available():
         torch.mps.empty_cache()
 

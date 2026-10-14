@@ -53,3 +53,18 @@ def bootstrap_ci(stat: Callable[[np.ndarray], np.ndarray], idx: np.ndarray,
 def paired_pct_change(base: np.ndarray, post: np.ndarray) -> Callable[[np.ndarray], np.ndarray]:
     """bootstrap_ci statistic: 100 * (Σ post − Σ base) / Σ base over each row of resampled windows."""
     return lambda ix: 100 * (post[ix].sum(1) - base[ix].sum(1)) / base[ix].sum(1)
+
+
+def stratified_mean_ci(stats: list[Callable[[np.ndarray], np.ndarray]], idxs: list[np.ndarray],
+                       level: float = 0.95) -> tuple[float, float, float]:
+    """(point, lo, hi) of the mean over strata (corpora) of a per-stratum window statistic.
+
+    Windows are resampled independently within each stratum: stats[c] maps an (k, n_c) index matrix to
+    k values and idxs[c] is that stratum's (n_boot, n_c) resample; every stratum needs the same n_boot.
+    The point estimate is the mean of each statistic on its identity resample.
+    """
+    point = float(np.mean([s(np.arange(ix.shape[1])[None, :])[0] for s, ix in zip(stats, idxs, strict=True)]))
+    rows = np.mean([s(ix) for s, ix in zip(stats, idxs, strict=True)], axis=0)
+    a = 100.0 * level
+    lo, hi = np.percentile(rows, [(100.0 - a) / 2, (100.0 + a) / 2])
+    return point, float(lo), float(hi)

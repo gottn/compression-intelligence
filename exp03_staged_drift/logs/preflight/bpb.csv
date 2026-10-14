@@ -1,0 +1,2 @@
+model,pair,role,condition,corpus,bytes,chars,tokens,total_bits,bpb,bpc,wall_s,tokens_per_byte,bits_per_token,n_windows,window,dtype,doc_start,family,stage,parent,doc_start_id,ids_sha1,gpu,torch
+Qwen/Qwen2.5-0.5B,qwen2.5-0.5b,base,raw,enwik8_ctrl,100000,99504,30521,83937.082,0.83937,0.84355,9.8,0.30521,2.75014,30,1024,float16,<|endoftext|>,qwen2.5-0.5b,base,,151643,4a4d7080ae27f77a,mps,2.14.1

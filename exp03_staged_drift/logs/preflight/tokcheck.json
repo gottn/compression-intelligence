@@ -1,0 +1,452 @@
+{
+ "corpora": {
+  "wiki2026": {
+   "bytes": 101843,
+   "chars": 101589
+  },
+  "arxiv2026": {
+   "bytes": 100041,
+   "chars": 99872
+  },
+  "gutenberg2026": {
+   "bytes": 106023,
+   "chars": 104188
+  },
+  "enwik8_ctrl": {
+   "bytes": 100000,
+   "chars": 99504
+  }
+ },
+ "groups": {
+  "olmo2": {
+   "models": {
+    "allenai/OLMo-2-0425-1B": {
+     "vocab": 100278,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 100257,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 21633,
+      "arxiv2026": 20620,
+      "gutenberg2026": 24634,
+      "enwik8_ctrl": 29255
+     },
+     "ids_sha1": {
+      "wiki2026": "2cfc9ea828a424ec",
+      "arxiv2026": "7cc08b4080a71757",
+      "gutenberg2026": "834137708d0d344c",
+      "enwik8_ctrl": "22d341f774e53dfa"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "allenai/OLMo-2-0425-1B-SFT": {
+     "vocab": 100278,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 100257,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 21633,
+      "arxiv2026": 20620,
+      "gutenberg2026": 24634,
+      "enwik8_ctrl": 29255
+     },
+     "ids_sha1": {
+      "wiki2026": "2cfc9ea828a424ec",
+      "arxiv2026": "7cc08b4080a71757",
+      "gutenberg2026": "834137708d0d344c",
+      "enwik8_ctrl": "22d341f774e53dfa"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "allenai/OLMo-2-0425-1B-DPO": {
+     "vocab": 100278,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 100257,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 21633,
+      "arxiv2026": 20620,
+      "gutenberg2026": 24634,
+      "enwik8_ctrl": 29255
+     },
+     "ids_sha1": {
+      "wiki2026": "2cfc9ea828a424ec",
+      "arxiv2026": "7cc08b4080a71757",
+      "gutenberg2026": "834137708d0d344c",
+      "enwik8_ctrl": "22d341f774e53dfa"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "allenai/OLMo-2-0425-1B-Instruct": {
+     "vocab": 100278,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 100257,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 21633,
+      "arxiv2026": 20620,
+      "gutenberg2026": 24634,
+      "enwik8_ctrl": 29255
+     },
+     "ids_sha1": {
+      "wiki2026": "2cfc9ea828a424ec",
+      "arxiv2026": "7cc08b4080a71757",
+      "gutenberg2026": "834137708d0d344c",
+      "enwik8_ctrl": "22d341f774e53dfa"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    }
+   },
+   "all_identical": true
+  },
+  "qwen2.5": {
+   "models": {
+    "Qwen/Qwen2.5-0.5B": {
+     "vocab": 151665,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 151643,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 22435,
+      "arxiv2026": 20702,
+      "gutenberg2026": 24979,
+      "enwik8_ctrl": 30521
+     },
+     "ids_sha1": {
+      "wiki2026": "150db86f78b65b1f",
+      "arxiv2026": "371fffe8f4a97f17",
+      "gutenberg2026": "444d022c713971e5",
+      "enwik8_ctrl": "4a4d7080ae27f77a"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "Qwen/Qwen2.5-0.5B-Instruct": {
+     "vocab": 151665,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 151643,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 22435,
+      "arxiv2026": 20702,
+      "gutenberg2026": 24979,
+      "enwik8_ctrl": 30521
+     },
+     "ids_sha1": {
+      "wiki2026": "150db86f78b65b1f",
+      "arxiv2026": "371fffe8f4a97f17",
+      "gutenberg2026": "444d022c713971e5",
+      "enwik8_ctrl": "4a4d7080ae27f77a"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "hkust-nlp/Qwen-2.5-0.5B-SimpleRL-Zoo": {
+     "vocab": 151665,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 151643,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 22435,
+      "arxiv2026": 20702,
+      "gutenberg2026": 24979,
+      "enwik8_ctrl": 30521
+     },
+     "ids_sha1": {
+      "wiki2026": "150db86f78b65b1f",
+      "arxiv2026": "371fffe8f4a97f17",
+      "gutenberg2026": "444d022c713971e5",
+      "enwik8_ctrl": "4a4d7080ae27f77a"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "Qwen/Qwen2.5-1.5B": {
+     "vocab": 151665,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 151643,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 22435,
+      "arxiv2026": 20702,
+      "gutenberg2026": 24979,
+      "enwik8_ctrl": 30521
+     },
+     "ids_sha1": {
+      "wiki2026": "150db86f78b65b1f",
+      "arxiv2026": "371fffe8f4a97f17",
+      "gutenberg2026": "444d022c713971e5",
+      "enwik8_ctrl": "4a4d7080ae27f77a"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "Qwen/Qwen2.5-1.5B-Instruct": {
+     "vocab": 151665,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 151643,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 22435,
+      "arxiv2026": 20702,
+      "gutenberg2026": 24979,
+      "enwik8_ctrl": 30521
+     },
+     "ids_sha1": {
+      "wiki2026": "150db86f78b65b1f",
+      "arxiv2026": "371fffe8f4a97f17",
+      "gutenberg2026": "444d022c713971e5",
+      "enwik8_ctrl": "4a4d7080ae27f77a"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "hkust-nlp/Qwen-2.5-1.5B-SimpleRL-Zoo": {
+     "vocab": 151665,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 151643,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 22435,
+      "arxiv2026": 20702,
+      "gutenberg2026": 24979,
+      "enwik8_ctrl": 30521
+     },
+     "ids_sha1": {
+      "wiki2026": "150db86f78b65b1f",
+      "arxiv2026": "371fffe8f4a97f17",
+      "gutenberg2026": "444d022c713971e5",
+      "enwik8_ctrl": "4a4d7080ae27f77a"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "Qwen/Qwen2.5-Math-1.5B": {
+     "vocab": 151665,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 151643,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 22435,
+      "arxiv2026": 20702,
+      "gutenberg2026": 24979,
+      "enwik8_ctrl": 30521
+     },
+     "ids_sha1": {
+      "wiki2026": "150db86f78b65b1f",
+      "arxiv2026": "371fffe8f4a97f17",
+      "gutenberg2026": "444d022c713971e5",
+      "enwik8_ctrl": "4a4d7080ae27f77a"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B": {
+     "vocab": 151665,
+     "doc_start": "<｜begin▁of▁sentence｜>",
+     "doc_start_id": 151646,
+     "adds_bos": true,
+     "tokens": {
+      "wiki2026": 22435,
+      "arxiv2026": 20702,
+      "gutenberg2026": 24979,
+      "enwik8_ctrl": 30521
+     },
+     "ids_sha1": {
+      "wiki2026": "150db86f78b65b1f",
+      "arxiv2026": "371fffe8f4a97f17",
+      "gutenberg2026": "444d022c713971e5",
+      "enwik8_ctrl": "4a4d7080ae27f77a"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "Qwen/Qwen2.5-3B": {
+     "vocab": 151665,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 151643,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 22435,
+      "arxiv2026": 20702,
+      "gutenberg2026": 24979,
+      "enwik8_ctrl": 30521
+     },
+     "ids_sha1": {
+      "wiki2026": "150db86f78b65b1f",
+      "arxiv2026": "371fffe8f4a97f17",
+      "gutenberg2026": "444d022c713971e5",
+      "enwik8_ctrl": "4a4d7080ae27f77a"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    },
+    "Qwen/Qwen2.5-3B-Instruct": {
+     "vocab": 151665,
+     "doc_start": "<|endoftext|>",
+     "doc_start_id": 151643,
+     "adds_bos": false,
+     "tokens": {
+      "wiki2026": 22435,
+      "arxiv2026": 20702,
+      "gutenberg2026": 24979,
+      "enwik8_ctrl": 30521
+     },
+     "ids_sha1": {
+      "wiki2026": "150db86f78b65b1f",
+      "arxiv2026": "371fffe8f4a97f17",
+      "gutenberg2026": "444d022c713971e5",
+      "enwik8_ctrl": "4a4d7080ae27f77a"
+     },
+     "roundtrip": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     },
+     "identical_to_first": {
+      "wiki2026": true,
+      "arxiv2026": true,
+      "gutenberg2026": true,
+      "enwik8_ctrl": true
+     }
+    }
+   },
+   "all_identical": true
+  }
+ }
+}
