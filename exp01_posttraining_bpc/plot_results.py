@@ -11,8 +11,8 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-import pandas as pd  # noqa: E402
+import matplotlib.pyplot as plt
+import pandas as pd
 
 PAIR_ORDER = ["qwen2.5", "qwen3", "smollm2", "qwen2.5-math"]
 PAIR_LABEL = {"qwen2.5": "Qwen2.5-1.5B\n→ Instruct", "qwen3": "Qwen3-1.7B-Base\n→ Qwen3-1.7B (post)",
@@ -85,7 +85,7 @@ def plot(t: pd.DataFrame, path: Path) -> None:
     fig, axes = plt.subplots(1, len(corpora), figsize=(4.2 * len(corpora), 4.6), sharey=True, facecolor=SURFACE)
     axes = [axes] if len(corpora) == 1 else axes
     w = 0.2
-    for ax, corpus in zip(axes, corpora):
+    for ax, corpus in zip(axes, corpora, strict=True):
         sub = t[t.corpus == corpus].set_index("pair").reindex(PAIR_ORDER)
         x = range(len(PAIR_ORDER))
         specs = [("base_raw", -1.5, BASE_C, None), ("base_chat", -0.5, BASE_C, "///"),
@@ -134,7 +134,7 @@ def sanity_markdown(sanity: dict, checks: list[dict], tok: dict, audit: list[dic
     out += ["", "## (b) labels-loss equality, (c) determinism, (d) fp16 vs fp32 — window 0 of the first corpus, every model", "",
             "| model | window tokens | fp32 bits | fp16 bits | fp16 vs fp32 rel | repeat fp16 bits | deterministic | HF loss×n bits | rel diff to HF | dtype used |",
             "|---|---|---|---|---|---|---|---|---|---|"]
-    for c in [wc] + checks:
+    for c in [wc, *checks]:
         if "error" in c:
             out.append(f"| {c['model']} | ERROR: {c['error'][:200]} |||||||||")
             continue
@@ -177,11 +177,11 @@ def main() -> None:
     abl = res / "ablation_docstart.csv"
     (res / "summary.md").write_text(summary_markdown(t, df) +
                                     (docstart_markdown(df, pd.read_csv(abl)) if abl.exists() else ""))
-    checks = [json.loads(l) for l in (res / "model_checks.jsonl").read_text().splitlines() if l.strip()]
+    checks = [json.loads(ln) for ln in (res / "model_checks.jsonl").read_text().splitlines() if ln.strip()]
     sanity = json.loads((res / "sanity.json").read_text()) if (res / "sanity.json").exists() else {}
     tok = json.loads((res / "tokcheck.json").read_text()) if (res / "tokcheck.json").exists() else {}
     ap = res / "fp32_audit.jsonl"
-    audit = [json.loads(l) for l in ap.read_text().splitlines() if l.strip()] if ap.exists() else []
+    audit = [json.loads(ln) for ln in ap.read_text().splitlines() if ln.strip()] if ap.exists() else []
     (res / "sanity.md").write_text(sanity_markdown(sanity, checks, tok, audit))
     print((res / "summary.md").read_text()[:4000])
 

@@ -9,32 +9,18 @@ Writes results/positions.csv and results/positions.md.
 """
 from __future__ import annotations
 
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # repo root, for `cilab`
 
 import numpy as np
 import pandas as pd
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
-from score_bpb import encode, load_corpora, make_windows
-
-BUCKETS = ((0, 1), (1, 16), (16, 128), (128, 10**9))
-
-
-def positions(tok, text: str, window: int, condition: str) -> np.ndarray:
-    wins = make_windows(tok, encode(tok, text), text, window)
-    if condition == "raw":
-        return np.concatenate([np.arange(e - b) for b, e, _ in wins])
-    return np.concatenate([np.arange(len(encode(tok, s))) for _, _, s in wins])
-
-
-def bucket_stats(bits: np.ndarray, pos: np.ndarray) -> dict:
-    out = {}
-    for lo, hi in BUCKETS:
-        m = (pos >= lo) & (pos < hi)
-        name = f"pos{lo}" + (f"-{hi - 1}" if hi < 10**9 else "+")
-        out[f"bpt_{name}"] = float(bits[m].mean()) if m.any() else float("nan")
-        out[f"share_bits_{name}"] = float(bits[m].sum() / bits.sum())
-    return out
+from cilab.io import load_corpora, load_token_bits
+from cilab.stats import bootstrap_ci, bucket_stats, paired_pct_change, window_sums
+from cilab.text import window_positions
 
 
 def main() -> None:
@@ -43,12 +29,11 @@ def main() -> None:
     corpora = load_corpora(Path("data"), sorted(df.corpus.unique()), None)
     rows, toks = [], {}
     for r in df.itertuples():
-        f = res / "tokens" / f"{r.model.replace('/', '__')}__{r.condition}__{r.corpus}.npy"
-        bits = np.load(f).astype(np.float64)
+        bits = load_token_bits(res, r.model, r.condition, r.corpus)
         tok = toks.setdefault(r.model, AutoTokenizer.from_pretrained(r.model))
-        pos = positions(tok, corpora[r.corpus], int(r.window), r.condition)
+        pos = window_positions(tok, corpora[r.corpus], int(r.window), r.condition)
         if pos.size != bits.size:
-            raise ValueError(f"{f.name}: {pos.size} positions vs {bits.size} bits")
+            raise ValueError(f"{r.model} {r.condition} {r.corpus}: {pos.size} positions vs {bits.size} bits")
         rows.append({"model": r.model, "pair": r.pair, "role": r.role, "condition": r.condition,
                      "corpus": r.corpus, "bpb": r.bpb, **bucket_stats(bits, pos)})
     p = pd.DataFrame(rows)
@@ -87,22 +72,21 @@ def concentration_lines(df: pd.DataFrame, res: Path) -> list[str]:
             p = g[g.role == "post"].iloc[0]
         except IndexError:
             continue
-        load = lambda r: np.load(res / "tokens" / f"{r.model.replace('/', '__')}__raw__{r.corpus}.npy").astype(np.float64)  # noqa: E731
-        d = load(p) - load(b)
+        base_bits = load_token_bits(res, b.model, "raw", b.corpus)
+        d = load_token_bits(res, p.model, "raw", p.corpus) - base_bits
         top = np.sort(d)[::-1][: max(1, d.size // 100)]
-        out.append(f"| {pair} | {corpus} | {d.sum():+.0f} | {100 * d.sum() / load(b).sum():+.1f}% | "
+        out.append(f"| {pair} | {corpus} | {d.sum():+.0f} | {100 * d.sum() / base_bits.sum():+.1f}% | "
                    f"{100 * (d > 0).mean():.0f}% | {np.median(d):+.3f} | {top.sum() / d.sum():.2f} | "
                    f"{d[d > 10].sum() / d.sum():.2f} |")
     return out
 
 
-def window_sums(bits: np.ndarray, pos: np.ndarray) -> np.ndarray:
-    starts = np.flatnonzero(pos == 0)
-    return np.add.reduceat(bits, starts)
+def bootstrap_lines(df: pd.DataFrame, res: Path, corpora: dict[str, str],
+                    toks: dict[str, PreTrainedTokenizerBase], n_boot: int = 5000) -> list[str]:
+    """Paired bootstrap over windows (same windows for base and post) -> 95% CI of Δbpb %.
 
-
-def bootstrap_lines(df: pd.DataFrame, res: Path, corpora: dict, toks: dict, n_boot: int = 5000) -> list[str]:
-    """Paired bootstrap over windows (same windows for base and post) -> 95% CI of Δbpb %."""
+    One generator (seed 0) is consumed in table order, so every row's resample differs; kept as in the
+    original exp01 run so results/positions.md stays byte-identical."""
     rng = np.random.default_rng(0)
     out = ["", "# Uncertainty: paired bootstrap over windows (5000 resamples, seed 0)", "",
            "Resamples whole windows (the same windows for base and post), so the CI reflects text-sample "
@@ -115,13 +99,13 @@ def bootstrap_lines(df: pd.DataFrame, res: Path, corpora: dict, toks: dict, n_bo
             if b.empty or p.empty:
                 continue
             b, p = b.iloc[0], p.iloc[0]
-            load = lambda r: np.load(res / "tokens" / f"{r.model.replace('/', '__')}__{r.condition}__{r.corpus}.npy").astype(np.float64)  # noqa: E731
-            wb = window_sums(load(b), positions(toks[b.model], corpora[corpus], int(b.window), b.condition))
-            wp = window_sums(load(p), positions(toks[p.model], corpora[corpus], int(p.window), p.condition))
+            wb = window_sums(load_token_bits(res, b.model, b.condition, b.corpus),
+                             window_positions(toks[b.model], corpora[corpus], int(b.window), b.condition))
+            wp = window_sums(load_token_bits(res, p.model, p.condition, p.corpus),
+                             window_positions(toks[p.model], corpora[corpus], int(p.window), p.condition))
             idx = rng.integers(0, wb.size, size=(n_boot, wb.size))
-            d = 100 * (wp[idx].sum(1) - wb[idx].sum(1)) / wb[idx].sum(1)
-            lo, hi = np.percentile(d, [2.5, 97.5])
-            out.append(f"| {pair} | {corpus} | {pc} vs {bc} | {wb.size} | {100 * (wp.sum() - wb.sum()) / wb.sum():+.1f}% | "
+            point, lo, hi = bootstrap_ci(paired_pct_change(wb, wp), idx)
+            out.append(f"| {pair} | {corpus} | {pc} vs {bc} | {wb.size} | {point:+.1f}% | "
                        f"[{lo:+.1f}%, {hi:+.1f}%] |")
     return out
 

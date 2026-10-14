@@ -22,10 +22,9 @@ from __future__ import annotations
 
 import argparse
 import html as htmllib
-import sys
-import io
 import json
 import re
+import sys
 import time
 import urllib.parse
 import urllib.request
@@ -105,10 +104,10 @@ def clean_wiki_extract(text: str) -> str:
         out.append(ln.rstrip())
     # drop headings immediately followed by another heading or end (empty sections)
     kept: list[str] = []
-    nonblank = [l for l in out]
+    nonblank = list(out)
     for i, ln in enumerate(nonblank):
         if re.match(r"^=+.*=+$", ln.strip()):
-            nxt = next((l for l in nonblank[i + 1:] if l.strip()), None)
+            nxt = next((x for x in nonblank[i + 1:] if x.strip()), None)
             if nxt is None or re.match(r"^=+.*=+$", nxt.strip()):
                 continue
         kept.append(ln)
@@ -162,10 +161,10 @@ def parse_arxiv_feed(xml_bytes: bytes) -> list[dict]:
 
 def interleave(*lists: list) -> list:
     out = []
-    for i in range(max(len(l) for l in lists)):
-        for l in lists:
-            if i < len(l):
-                out.append(l[i])
+    for i in range(max(len(lst) for lst in lists)):
+        for lst in lists:
+            if i < len(lst):
+                out.append(lst[i])
     return out
 
 

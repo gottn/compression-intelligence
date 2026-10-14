@@ -18,180 +18,48 @@ Mechanics (identical for every model, see RESULTS.md):
     (Qwen3: enable_thinking=False) + tokens(window_text). Only the window_text tokens are scored.
     bytes are identical to RAW because the window texts concatenate to the corpus.
   * -log2 p computed from float32 log-softmax of the logits.
-No globals besides immutable constants; model/tokenizer/device are passed explicitly.
+No globals besides immutable constants; model/tokenizer/device are passed explicitly. The shared
+helpers (windows, doc-start, scoring, CSV I/O) live in ../cilab.
 """
 from __future__ import annotations
 
 import argparse
-import csv
-import gc
 import json
-import math
 import os
 import subprocess
 import sys
 import time
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # repo root, for `cilab`
+
 import numpy as np
 import torch
-import torch.nn.functional as F
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
-PAIRS = (
-    ("qwen2.5", "Qwen/Qwen2.5-1.5B", "Qwen/Qwen2.5-1.5B-Instruct"),
-    ("qwen3", "Qwen/Qwen3-1.7B-Base", "Qwen/Qwen3-1.7B"),
-    ("smollm2", "HuggingFaceTB/SmolLM2-1.7B", "HuggingFaceTB/SmolLM2-1.7B-Instruct"),
-    ("qwen2.5-math", "Qwen/Qwen2.5-Math-1.5B", "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"),
+from cilab.io import append_rows, existing_keys, load_corpora, read_tokenizer_config, token_bits_path
+from cilab.pairs import CORPORA, PAIRS, model_roles
+from cilab.score import (
+    free_model,
+    hf_loss_bits,
+    load_model,
+    pick_device,
+    score_chat,
+    score_raw,
+    score_tokens,
+    summarize,
 )
-CORPORA = ("wiki2026", "arxiv2026", "gutenberg2026", "enwik8_ctrl")
+from cilab.text import Window, chat_prefix, decode, doc_start_token, encode, make_windows
+
 CSV_COLS = ("model", "pair", "role", "condition", "corpus", "bytes", "chars", "tokens", "total_bits",
             "bpb", "bpc", "wall_s", "tokens_per_byte", "bits_per_token", "n_windows", "window", "dtype",
             "doc_start")
-CHAT_USER = "Continue the text."
-PLACEHOLDER = "@@PLACEHOLDER@@"
-LN2 = math.log(2.0)
-
-
-# ----------------------------------------------------------------------------- pure helpers
-def model_roles(pairs=PAIRS) -> list[dict]:
-    out = []
-    for pair, base, post in pairs:
-        out += [{"model": base, "pair": pair, "role": "base"}, {"model": post, "pair": pair, "role": "post"}]
-    return out
-
-
-def load_corpora(data_dir: Path, names, max_bytes: int | None) -> dict[str, str]:
-    out = {}
-    for n in names:
-        t = (data_dir / f"{n}.txt").read_text(encoding="utf-8")
-        if max_bytes:
-            t = t.encode("utf-8")[:max_bytes].decode("utf-8", errors="ignore")
-        out[n] = t
-    return out
-
-
-def adds_bos(model_dir: str, tok) -> bool:
-    """True if the tokenizer config asks for a BOS in front of every sequence."""
-    cfg_path = Path(model_dir) / "tokenizer_config.json"
-    cfg = json.loads(cfg_path.read_text()) if cfg_path.exists() else {}
-    return bool(cfg.get("add_bos_token")) and tok.bos_token_id is not None
-
-
-def doc_start_token(tok, model_dir: str) -> tuple[int, str]:
-    if adds_bos(model_dir, tok):
-        return tok.bos_token_id, tok.bos_token
-    eot = tok.convert_tokens_to_ids("<|endoftext|>")
-    # compare by string, not against unk_token_id: SmolLM2-Instruct's unk token IS <|endoftext|> (id 0)
-    if eot is not None and tok.convert_ids_to_tokens(eot) == "<|endoftext|>":
-        return eot, "<|endoftext|>"
-    if tok.eos_token_id is not None:
-        return tok.eos_token_id, tok.eos_token
-    raise ValueError("no document-start token")
-
-
-def encode(tok, text: str) -> list[int]:
-    return tok(text, add_special_tokens=False)["input_ids"]
-
-
-def decode(tok, ids) -> str:
-    return tok.decode(ids, skip_special_tokens=False, clean_up_tokenization_spaces=False)
-
-
-def make_windows(tok, ids: list[int], text: str, size: int) -> list[tuple[int, int, str]]:
-    """Consecutive (start, end, text) windows of <= size tokens whose texts concatenate to `text`."""
-    wins, b, pos = [], 0, 0
-    while b < len(ids):
-        e = min(b + size, len(ids))
-        s = decode(tok, ids[b:e])
-        while e < len(ids) and not (text.startswith(s, pos) and not s.endswith("�")):
-            e -= 1
-            s = decode(tok, ids[b:e])
-        if e <= b or not text.startswith(s, pos):
-            raise ValueError(f"window {len(wins)} does not decode to a prefix of the remaining corpus")
-        wins.append((b, e, s))
-        pos += len(s)
-        b = e
-    if pos != len(text):
-        raise ValueError(f"windows cover {pos} of {len(text)} chars")
-    return wins
-
-
-def chat_prefix(tok, model_id: str) -> tuple[list[int], str] | None:
-    if tok.chat_template is None:
-        return None
-    kw = {"enable_thinking": False} if "Qwen3" in model_id else {}
-    msgs = [{"role": "user", "content": CHAT_USER}, {"role": "assistant", "content": PLACEHOLDER}]
-    rendered = tok.apply_chat_template(msgs, tokenize=False, **kw)
-    if rendered.count(PLACEHOLDER) != 1:
-        raise ValueError("placeholder not rendered exactly once")
-    pre = rendered.split(PLACEHOLDER)[0]
-    return encode(tok, pre), pre  # special-token strings in `pre` are parsed as special tokens
-
-
-def summarize(bits: np.ndarray, text: str, meta: dict) -> dict:
-    nbytes, nchars, ntok = len(text.encode("utf-8")), len(text), int(bits.size)
-    total = float(bits.sum(dtype=np.float64))
-    return {**meta, "bytes": nbytes, "chars": nchars, "tokens": ntok, "total_bits": round(total, 3),
-            "bpb": round(total / nbytes, 5), "bpc": round(total / nchars, 5),
-            "tokens_per_byte": round(ntok / nbytes, 5), "bits_per_token": round(total / ntok, 5)}
-
-
-# ----------------------------------------------------------------------------- model I/O
-def pick_device() -> str:
-    return "mps" if torch.backends.mps.is_available() else "cpu"
-
-
-def load_model(model_id: str, dtype: torch.dtype, device: str):
-    m = AutoModelForCausalLM.from_pretrained(model_id, dtype=dtype)
-    return m.to(device).eval()
-
-
-def free_model(model) -> None:
-    del model
-    gc.collect()
-    if torch.backends.mps.is_available():
-        torch.mps.empty_cache()
-
-
-def model_dir(model_id: str) -> str:
-    from huggingface_hub import hf_hub_download
-    return str(Path(hf_hub_download(model_id, "tokenizer_config.json", local_files_only=True)).parent)
-
-
-@torch.no_grad()
-def score_tokens(model, input_ids: list[int], n_score: int, device: str) -> np.ndarray:
-    """-log2 p of the last n_score tokens of input_ids, each conditioned on everything before it."""
-    x = torch.tensor([input_ids], device=device)
-    logits = model(input_ids=x, use_cache=False).logits[0]
-    lo = len(input_ids) - n_score
-    pred = logits[lo - 1:-1].float()
-    nats = F.cross_entropy(pred, x[0, lo:], reduction="none")
-    return (nats / LN2).cpu().numpy().astype(np.float64)
-
-
-def score_raw(model, wins, ids, start_id: int, device: str) -> np.ndarray:
-    return np.concatenate([score_tokens(model, [start_id] + ids[b:e], e - b, device) for b, e, _ in wins])
-
-
-def score_chat(model, tok, wins, prefix_ids: list[int], device: str) -> np.ndarray:
-    out = []
-    for _, _, s in wins:
-        t = encode(tok, s)
-        out.append(score_tokens(model, prefix_ids + t, len(t), device))
-    return np.concatenate(out)
-
-
-@torch.no_grad()
-def hf_loss_bits(model, input_ids: list[int], device: str) -> float:
-    """Sum of bits implied by HF's own labels= loss (mean nats over len-1 shifted targets)."""
-    x = torch.tensor([input_ids], device=device)
-    loss = model(input_ids=x, labels=x, use_cache=False).loss.float().item()
-    return loss * (len(input_ids) - 1) / LN2
+KEY_COLS = ("model", "condition", "corpus")
 
 
 # ----------------------------------------------------------------------------- checks
-def fp32_reference_bits(model_id: str, seq: list[int], n_score: int, device: str, data_args: list[str]) -> float:
+def fp32_reference_bits(model_id: str, seq: list[int], n_score: int, device: str,
+                        data_args: list[str]) -> float:
     """fp32 bits for one window, computed in a SEPARATE process so the fp32 weights (up to 8 GB for
     Qwen3-1.7B) are guaranteed to be released before the fp16 copy is loaded (an in-process
     model.half() kept the fp32 copy alive on MPS -> 12 GB RSS and heavy swapping)."""
@@ -203,10 +71,11 @@ def fp32_reference_bits(model_id: str, seq: list[int], n_score: int, device: str
     return rec["fp32_bits"]
 
 
-def window_checks(model_id: str, tok, ids, wins, start_id: int, device: str, data_args: list[str]) -> dict:
+def window_checks(model_id: str, tok: PreTrainedTokenizerBase, ids: list[int], wins: list[Window],
+                  start_id: int, device: str, data_args: list[str]) -> dict:
     """(b) labels-loss equality, (c) determinism, (d) fp16 vs fp32 on window 0. Returns the fp16 model."""
     b, e, _ = wins[0]
-    seq = [start_id] + ids[b:e]
+    seq = [start_id, *ids[b:e]]
     fp32 = fp32_reference_bits(model_id, seq, e - b, device, data_args)
     model = load_model(model_id, torch.float16, device)
     fp16_a = score_tokens(model, seq, e - b, device).sum()
@@ -224,7 +93,7 @@ def window_checks(model_id: str, tok, ids, wins, start_id: int, device: str, dat
     return {"check": rec, "model": model}
 
 
-def cmd_docstart(args) -> None:
+def cmd_docstart(args: argparse.Namespace) -> None:
     """Ablation: RAW scoring with a plain-text doc-start ("\\n\\n" tokens) instead of a special token.
     One process per model; rows -> results/ablation_docstart.csv, bits -> results/ablation_tokens/."""
     specs = [s for s in model_roles() if not args.models or s["model"] in args.models]
@@ -248,36 +117,36 @@ def cmd_docstart(args) -> None:
         wins = make_windows(tok, ids, text, args.window)
         t0 = time.time()
         bits = np.concatenate([score_tokens(model, prefix + ids[b:e], e - b, device) for b, e, _ in wins])
-        np.save(out / "ablation_tokens" / f"{mid.replace('/', '__')}__raw_nl__{n}.npy", bits.astype(np.float32))
+        np.save(out / "ablation_tokens" / token_bits_path(out, mid, "raw_nl", n).name, bits.astype(np.float32))
         meta = {"model": mid, "pair": spec["pair"], "role": spec["role"], "condition": "raw_nl", "corpus": n,
                 "n_windows": len(wins), "window": args.window, "dtype": "float16", "doc_start": f"\\n\\n {prefix}"}
         rows.append({**summarize(bits, text, meta), "wall_s": round(time.time() - t0, 1)})
         print(json.dumps({k: rows[-1][k] for k in ("model", "corpus", "bpb")}), flush=True)
     free_model(model)
-    append_rows(out / "ablation_docstart.csv", rows)
+    append_rows(out / "ablation_docstart.csv", rows, CSV_COLS)
 
 
-def cmd_audit(args) -> None:
+def cmd_audit(args: argparse.Namespace) -> None:
     """Recompute selected windows in float32 (or --dtype) and compare with the saved fp16 per-token bits.
     Appends one JSON line per window to results/fp32_audit.jsonl."""
     mid, corpus, cond = args.models[0], args.corpora[0], args.condition
     dtype = {"float32": torch.float32, "bfloat16": torch.bfloat16, "float16": torch.float16}[args.dtype]
     text = load_corpora(Path(args.data), [corpus], args.max_bytes)[corpus]
     tok = AutoTokenizer.from_pretrained(mid)
-    start_id, _ = doc_start_token(tok, model_dir(mid))
+    start_id, _ = doc_start_token(tok, read_tokenizer_config(mid))
     ids = encode(tok, text)
     wins = make_windows(tok, ids, text, args.window)
     cp = chat_prefix(tok, mid) if cond == "chat" else None
     lens = [len(encode(tok, w[2])) if cond == "chat" else w[1] - w[0] for w in wins]
-    edges = np.cumsum([0] + lens)
-    saved = np.load(Path(args.results) / "tokens" / f"{mid.replace('/', '__')}__{cond}__{corpus}.npy").astype(np.float64)
+    edges = np.cumsum([0, *lens])
+    saved = np.load(token_bits_path(Path(args.results), mid, cond, corpus)).astype(np.float64)
     device = pick_device() if args.device == "auto" else args.device
     model = load_model(mid, dtype, device)
     targets = args.windows if args.windows else list(range(len(wins)))
     with (Path(args.results) / "fp32_audit.jsonl").open("a") as f:
         for k in targets:
             b, e, w = wins[k]
-            bits = (score_tokens(model, [start_id] + ids[b:e], e - b, device) if cond == "raw"
+            bits = (score_tokens(model, [start_id, *ids[b:e]], e - b, device) if cond == "raw"
                     else score_tokens(model, cp[0] + encode(tok, w), lens[k], device))
             old = saved[edges[k]:edges[k + 1]]
             rec = {"model": mid, "condition": cond, "corpus": corpus, "window": k, "dtype": args.dtype,
@@ -289,15 +158,15 @@ def cmd_audit(args) -> None:
             print(json.dumps(rec), flush=True)
 
 
-def cmd_fp32ref(args) -> None:
+def cmd_fp32ref(args: argparse.Namespace) -> None:
     """Child process: fp32 bits of window 0 of the first corpus for one model; prints one JSON line."""
     mid = args.models[0]
     text = load_corpora(Path(args.data), args.corpora[:1], args.max_bytes)[args.corpora[0]]
     tok = AutoTokenizer.from_pretrained(mid)
-    start_id, _ = doc_start_token(tok, model_dir(mid))
+    start_id, _ = doc_start_token(tok, read_tokenizer_config(mid))
     ids = encode(tok, text)
     b, e, _ = make_windows(tok, ids, text, args.window)[0]
-    seq = [start_id] + ids[b:e]
+    seq = [start_id, *ids[b:e]]
     device = pick_device()
     model = load_model(mid, torch.float32, device)
     bits = float(score_tokens(model, seq, e - b, device).sum())
@@ -305,29 +174,11 @@ def cmd_fp32ref(args) -> None:
 
 
 # ----------------------------------------------------------------------------- runners
-def existing_keys(csv_path: Path) -> set[tuple]:
-    if not csv_path.exists():
-        return set()
-    with csv_path.open() as f:
-        return {(r["model"], r["condition"], r["corpus"]) for r in csv.DictReader(f)}
-
-
-def append_rows(csv_path: Path, rows: list[dict]) -> None:
-    new = not csv_path.exists()
-    with csv_path.open("a", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=CSV_COLS)
-        if new:
-            w.writeheader()
-        for r in rows:
-            w.writerow({k: r.get(k, "") for k in CSV_COLS})
-
-
-def run_one_model(spec: dict, corpora: dict[str, str], window: int, out_dir: Path, device: str,
-                  done: set, data_args: list[str]) -> tuple[list[dict], dict]:
+def run_one_model(spec: dict[str, str], corpora: dict[str, str], window: int, out_dir: Path, device: str,
+                  done: set[tuple[str, ...]], data_args: list[str]) -> tuple[list[dict], dict]:
     mid = spec["model"]
-    mdir = model_dir(mid)
     tok = AutoTokenizer.from_pretrained(mid)
-    start_id, start_str = doc_start_token(tok, mdir)
+    start_id, start_str = doc_start_token(tok, read_tokenizer_config(mid))
     toks = {n: encode(tok, t) for n, t in corpora.items()}
     wins = {n: make_windows(tok, toks[n], corpora[n], window) for n in corpora}
     first = next(iter(corpora))
@@ -357,8 +208,8 @@ def run_one_model(spec: dict, corpora: dict[str, str], window: int, out_dir: Pat
                 raise FloatingPointError(f"non-finite bits for {mid} {cond} {n}")
             tdir = out_dir / "tokens"
             tdir.mkdir(exist_ok=True)
-            np.save(tdir / f"{mid.replace('/', '__')}__{cond}__{n}.npy", bits.astype(np.float32))
-            append_rows(out_dir / "bpb.csv", [row])
+            np.save(token_bits_path(out_dir, mid, cond, n), bits.astype(np.float32))
+            append_rows(out_dir / "bpb.csv", [row], CSV_COLS)
             rows.append(row)
             print(json.dumps({k: row[k] for k in ("model", "condition", "corpus", "tokens", "bpb", "wall_s")}),
                   flush=True)
@@ -366,12 +217,12 @@ def run_one_model(spec: dict, corpora: dict[str, str], window: int, out_dir: Pat
     return rows, check
 
 
-def data_args_of(args) -> list[str]:
+def data_args_of(args: argparse.Namespace) -> list[str]:
     a = ["--corpora", *args.corpora, "--data", args.data, "--window", str(args.window)]
     return a + (["--max-bytes", str(args.max_bytes)] if args.max_bytes else [])
 
 
-def cmd_run(args) -> None:
+def cmd_run(args: argparse.Namespace) -> None:
     out = Path(args.results)
     out.mkdir(exist_ok=True)
     specs = [s for s in model_roles() if not args.models or s["model"] in args.models]
@@ -384,7 +235,7 @@ def cmd_run(args) -> None:
     corpora = load_corpora(Path(args.data), args.corpora, args.max_bytes)
     device = pick_device()
     for spec in specs:
-        done = existing_keys(out / "bpb.csv")
+        done = existing_keys(out / "bpb.csv", KEY_COLS)
         conds = ["raw"] + (["chat"] if AutoTokenizer.from_pretrained(spec["model"]).chat_template else [])
         if all((spec["model"], c, n) in done for c in conds for n in corpora):
             continue
@@ -399,7 +250,7 @@ def cmd_run(args) -> None:
         print(json.dumps({k: v for k, v in check.items() if k != "chat_prefix"}), flush=True)
 
 
-def cmd_tokcheck(args) -> None:
+def cmd_tokcheck(args: argparse.Namespace) -> None:
     corpora = load_corpora(Path(args.data), args.corpora, args.max_bytes)
     res = {"corpora": {}, "pairs": {}, "special_strings_in_corpora": {}}
     for n, t in corpora.items():
@@ -421,13 +272,13 @@ def cmd_tokcheck(args) -> None:
     print(json.dumps(res, indent=1, ensure_ascii=False))
 
 
-def cmd_sanity(args) -> None:
+def cmd_sanity(args: argparse.Namespace) -> None:
     """(a) GPT-2 bpb on enwik8 control; (b,c,d) on GPT-2 window 0; prefix ablation for R1-distill."""
     device = pick_device()
     corpora = load_corpora(Path(args.data), ["enwik8_ctrl", "arxiv2026"], args.max_bytes)
     mid = "openai-community/gpt2"
     tok = AutoTokenizer.from_pretrained(mid)
-    start_id, start_str = doc_start_token(tok, model_dir(mid))
+    start_id, start_str = doc_start_token(tok, read_tokenizer_config(mid))
     window = 1023  # GPT-2 has 1024 positions; one is the doc-start token
     res = {"device": device, "torch": torch.__version__}
     ids = encode(tok, corpora["enwik8_ctrl"])
@@ -480,7 +331,9 @@ def main() -> None:
     ap.add_argument("--max-bytes", type=int, default=None, help="cut every corpus to this many bytes")
     args = ap.parse_args()
     torch.manual_seed(0)
-    {"run": cmd_run, "sanity": cmd_sanity, "tokcheck": cmd_tokcheck, "fp32ref": cmd_fp32ref, "audit": cmd_audit, "docstart": cmd_docstart}[args.cmd](args)
+    cmds = {"run": cmd_run, "sanity": cmd_sanity, "tokcheck": cmd_tokcheck, "fp32ref": cmd_fp32ref,
+            "audit": cmd_audit, "docstart": cmd_docstart}
+    cmds[args.cmd](args)
 
 
 if __name__ == "__main__":
