@@ -1,0 +1,4 @@
+# exp04: lm-evaluation-harness, installed ONLY by infra/slurm/exp04_setup.sbatch (never by array tasks, so they
+# cannot race on pip). 0.4.13 is the newest release on PyPI on 2026-10-14 (uploaded 2026-08-31); the job writes
+# the full resolved set to $CI_OUT/pip_freeze.txt, which is copied to exp04_benchmarks/logs/.
+lm-eval[hf,ifeval]==0.4.13
