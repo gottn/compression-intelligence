@@ -1,0 +1,358 @@
+<title>Project Overview Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: an engineering drawing sheet. Rulers on four sides, six lettered panels in a 3x2 grid, title block bottom-right. */
+:root{
+  --paper:#eeeeea; --sheet:#fdfdfb; --ink:#1b1f26; --ink2:#454c5a; --muted:#767d8b;
+  --line:#1b1f26; --rule:#d6d9df; --tint:#edf2fb; --tint2:#f4f5f7;
+  --ann:#1f5fc4; --bad:#b93a2b; --good:#1e7f45; --warn:#9a6a12;
+  --bar:#d9731f; --bar2:#2a62c9; --track:#e6e8ec;
+  --badge-bg:#1b1f26; --badge-fg:#ffffff;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f1114; --sheet:#181b20; --ink:#e6e8ec; --ink2:#b9bec8; --muted:#8a919d;
+    --line:#cfd3da; --rule:#333942; --tint:#1e2a3d; --tint2:#20242b;
+    --ann:#7aa6ef; --bad:#ef8a7c; --good:#5fc98a; --warn:#e0b35a;
+    --bar:#c9752e; --bar2:#5b8ee6; --track:#2a2f37;
+    --badge-bg:#e6e8ec; --badge-fg:#181b20;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f1114; --sheet:#181b20; --ink:#e6e8ec; --ink2:#b9bec8; --muted:#8a919d;
+  --line:#cfd3da; --rule:#333942; --tint:#1e2a3d; --tint2:#20242b;
+  --ann:#7aa6ef; --bad:#ef8a7c; --good:#5fc98a; --warn:#e0b35a;
+  --bar:#c9752e; --bar2:#5b8ee6; --track:#2a2f37;
+  --badge-bg:#e6e8ec; --badge-fg:#181b20;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:13px;line-height:1.45;padding-block:20px;padding-inline:16px;margin:0}
+.sheet{max-width:1560px;margin:0 auto;background:var(--sheet);border:1.5px solid var(--line);display:grid;grid-template-columns:22px minmax(0,1fr) 22px;grid-template-rows:22px auto 22px;font-variant-numeric:tabular-nums}
+.ruler{display:flex;font:11px var(--mono);color:var(--muted)}
+.ruler.h{flex-direction:row}
+.ruler.v{flex-direction:column}
+.ruler span{flex:1;display:grid;place-items:center;border-color:var(--rule);border-style:solid;border-width:0}
+.ruler.h span{border-right-width:1px}
+.ruler.h span:last-child{border-right-width:0}
+.ruler.v span{border-bottom-width:1px}
+.ruler.v span:last-child{border-bottom-width:0}
+.ruler.top{border-bottom:1.5px solid var(--line)}
+.ruler.bottom{border-top:1.5px solid var(--line)}
+.ruler.left{border-right:1.5px solid var(--line)}
+.ruler.right{border-left:1.5px solid var(--line)}
+.corner{border-color:var(--line);border-style:solid;border-width:0}
+.c-tl{border-right-width:1.5px;border-bottom-width:1.5px}
+.c-tr{border-left-width:1.5px;border-bottom-width:1.5px}
+.c-bl{border-right-width:1.5px;border-top-width:1.5px}
+.c-br{border-left-width:1.5px;border-top-width:1.5px}
+.frame{padding:18px;display:grid;gap:18px;grid-template-columns:1.05fr 1.3fr 0.85fr;grid-template-areas:"a b e" "c d d" "f d d"}
+.panel{border:1.5px solid var(--line);background:var(--sheet);display:flex;flex-direction:column;min-width:0}
+.pa{grid-area:a}.pb{grid-area:b}.pc{grid-area:c}.pd{grid-area:d}.pe{grid-area:e}.pf{grid-area:f}
+.ph{display:flex;align-items:center;gap:10px;border-bottom:1.5px solid var(--line);padding-right:10px}
+.badge{width:30px;height:30px;flex:none;background:var(--badge-bg);color:var(--badge-fg);display:grid;place-items:center;font:600 14px var(--sans)}
+.ph h2{margin:0;flex:1;font:600 15px/1.2 var(--sans);text-wrap:balance}
+.ph .cap{font:11px var(--mono);color:var(--muted);white-space:nowrap}
+.pbody{padding:12px 12px 10px;display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+.foot{margin-top:auto;padding-top:8px;border-top:1px solid var(--rule);font:italic 11px/1.4 var(--sans);color:var(--muted)}
+.foot b{font-style:normal;font-weight:600;color:var(--ink2)}
+.kw{font-family:var(--mono);font-weight:500}
+/* A: tree */
+.tree{display:flex;flex-direction:column;gap:0;align-items:stretch}
+.root{align-self:center;background:var(--tint);border:1.5px solid var(--line);padding:8px 16px;text-align:center;min-width:60%}
+.root b{display:block;font-size:14px}
+.root span{font-size:11px;color:var(--ink2)}
+.stem{width:1.5px;height:14px;background:var(--line);align-self:center}
+.branches{display:grid;grid-template-columns:1fr 1fr;gap:14px;position:relative;padding-top:14px}
+.branches::before{content:"";position:absolute;top:0;left:25%;right:25%;height:1.5px;background:var(--line)}
+.branch{position:relative;min-width:0}
+.branch::before{content:"";position:absolute;top:-14px;left:50%;width:1.5px;height:14px;background:var(--line)}
+.bhead{border:1.5px solid var(--line);padding:5px 8px;font-weight:600;font-size:12px;text-align:center}
+.bhead small{display:block;font-weight:400;color:var(--ink2);font-size:11px}
+.steps{list-style:none;margin:0;padding:8px 0 0 10px;border-left:1px solid var(--ink2);margin-left:10px}
+.steps li{position:relative;display:grid;grid-template-columns:44px 1fr;gap:6px;padding:3px 0 3px 8px;font-size:12px;line-height:1.35}
+.steps li::before{content:"";position:absolute;left:-10px;top:12px;width:10px;height:1px;background:var(--ink2)}
+.steps li .n{font:11px var(--mono);color:var(--muted)}
+.steps li .t{color:var(--ink)}
+.steps li .t em{font-style:normal;color:var(--ann)}
+.thesis{margin-top:12px;background:var(--tint2);border:1px solid var(--rule);padding:8px 10px;font-size:12px}
+.thesis b{display:block;font-size:12.5px}
+.thesis span{color:var(--ink2)}
+/* B: annotated examples */
+.ex{display:flex;flex-direction:column;gap:6px;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.ex:last-of-type{border-bottom:0}
+.exlabel{font-weight:600;font-size:12px}
+.exlabel small{font-weight:400;color:var(--muted);font-family:var(--mono);font-size:11px;margin-left:6px}
+.claim{font-size:13px;color:var(--ink2)}
+.claim .no{color:var(--bad);font-weight:500}
+.claim .pre{font:11px var(--mono);color:var(--muted);display:block;margin-bottom:2px}
+.segrow{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:flex-start}
+.seg{display:flex;flex-direction:column;gap:3px;min-width:0}
+.seg code{font:500 13.5px var(--mono);border-bottom:2px solid var(--ann);padding-bottom:2px;white-space:nowrap}
+.seg i{font:11px/1.25 var(--sans);font-style:normal;color:var(--ann);max-width:15ch}
+.seg.q code{border-bottom-color:var(--ink2)}
+.seg.q i{color:var(--ink2)}
+.exnote{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:11px var(--mono);color:var(--muted)}
+.exnote b{color:var(--ink2);font-weight:500}
+/* tables */
+.tw{overflow-x:auto;min-width:0}
+.pc table{min-width:0}
+.pc td.m{white-space:normal}
+.pd table{min-width:640px}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th{font:500 11px var(--mono);color:var(--muted);text-align:left;padding:4px 8px 6px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.m{font-family:var(--mono);white-space:nowrap}
+td.num{font-family:var(--mono);text-align:right;white-space:nowrap}
+.pair{font-weight:600}
+.pair small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+.bp{font-family:var(--mono);white-space:nowrap}
+.bp b{font-weight:600}
+.dcell{display:flex;align-items:center;gap:8px;min-width:120px}
+.dbar{flex:1;height:8px;background:var(--track);position:relative;border-radius:0 4px 4px 0;overflow:hidden}
+.dbar::after{content:"";position:absolute;left:0;top:0;bottom:0;width:var(--w);background:var(--bar);border-radius:0 4px 4px 0}
+.dval{font:600 12px var(--mono);min-width:5.5ch;text-align:right}
+.st{white-space:nowrap;font-weight:500}
+.st.ok{color:var(--good)}.st.no{color:var(--bad)}.st.half{color:var(--warn)}
+.alt{color:var(--ann);font-weight:500}
+.redt{color:var(--bad)}
+/* E: gauges */
+.g{display:flex;flex-direction:column;gap:3px}
+.gh{display:flex;justify-content:space-between;gap:10px;font-size:12px}
+.gh b{font:600 11px var(--mono);color:var(--ann);white-space:nowrap}
+.track{height:12px;background:var(--track);border:1px solid var(--rule);position:relative}
+.fill{position:absolute;left:0;top:0;bottom:0;background:var(--bar);width:var(--w);min-width:1px}
+.fill.b2{background:var(--bar2)}
+.tick{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);left:var(--x)}
+.axis{display:flex;justify-content:space-between;font:10px var(--mono);color:var(--muted)}
+.rules{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:12px}
+.rules li{padding-left:14px;position:relative}
+.rules li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;background:var(--ink)}
+/* F: timeline + title block */
+.tl{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;position:relative}
+.tl::before{content:"";position:absolute;left:10%;right:10%;top:8px;height:1.5px;background:var(--ink)}
+.tl li{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;font-size:11px;line-height:1.3;color:var(--ink2);min-width:0}
+.tl li i{width:11px;height:11px;border-radius:50%;background:var(--sheet);border:2px solid var(--ink);flex:none;margin-top:3px}
+.tl li b{font:600 13px var(--sans);color:var(--ink)}
+.tl li.next i{background:var(--ann);border-color:var(--ann)}
+.tl li.next b{color:var(--ann)}
+.tb{margin-top:auto;border-top:1.5px solid var(--line);display:grid;grid-template-columns:1fr 1fr}
+.tb div{padding:6px 10px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule);min-width:0}
+.tb div:nth-child(2n){border-right:0}
+.tb div.full{grid-column:1/-1;border-right:0}
+.tb div:nth-last-child(-n+2){border-bottom:0}
+.tb small{display:block;font:11px var(--mono);color:var(--muted)}
+.tb span{font-weight:600;font-size:13px}
+.tb span.sm{font-weight:500;font-size:12px}
+@media (max-width:1100px){
+  .frame{grid-template-columns:1fr 1fr;grid-template-areas:"a b" "c c" "d d" "e f"}
+}
+@media (max-width:760px){
+  .sheet{grid-template-columns:minmax(0,1fr);grid-template-rows:auto}
+  .ruler,.corner{display:none}
+  .frame{grid-template-columns:1fr;grid-template-areas:"a" "b" "c" "d" "e" "f";padding:12px;gap:12px}
+  .branches{grid-template-columns:1fr}
+  .branches::before{display:none}
+  .branch::before{display:none}
+  .tl{grid-template-columns:1fr;gap:10px}
+  .tl::before{display:none}
+  .tl li{flex-direction:row;text-align:left;align-items:flex-start}
+  .ph .cap{display:none}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="sheet">
+  <div class="corner c-tl"></div>
+  <div class="ruler h top"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+  <div class="corner c-tr"></div>
+  <div class="ruler v left"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+
+  <div class="frame">
+
+    <section class="panel pa">
+      <div class="ph"><div class="badge">A</div><h2>From first principles</h2><span class="cap">the chain we are testing</span></div>
+      <div class="pbody">
+        <div class="tree">
+          <div class="root"><b>Prediction is compression</b><span>a probability p costs −log₂ p bits to transmit (Shannon 1948)</span></div>
+          <div class="stem"></div>
+          <div class="branches">
+            <div class="branch">
+              <div class="bhead">Part 1: What the identity gives<small>theorems and published measurements</small></div>
+              <ol class="steps">
+                <li><span class="n">Step 1</span><span class="t">Code length of a text under model Q is the sum of <em>−log₂ q</em> over its tokens</span></li>
+                <li><span class="n">Step 2</span><span class="t">Its expectation is <em>H(P) + KL(P‖Q)</em>: entropy of the text plus the model's distance from it</span></li>
+                <li><span class="n">Step 3</span><span class="t">On fixed text H(P) cancels, so <em>Δbits = ΔKL</em>: a difference in code length is a distance between beliefs</span></li>
+                <li><span class="n">Step 4</span><span class="t">Pretraining minimises exactly this; across base models it tracks benchmarks at <em>r = −0.93</em> (Huang 2024)</span></li>
+              </ol>
+            </div>
+            <div class="branch">
+              <div class="bhead">Part 2: What post-training does<small>our experiments</small></div>
+              <ol class="steps">
+                <li><span class="n">Step 5</span><span class="t">Its objective moves Q toward a target, never toward general text, so KL to pretraining can only rise</span></li>
+                <li><span class="n">Step 6</span><span class="t">It does rise, in 16 of 16 stages and pairs: <em>+0.1 % to +43 %</em> (exp01, exp03)</span></li>
+                <li><span class="n">Step 7</span><span class="t">The rise is mostly new beliefs, not sharper ones: one temperature undoes ≤ 35 % (exp02)</span></li>
+                <li><span class="n">Step 8</span><span class="t">The rise measures distance moved, not skill gained; whether distance predicts forgetting is <em>exp04, running</em></span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="thesis"><b>Thesis under test</b><span>Fresh-text bits per byte is a 10-second ruler for how far post-training moved a model from its pretraining distribution. If that distance predicts lost general ability and not gained target skill, it replaces the forgetting half of every post-training evaluation.</span></div>
+        </div>
+        <div class="foot">Steps 1 to 3 are algebra. Step 4 is someone else's measurement. Steps 5 to 7 are ours. Step 8 decides whether any of it saves money.</div>
+      </div>
+    </section>
+
+    <section class="panel pb">
+      <div class="ph"><div class="badge">B</div><h2>Anatomy of the evidence</h2><span class="cap">four experiments, one measurement</span></div>
+      <div class="pbody">
+        <div class="ex">
+          <div class="claim"><span class="pre">The slogan, not testable as stated: vague words in red</span><span class="no">Compression</span> is <span class="no">intelligence</span>. Rewritten: on fixed fresh text, Δbpb between a model and its base is ΔKL from the pretraining distribution, and we test what that distance predicts.</div>
+        </div>
+        <div class="ex">
+          <div class="exlabel">1 exp01 · pilot on the Mac <small>4 matched pairs ≤ 2B, 3 fresh 2026 corpora + 2006 control</small></div>
+          <div class="segrow">
+            <div class="seg"><code>12 of 12 cells worse</code><i>every CI excludes zero</i></div>
+            <div class="seg"><code>+0.9 % … +16.2 %</code><i>light SFT vs reasoning-distilled</i></div>
+            <div class="seg"><code>chat template</code><i>does not close the gap; widens Qwen3 to +37 %</i></div>
+            <div class="seg q"><code>MATH +20 for +0.9 %</code><i>gain does not track drift</i></div>
+          </div>
+          <div class="exnote"><span>Rules out: "post-trained models still compress like their base". Leaves open: calibration, and what the drift costs.</span></div>
+        </div>
+        <div class="ex">
+          <div class="exlabel">2 exp02 · temperature <small>fit one scalar on even windows, score odd windows</small></div>
+          <div class="segrow">
+            <div class="seg"><code>T* base ≈ 1.00</code><i>fit is unbiased</i></div>
+            <div class="seg"><code>T* Qwen3 1.25, R1 1.16</code><i>post-trained models are over-sharp</i></div>
+            <div class="seg"><code>35 % / 19 % recovered</code><i>Yang 2026 ceiling: 36 %</i></div>
+            <div class="seg q"><code>residual +10 % / +13 %</code><i>at each model's own best T</i></div>
+          </div>
+          <div class="exnote"><span>Rules out: "it is only confidence". Verdict against the pre-stated rule: mixed, nowhere near the 70 % calibration band.</span></div>
+        </div>
+        <div class="ex">
+          <div class="exlabel">3 exp03 · staged drift on AAU <small>14 checkpoints, one GPU, 19 minutes</small></div>
+          <div class="segrow">
+            <div class="seg"><code>SFT +7.0 %</code><i>expected +3 to +8: met</i></div>
+            <div class="seg"><code>DPO +6.65 %</code><i>expected ≤ +2: missed, 3× over</i></div>
+            <div class="seg"><code>RLVR +0.49 %</code><i>expected within ±1: met</i></div>
+            <div class="seg"><code>pure GRPO +0.12 … 0.18 %</code><i>expected +0.5 to +3: smaller</i></div>
+            <div class="seg q"><code>old text drifts 1.3–3×</code><i>fresh text is not required</i></div>
+          </div>
+          <div class="exnote"><span>Rules out: "RL teaches general language modelling" (15 of 15 RL intervals above zero). Confirms RL's Razor on general text without task samples.</span></div>
+        </div>
+        <div class="ex">
+          <div class="exlabel">4 exp04 · benchmarks on AAU, running <small>18 checkpoints × 7 tasks, rules written before any score</small></div>
+          <div class="segrow">
+            <div class="seg"><code>forgetting</code><i>relative drop on 6 general tasks</i></div>
+            <div class="seg"><code>gain</code><i>GSM8K delta, same prompting for all</i></div>
+            <div class="seg"><code>gate: r ≥ 0.8</code><i>soft pass at 0.6</i></div>
+            <div class="seg"><code>one-sided: |r_gain| &lt; 0.3</code><i>the headline claim, not in the literature</i></div>
+          </div>
+          <div class="exnote"><span>Decides whether drift is a cost meter or only a ruler. Odds held at 45 % for a usable meter.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel pe">
+      <div class="ph"><div class="badge">E</div><h2>Expectations and odds</h2><span class="cap">pre-registered, then checked</span></div>
+      <div class="pbody">
+        <div class="g"><div class="gh"><span>exp02 · Qwen3 gap recovered, expected 10 to 30 %</span><b>35 %</b></div><div class="track"><span class="fill" style="--w:50%"></span><span class="tick" style="--x:14%"></span><span class="tick" style="--x:43%"></span></div><div class="axis"><i>0</i><i>35</i><i>70 %</i></div></div>
+        <div class="g"><div class="gh"><span>exp03 · OLMo-2 SFT step, expected 3 to 8 %</span><b>7.0 %</b></div><div class="track"><span class="fill b2" style="--w:70%"></span><span class="tick" style="--x:30%"></span><span class="tick" style="--x:80%"></span></div><div class="axis"><i>0</i><i>5</i><i>10 %</i></div></div>
+        <div class="g"><div class="gh"><span>exp03 · OLMo-2 DPO step, expected 0 to 2 %</span><b class="redt">6.65 %</b></div><div class="track"><span class="fill" style="--w:66.5%"></span><span class="tick" style="--x:20%"></span></div><div class="axis"><i>0</i><i>5</i><i>10 %</i></div></div>
+        <div class="g"><div class="gh"><span>exp03 · pure GRPO step, expected 0.5 to 3 %</span><b>0.12 to 0.18 %</b></div><div class="track"><span class="fill b2" style="--w:6%"></span><span class="tick" style="--x:17%"></span><span class="tick" style="--x:100%"></span></div><div class="axis"><i>0</i><i>1.5</i><i>3 %</i></div></div>
+        <div class="g"><div class="gh"><span>Odds · usable forgetting meter after exp04</span><b>45 %</b></div><div class="track"><span class="fill b2" style="--w:45%"></span></div><div class="axis"><i>0</i><i>50</i><i>100 %</i></div></div>
+        <div class="g"><div class="gh"><span>Odds · full gate as written</span><b>20 to 25 %</b></div><div class="track"><span class="fill b2" style="--w:22%"></span></div></div>
+        <div class="g"><div class="gh"><span>Odds · a publishable result either way</span><b>80 %</b></div><div class="track"><span class="fill b2" style="--w:80%"></span></div></div>
+        <ul class="rules">
+          <li>Expectations are written into RESULTS.md before the run.</li>
+          <li>Misses are recorded as misses: 2 of 6 so far.</li>
+          <li>Every number carries a bootstrap interval.</li>
+          <li>Every result reproduces across Mac and cluster to 5e-5 bpb.</li>
+        </ul>
+        <div class="foot">Ticks mark the expected band. Orange bars fell outside it.</div>
+      </div>
+    </section>
+
+    <section class="panel pc">
+      <div class="ph"><div class="badge">C</div><h2>Claims and their status</h2><span class="cap">what is settled</span></div>
+      <div class="pbody">
+        <div class="tw">
+        <table>
+          <thead><tr><th>Claim</th><th>Evidence</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Prediction equals lossless compression</td><td class="m">Shannon 1948; arithmetic coding</td><td class="st ok">✓ Theorem</td></tr>
+            <tr><td>Compression tracks capability across base models</td><td class="m">Huang 2024, 31 models, r = −0.93</td><td class="st ok">✓ Published</td></tr>
+            <tr><td>Post-training raises fresh-text bpb</td><td class="m">exp01 + exp03, 16 of 16</td><td class="st ok">✓ Ours</td></tr>
+            <tr><td>The rise is a confidence shift</td><td class="m">exp02: ≤ 35 % recovered</td><td class="st no">✗ Rejected</td></tr>
+            <tr><td>RL improves general compression</td><td class="m">exp03: 15 of 15 RL steps above zero</td><td class="st no">✗ Rejected</td></tr>
+            <tr><td>RL moves a model far less than SFT</td><td class="m">exp03: 14× and 8× smaller steps</td><td class="st ok">✓ Ours</td></tr>
+            <tr><td>DPO is a light touch</td><td class="m">exp03: +6.65 %, same as SFT</td><td class="st no">✗ Rejected</td></tr>
+            <tr><td>Fresh text is needed to see drift</td><td class="m">exp03: 2006 text drifts more</td><td class="st no">✗ Rejected</td></tr>
+            <tr><td>Drift tracks the capability gain</td><td class="m">exp01: largest gain, smallest drift</td><td class="st half">◐ Against, n = 4</td></tr>
+            <tr><td>Drift predicts forgetting</td><td class="m">exp04 running</td><td class="st half">◐ Pending</td></tr>
+            <tr><td>Drift does not predict gain</td><td class="m">exp04 running</td><td class="st half">◐ Pending</td></tr>
+            <tr><td>A KL anchor buys back the tax</td><td class="m">exp05, not started</td><td class="st half">◐ Pending</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="foot">Convention: <b>✓</b> holds, <b>✗</b> falsified by our data at ≤ 3B parameters, <b>◐</b> open. Prior art: three of four thesis parts are partly published; one-sidedness is not.</div>
+      </div>
+    </section>
+
+    <section class="panel pd">
+      <div class="ph"><div class="badge">D</div><h2>Vocabulary</h2><span class="cap">one meaning each</span></div>
+      <div class="pbody">
+        <div class="tw">
+        <table>
+          <thead><tr><th>Term</th><th>Meaning</th><th>Example value</th><th>Not this</th></tr></thead>
+          <tbody>
+            <tr><td class="m">bpb</td><td>Total −log₂ p over all tokens, divided by UTF-8 bytes of the text</td><td class="m">Qwen2.5-1.5B on wiki2026: 0.719</td><td class="redt">perplexity per token; not comparable across tokenizers</td></tr>
+            <tr><td class="m">Δbpb</td><td>Percent change of bpb against the family base on the same text</td><td class="m">OLMo-2 SFT: +7.0 % [6.6, 7.4]</td><td class="redt">a difference across families</td></tr>
+            <tr><td class="m">KL(P‖Q)</td><td>Distance from the text distribution to the model; the only term in bpb a model changes</td><td class="m">Δbits = ΔKL on fixed text</td><td class="redt">a measure of intelligence</td></tr>
+            <tr><td class="m">drift</td><td>Δbpb of a checkpoint against its base: how far post-training moved it</td><td class="m">R1-Distill vs plain 1.5B: +43 %</td><td class="redt">forgetting; that is what exp04 tests</td></tr>
+            <tr><td class="m">T*</td><td>Scalar temperature that minimises bpb, fit on held-out windows</td><td class="m">Qwen3-1.7B: 1.25; bases: 1.00</td><td class="redt">a fix for the gap; it recovers ≤ 35 %</td></tr>
+            <tr><td class="m">stage</td><td>One checkpoint of one recipe: base, SFT, DPO, RLVR, GRPO</td><td class="m">OLMo-2-0425-1B-DPO</td><td class="redt">a model from a different family</td></tr>
+            <tr><td class="m">forgetting</td><td>Relative drop of the mean general-benchmark score against the base</td><td class="m">exp04, 6 tasks, same prompting</td><td class="redt">a drop caused by answer format</td></tr>
+            <tr><td class="m">gain</td><td>Rise of the target-task score against the base</td><td class="m">exp04, GSM8K</td><td class="redt">anything the drift meter is meant to see</td></tr>
+            <tr><td class="m">gate</td><td>Pass rule written before the run</td><td class="m">r(drift, forgetting) ≥ 0.8</td><td class="redt">a threshold chosen after looking</td></tr>
+            <tr><td class="m">fresh text</td><td>Text first published after every model's training cutoff</td><td class="m">wiki2026, arxiv2026, gutenberg2026</td><td class="redt">a requirement; the 2006 control drifts more</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="foot">Every delta is within a tokenizer family, measured on identical token ids, with a paired bootstrap over 1024-token windows. Corpora are dated snapshots with provenance files and are never re-collected in place.</div>
+      </div>
+    </section>
+
+    <section class="panel pf">
+      <div class="ph"><div class="badge">F</div><h2>History</h2><span class="cap">2026-10-13 to now</span></div>
+      <div class="pbody">
+        <ul class="tl">
+          <li><i></i><b>10-13</b>Video, 4 research notes, 10 ranked open questions, one chosen</li>
+          <li><i></i><b>10-13</b>exp01 on the Mac: 12 of 12 cells worse</li>
+          <li><i></i><b>10-14</b>Prior art; repo with style gate; cluster rules and smoke job</li>
+          <li><i></i><b>10-14</b>exp02 and exp03: not calibration; RL moves least</li>
+          <li class="next"><i></i><b>now</b>exp04 array on AAU; exp05 anchor loss queued behind its gate</li>
+        </ul>
+        <div class="tb">
+          <div class="full"><small>Title</small><span>Compression after post-training: project overview</span></div>
+          <div><small>Repo</small><span class="sm">github.com/gottn/compression-intelligence · 21 commits</span></div>
+          <div><small>Gate</small><span class="sm">ruff + 54 tests + commit hook · green</span></div>
+          <div><small>Compute so far</small><span class="sm">Mac M2 Pro; AAU jobs 1080233, 1080281 · 21 GPU-min</span></div>
+          <div><small>Models scored</small><span class="sm">18 checkpoints, 4 families, ≤ 3B</span></div>
+          <div><small>Reports</small><span class="sm">survey, prior-art, 3 RESULTS.md, 3 sheets</span></div>
+          <div><small>Sheet</small><span class="sm">1 of 1 · 2026-10-14</span></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="ruler v right"><span>A</span><span>B</span><span>C</span><span>D</span></div>
+  <div class="corner c-bl"></div>
+  <div class="ruler h bottom"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+  <div class="corner c-br"></div>
+</div>
