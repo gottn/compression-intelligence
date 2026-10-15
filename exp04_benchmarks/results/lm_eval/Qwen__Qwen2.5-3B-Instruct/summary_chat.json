@@ -1,0 +1,155 @@
+{
+ "model": "Qwen/Qwen2.5-3B-Instruct",
+ "index": 13,
+ "host": "i256-a10-08.srv.aau.dk",
+ "gpu": "NVIDIA A10",
+ "versions": {
+  "python": "3.12.3",
+  "lm_eval": "0.4.13",
+  "transformers": "5.19.0",
+  "torch": "2.9.0a0+50eac811a6.nv25.9",
+  "datasets": "5.1.0",
+  "accelerate": "1.15.0",
+  "nltk": "3.10.3"
+ },
+ "model_kwargs": {
+  "pretrained": "Qwen/Qwen2.5-3B-Instruct",
+  "dtype": "float16",
+  "max_length": 2048,
+  "batch_size": "auto",
+  "device": "cuda"
+ },
+ "generation_config_kept": {
+  "bos_token_id": 151643,
+  "eos_token_id": [
+   151645,
+   151643
+  ],
+  "pad_token_id": 151643
+ },
+ "generation_config_dropped": {
+  "do_sample": true,
+  "repetition_penalty": 1.05,
+  "temperature": 0.7,
+  "top_k": 20,
+  "top_p": 0.8
+ },
+ "chat": {
+  "has_chat_template": true,
+  "chat_template_args": {}
+ },
+ "groups": {
+  "gsm8k_chat": {
+   "group": "gsm8k_chat",
+   "kwargs": {
+    "tasks": [
+     "gsm8k"
+    ],
+    "log_samples": false,
+    "apply_chat_template": true,
+    "fewshot_as_multiturn": true,
+    "random_seed": 0,
+    "numpy_random_seed": 1234,
+    "torch_random_seed": 1234,
+    "fewshot_random_seed": 1234,
+    "limit": 300
+   },
+   "samples_file": null,
+   "status": "ok",
+   "wall_s": 599.9,
+   "results_file": "gsm8k_chat/results.json",
+   "tasks": {
+    "gsm8k": {
+     "metrics": {
+      "exact_match,strict-match": 0.013333333333333334,
+      "exact_match_stderr,strict-match": 0.00663313753541495,
+      "exact_match,flexible-extract": 0.6033333333333334,
+      "exact_match_stderr,flexible-extract": 0.02829149642514497
+     },
+     "version": 3.0,
+     "leaf_versions": [
+      "3.0"
+     ],
+     "n_shot": [
+      5
+     ],
+     "n_effective": 300,
+     "n_original": 1319,
+     "n_leaves": 1
+    }
+   },
+   "config": {
+    "batch_size": null,
+    "batch_sizes": [],
+    "model_dtype": "torch.float16",
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234,
+    "limit": 300,
+    "model_num_parameters": 3085938688
+   },
+   "lm_eval_version": "0.4.13",
+   "transformers_version": "5.19.0",
+   "max_length": 2048,
+   "chat_template": null
+  },
+  "ifeval_chat": {
+   "group": "ifeval_chat",
+   "kwargs": {
+    "tasks": [
+     "ifeval"
+    ],
+    "log_samples": false,
+    "apply_chat_template": true,
+    "fewshot_as_multiturn": true,
+    "random_seed": 0,
+    "numpy_random_seed": 1234,
+    "torch_random_seed": 1234,
+    "fewshot_random_seed": 1234,
+    "limit": 200
+   },
+   "samples_file": null,
+   "status": "ok",
+   "wall_s": 911.2,
+   "results_file": "ifeval_chat/results.json",
+   "tasks": {
+    "ifeval": {
+     "metrics": {
+      "prompt_level_strict_acc,none": 0.555,
+      "prompt_level_strict_acc_stderr,none": 0.03522897106090454,
+      "inst_level_strict_acc,none": 0.6540880503144654,
+      "prompt_level_loose_acc,none": 0.595,
+      "prompt_level_loose_acc_stderr,none": 0.03479841445010399,
+      "inst_level_loose_acc,none": 0.6855345911949685
+     },
+     "version": 4.0,
+     "leaf_versions": [
+      "4.0"
+     ],
+     "n_shot": [
+      0
+     ],
+     "n_effective": 200,
+     "n_original": 541,
+     "n_leaves": 1
+    }
+   },
+   "config": {
+    "batch_size": null,
+    "batch_sizes": [],
+    "model_dtype": "torch.float16",
+    "random_seed": 0,
+    "numpy_seed": 1234,
+    "torch_seed": 1234,
+    "fewshot_seed": 1234,
+    "limit": 200,
+    "model_num_parameters": 3085938688
+   },
+   "lm_eval_version": "0.4.13",
+   "transformers_version": "5.19.0",
+   "max_length": 2048,
+   "chat_template": null
+  }
+ }
+}

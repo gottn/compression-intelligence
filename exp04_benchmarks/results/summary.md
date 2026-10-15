@@ -12,6 +12,7 @@ Correlations over post-trained checkpoints; 95% CIs from 10000 checkpoint-bootst
 | E2 | r(fresh, gsm8k gain) < 0.3 | r = 0.383 | **not met** |
 | E3 | r(enwik8, forgetting) ≥ r(fresh, forgetting) − 0.05 | enwik8 r = 0.949 vs fresh r = 0.887 | **met** |
 | E4 | R1-Distill largest Δbpb_fresh and below the all-12 OLS line | largest: True; residual +2.13 points | **not met** |
+| One-sidedness, chat-condition gain (gain measure changed after the run) | abs r(Δbpb_fresh, gsm8k gain, chat) < 0.3 and Gate 1 ≥ soft pass | r = -0.473; ρ = 0.077 | **not shown** |
 | Gate 1 on Spearman (not pre-registered) | same thresholds on Spearman ρ | ρ = 0.671 | **soft pass** |
 | Gate 1 without Qwen2.5-Math and R1-Distill (not pre-registered) | same thresholds on Pearson r, n = 10 | r = 0.317; ρ = 0.430 | **fail** |
 
@@ -33,23 +34,37 @@ Noise floor per checkpoint = 1.96 × √(SE_post² + SE_base²) of the 6-task me
 | dbpb_fresh | gain_gsm8k | all 12 (pre-registered) | 12 | +0.383 [+0.08, +0.69] | +0.371 [-0.31, +0.75] | +0.33 to +0.44 | Qwen-2.5-0.5B-SimpleRL-Zoo (+0.44) |
 | dbpb_fresh | gain_gsm8k_strict | all 12 (pre-registered) | 12 | +0.507 [+0.37, +0.78] | +0.608 [+0.09, +0.87] | +0.46 to +0.56 | DeepSeek-R1-Distill-Qwen-1.5B (+0.56) |
 | dbpb_fresh | gain_ifeval | all 12 (pre-registered) | 12 | -0.212 [-0.67, +0.70] | -0.203 [-0.64, +0.54] | -0.32 to +0.01 | DeepSeek-R1-Distill-Qwen-1.5B (+0.01) |
+| dbpb_fresh | gain_gsm8k_chat | all 12 (pre-registered) | 12 | -0.473 [-0.88, +0.74] | +0.077 [-0.61, +0.80] | -0.58 to +0.43 | DeepSeek-R1-Distill-Qwen-1.5B (+0.43) |
+| dbpb_fresh | gain_gsm8k_chat_strict | all 12 (pre-registered) | 12 | -0.208 [-0.78, +0.70] | +0.147 [-0.54, +0.84] | -0.44 to +0.39 | DeepSeek-R1-Distill-Qwen-1.5B (+0.39) |
+| dbpb_fresh | gain_ifeval_chat | all 12 (pre-registered) | 12 | -0.030 [-0.53, +0.91] | +0.308 [-0.41, +0.97] | -0.18 to +0.34 | DeepSeek-R1-Distill-Qwen-1.5B (+0.34) |
 | dbpb_enwik8 | forgetting | all 12 (pre-registered) | 12 | +0.949 [+0.28, +0.99] | +0.678 [+0.07, +0.98] | +0.89 to +0.97 | DeepSeek-R1-Distill-Qwen-1.5B (+0.89) |
 | dbpb_enwik8 | forgetting_chance | all 12 (pre-registered) | 12 | +0.952 [+0.27, +0.99] | +0.678 [+0.07, +0.98] | +0.90 to +0.97 | DeepSeek-R1-Distill-Qwen-1.5B (+0.90) |
 | dbpb_enwik8 | gain_gsm8k | all 12 (pre-registered) | 12 | +0.303 [-0.11, +0.63] | +0.336 [-0.36, +0.71] | +0.21 to +0.36 | Qwen2.5-Math-1.5B (+0.21) |
 | dbpb_enwik8 | gain_gsm8k_strict | all 12 (pre-registered) | 12 | +0.435 [+0.20, +0.76] | +0.573 [+0.04, +0.85] | +0.35 to +0.48 | Qwen2.5-Math-1.5B (+0.35) |
 | dbpb_enwik8 | gain_ifeval | all 12 (pre-registered) | 12 | -0.346 [-0.71, +0.53] | -0.252 [-0.66, +0.50] | -0.42 to -0.21 | Qwen2.5-Math-1.5B (-0.21) |
+| dbpb_enwik8 | gain_gsm8k_chat | all 12 (pre-registered) | 12 | -0.435 [-0.89, +0.66] | +0.091 [-0.61, +0.83] | -0.65 to +0.35 | DeepSeek-R1-Distill-Qwen-1.5B (+0.35) |
+| dbpb_enwik8 | gain_gsm8k_chat_strict | all 12 (pre-registered) | 12 | -0.169 [-0.78, +0.63] | +0.161 [-0.53, +0.87] | -0.39 to +0.35 | DeepSeek-R1-Distill-Qwen-1.5B (+0.35) |
+| dbpb_enwik8 | gain_ifeval_chat | all 12 (pre-registered) | 12 | -0.161 [-0.66, +0.93] | +0.301 [-0.42, +0.96] | -0.33 to +0.07 | DeepSeek-R1-Distill-Qwen-1.5B (+0.07) |
 | dbpb_fresh | forgetting | without Qwen2.5-Math and R1-Distill | 10 | +0.317 [-0.45, +0.88] | +0.430 [-0.39, +0.89] | -0.12 to +0.49 | Qwen3-1.7B (-0.12) |
 | dbpb_fresh | gain_gsm8k | without Qwen2.5-Math and R1-Distill | 10 | +0.353 [-0.36, +0.82] | +0.030 [-0.74, +0.77] | +0.10 to +0.54 | OLMo-2-0425-1B-Instruct (+0.10) |
+| dbpb_fresh | gain_gsm8k_chat | without Qwen2.5-Math and R1-Distill | 10 | +0.394 [-0.40, +0.92] | +0.261 [-0.48, +0.92] | +0.16 to +0.72 | Qwen3-1.7B (+0.72) |
 | dbpb_enwik8 | forgetting | without Qwen2.5-Math and R1-Distill | 10 | +0.518 [-0.30, +0.94] | +0.442 [-0.37, +0.92] | +0.17 to +0.68 | Qwen3-1.7B (+0.17) |
 | dbpb_enwik8 | gain_gsm8k | without Qwen2.5-Math and R1-Distill | 10 | +0.104 [-0.59, +0.76] | -0.030 [-0.79, +0.70] | -0.18 to +0.26 | OLMo-2-0425-1B-Instruct (-0.18) |
+| dbpb_enwik8 | gain_gsm8k_chat | without Qwen2.5-Math and R1-Distill | 10 | +0.330 [-0.38, +0.95] | +0.285 [-0.46, +0.96] | +0.13 to +0.68 | Qwen3-1.7B (+0.68) |
 | dbpb_fresh | forgetting | R1-Distill vs its Math parent | 12 | +0.723 [-0.01, +0.96] | +0.664 [+0.06, +0.93] | +0.51 to +0.81 | Qwen2.5-Math-1.5B (+0.51) |
 | dbpb_fresh | gain_gsm8k | R1-Distill vs its Math parent | 12 | +0.372 [-0.17, +0.69] | +0.161 [-0.53, +0.71] | +0.27 to +0.45 | Qwen2.5-Math-1.5B (+0.27) |
+| dbpb_fresh | gain_gsm8k_chat | R1-Distill vs its Math parent | 12 | -0.034 [-0.60, +0.73] | +0.154 [-0.49, +0.80] | -0.19 to +0.43 | DeepSeek-R1-Distill-Qwen-1.5B (+0.43) |
 | dbpb_enwik8 | forgetting | R1-Distill vs its Math parent | 12 | +0.762 [-0.03, +0.97] | +0.552 [-0.10, +0.92] | +0.33 to +0.89 | Qwen2.5-Math-1.5B (+0.33) |
 | dbpb_enwik8 | gain_gsm8k | R1-Distill vs its Math parent | 12 | +0.284 [-0.38, +0.65] | +0.175 [-0.55, +0.76] | +0.10 to +0.36 | Qwen2.5-Math-1.5B (+0.10) |
+| dbpb_enwik8 | gain_gsm8k_chat | R1-Distill vs its Math parent | 12 | +0.245 [-0.12, +0.64] | +0.371 [-0.31, +0.85] | +0.16 to +0.35 | DeepSeek-R1-Distill-Qwen-1.5B (+0.35) |
 | dbpb_fresh | gain_gsm8k | without the 5 instruct-stage checkpoints | 7 | +0.191 [-0.34, +0.95] | +0.643 [-0.18, +1.00] | +0.06 to +0.54 | OLMo-2-0425-1B-Instruct (+0.54) |
+| dbpb_fresh | gain_gsm8k_chat | without the 5 instruct-stage checkpoints | 7 | -0.641 [-0.96, +0.94] | +0.107 [-0.76, +1.00] | -0.73 to +0.68 | DeepSeek-R1-Distill-Qwen-1.5B (+0.68) |
 | dbpb_enwik8 | gain_gsm8k | without the 5 instruct-stage checkpoints | 7 | +0.144 [-0.38, +0.93] | +0.643 [-0.18, +1.00] | +0.02 to +0.66 | OLMo-2-0425-1B-Instruct (+0.66) |
+| dbpb_enwik8 | gain_gsm8k_chat | without the 5 instruct-stage checkpoints | 7 | -0.582 [-0.95, +0.94] | +0.107 [-0.76, +1.00] | -0.79 to +0.44 | DeepSeek-R1-Distill-Qwen-1.5B (+0.44) |
 | dbpb_fresh | gain_ifeval | chat-style (sft/dpo/rlvr/instruct) | 8 | +0.280 [-0.67, +0.94] | +0.190 [-0.62, +0.90] | +0.07 to +0.75 | Qwen3-1.7B (+0.75) |
+| dbpb_fresh | gain_ifeval_chat | chat-style (sft/dpo/rlvr/instruct) | 8 | +0.892 [+0.70, +0.99] | +0.881 [+0.41, +1.00] | +0.86 to +0.96 | Qwen2.5-3B-Instruct (+0.96) |
 | dbpb_enwik8 | gain_ifeval | chat-style (sft/dpo/rlvr/instruct) | 8 | +0.093 [-0.75, +0.95] | +0.095 [-0.67, +0.85] | -0.12 to +0.57 | Qwen3-1.7B (+0.57) |
+| dbpb_enwik8 | gain_ifeval_chat | chat-style (sft/dpo/rlvr/instruct) | 8 | +0.905 [+0.76, +0.98] | +0.857 [+0.29, +1.00] | +0.88 to +0.95 | Qwen2.5-3B-Instruct (+0.95) |
 
 ## Within-family slopes (post-trained checkpoints only)
 
@@ -62,44 +77,44 @@ Noise floor per checkpoint = 1.96 × √(SE_post² + SE_base²) of the 6-task me
 
 ## Per-checkpoint scores (accuracy %, primary metric per task)
 
-| family | stage | model | arc_easy | arc_challenge | hellaswag | piqa | winogrande | mmlu | general | gsm8k flex | gsm8k strict | ifeval prompt-strict |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| olmo2-1b | base | OLMo-2-0425-1B | 73.5 | 42.3 | 59.0 | 75.8 | 64.4 | 38.2 | 58.89 | 32.3 | 32.3 | 9.5 |
-| olmo2-1b | sft | OLMo-2-0425-1B-SFT | 69.9 | 41.0 | 59.4 | 75.2 | 63.5 | 44.1 | 58.88 | 39.0 | 31.3 | 19.0 |
-| olmo2-1b | dpo | OLMo-2-0425-1B-DPO | 70.9 | 43.0 | 61.8 | 75.8 | 63.6 | 43.2 | 59.71 | 43.7 | 41.3 | 41.5 |
-| olmo2-1b | rlvr | OLMo-2-0425-1B-Instruct | 71.0 | 41.9 | 62.0 | 75.6 | 63.8 | 42.2 | 59.41 | 60.3 | 55.0 | 39.5 |
-| qwen2.5-0.5b | base | Qwen2.5-0.5B | 58.7 | 32.5 | 48.8 | 70.0 | 56.6 | 50.0 | 52.74 | 33.7 | 33.7 | 10.0 |
-| qwen2.5-0.5b | instruct | Qwen2.5-0.5B-Instruct | 59.2 | 33.8 | 50.2 | 70.2 | 55.9 | 47.8 | 52.85 | 34.7 | 33.7 | 14.5 |
-| qwen2.5-0.5b | rl-zero | Qwen-2.5-0.5B-SimpleRL-Zoo | 58.8 | 34.1 | 49.2 | 70.2 | 55.1 | 49.5 | 52.82 | 43.0 | 29.7 | 11.5 |
-| qwen2.5-1.5b | base | Qwen2.5-1.5B | 71.5 | 45.1 | 58.6 | 76.0 | 63.4 | 61.7 | 62.69 | 60.3 | 60.3 | 19.5 |
-| qwen2.5-1.5b | instruct | Qwen2.5-1.5B-Instruct | 75.9 | 46.4 | 59.4 | 76.0 | 63.0 | 62.1 | 63.81 | 54.3 | 49.0 | 27.0 |
-| qwen2.5-1.5b | rl-zero | Qwen-2.5-1.5B-SimpleRL-Zoo | 75.8 | 47.6 | 58.8 | 75.6 | 62.6 | 61.7 | 63.67 | 67.3 | 55.7 | 20.5 |
-| qwen2.5-1.5b | math-cpt | Qwen2.5-Math-1.5B | 64.2 | 40.6 | 48.1 | 68.1 | 58.0 | 44.8 | 53.97 | 74.7 | 74.0 | 10.0 |
-| qwen2.5-1.5b | r1-distill | DeepSeek-R1-Distill-Qwen-1.5B | 56.1 | 34.6 | 44.1 | 65.9 | 55.6 | 38.4 | 49.14 | 70.7 | 70.0 | 13.0 |
-| qwen2.5-3b | base | Qwen2.5-3B | 73.0 | 47.4 | 62.5 | 78.8 | 68.4 | 67.5 | 66.27 | 76.0 | 71.3 | 21.5 |
-| qwen2.5-3b | instruct | Qwen2.5-3B-Instruct | 72.9 | 48.0 | 64.0 | 78.3 | 69.3 | 66.9 | 66.56 | 65.7 | 17.0 | 42.0 |
-| smollm2 | base | SmolLM2-1.7B | 73.5 | 47.4 | 61.4 | 77.6 | 66.3 | 49.9 | 62.68 | 29.7 | 29.3 | 16.5 |
-| smollm2 | instruct | SmolLM2-1.7B-Instruct | 62.9 | 43.7 | 61.2 | 76.3 | 68.3 | 49.5 | 60.30 | 0.0 | 0.0 | 8.0 |
-| qwen3 | base | Qwen3-1.7B-Base | 68.5 | 45.1 | 58.0 | 75.8 | 64.2 | 63.8 | 62.54 | 73.0 | 70.3 | 22.5 |
-| qwen3 | instruct | Qwen3-1.7B | 69.8 | 43.0 | 53.8 | 72.3 | 61.0 | 57.9 | 59.62 | 66.7 | 66.3 | 14.5 |
+| family | stage | model | arc_easy | arc_challenge | hellaswag | piqa | winogrande | mmlu | general | gsm8k flex | gsm8k strict | ifeval prompt-strict | gsm8k flex, chat | gsm8k strict, chat | ifeval prompt-strict, chat |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| olmo2-1b | base | OLMo-2-0425-1B | 73.5 | 42.3 | 59.0 | 75.8 | 64.4 | 38.2 | 58.89 | 32.3 | 32.3 | 9.5 | – | – | – |
+| olmo2-1b | sft | OLMo-2-0425-1B-SFT | 69.9 | 41.0 | 59.4 | 75.2 | 63.5 | 44.1 | 58.88 | 39.0 | 31.3 | 19.0 | 41.7 | 33.0 | 41.0 |
+| olmo2-1b | dpo | OLMo-2-0425-1B-DPO | 70.9 | 43.0 | 61.8 | 75.8 | 63.6 | 43.2 | 59.71 | 43.7 | 41.3 | 41.5 | 52.3 | 48.3 | 53.0 |
+| olmo2-1b | rlvr | OLMo-2-0425-1B-Instruct | 71.0 | 41.9 | 62.0 | 75.6 | 63.8 | 42.2 | 59.41 | 60.3 | 55.0 | 39.5 | 62.0 | 56.0 | 60.0 |
+| qwen2.5-0.5b | base | Qwen2.5-0.5B | 58.7 | 32.5 | 48.8 | 70.0 | 56.6 | 50.0 | 52.74 | 33.7 | 33.7 | 10.0 | – | – | – |
+| qwen2.5-0.5b | instruct | Qwen2.5-0.5B-Instruct | 59.2 | 33.8 | 50.2 | 70.2 | 55.9 | 47.8 | 52.85 | 34.7 | 33.7 | 14.5 | 40.7 | 28.0 | 23.0 |
+| qwen2.5-0.5b | rl-zero | Qwen-2.5-0.5B-SimpleRL-Zoo | 58.8 | 34.1 | 49.2 | 70.2 | 55.1 | 49.5 | 52.82 | 43.0 | 29.7 | 11.5 | 43.3 | 34.7 | 15.5 |
+| qwen2.5-1.5b | base | Qwen2.5-1.5B | 71.5 | 45.1 | 58.6 | 76.0 | 63.4 | 61.7 | 62.69 | 60.3 | 60.3 | 19.5 | – | – | – |
+| qwen2.5-1.5b | instruct | Qwen2.5-1.5B-Instruct | 75.9 | 46.4 | 59.4 | 76.0 | 63.0 | 62.1 | 63.81 | 54.3 | 49.0 | 27.0 | 62.0 | 34.7 | 37.5 |
+| qwen2.5-1.5b | rl-zero | Qwen-2.5-1.5B-SimpleRL-Zoo | 75.8 | 47.6 | 58.8 | 75.6 | 62.6 | 61.7 | 63.67 | 67.3 | 55.7 | 20.5 | 64.3 | 53.0 | 13.5 |
+| qwen2.5-1.5b | math-cpt | Qwen2.5-Math-1.5B | 64.2 | 40.6 | 48.1 | 68.1 | 58.0 | 44.8 | 53.97 | 74.7 | 74.0 | 10.0 | 77.0 | 77.3 | 21.0 |
+| qwen2.5-1.5b | r1-distill | DeepSeek-R1-Distill-Qwen-1.5B | 56.1 | 34.6 | 44.1 | 65.9 | 55.6 | 38.4 | 49.14 | 70.7 | 70.0 | 13.0 | 15.7 | 0.0 | 25.0 |
+| qwen2.5-3b | base | Qwen2.5-3B | 73.0 | 47.4 | 62.5 | 78.8 | 68.4 | 67.5 | 66.27 | 76.0 | 71.3 | 21.5 | – | – | – |
+| qwen2.5-3b | instruct | Qwen2.5-3B-Instruct | 72.9 | 48.0 | 64.0 | 78.3 | 69.3 | 66.9 | 66.56 | 65.7 | 17.0 | 42.0 | 60.3 | 1.3 | 55.5 |
+| smollm2 | base | SmolLM2-1.7B | 73.5 | 47.4 | 61.4 | 77.6 | 66.3 | 49.9 | 62.68 | 29.7 | 29.3 | 16.5 | – | – | – |
+| smollm2 | instruct | SmolLM2-1.7B-Instruct | 62.9 | 43.7 | 61.2 | 76.3 | 68.3 | 49.5 | 60.30 | 0.0 | 0.0 | 8.0 | 45.7 | 45.0 | 46.0 |
+| qwen3 | base | Qwen3-1.7B-Base | 68.5 | 45.1 | 58.0 | 75.8 | 64.2 | 63.8 | 62.54 | 73.0 | 70.3 | 22.5 | – | – | – |
+| qwen3 | instruct | Qwen3-1.7B | 69.8 | 43.0 | 53.8 | 72.3 | 61.0 | 57.9 | 59.62 | 66.7 | 66.3 | 14.5 | 69.3 | 40.0 | 69.0 |
 
 ## Post-trained checkpoints: predictors and outcomes (last row: R1-Distill against its parent, a second reference for the same model, not one of the 12)
 
-| family | stage | model | Δbpb fresh % | Δbpb enwik8 % | forgetting % | forgetting (chance-adj.) % | gsm8k gain (flex) pts | gsm8k gain (strict) pts | ifeval gain pts | bpb source |
-|---|---|---|---|---|---|---|---|---|---|---|
-| olmo2-1b | sft | OLMo-2-0425-1B-SFT | +6.99 | +9.35 | +0.01 | +0.45 | +6.7 | -1.0 | +9.5 | exp03 (AAU T4) |
-| olmo2-1b | dpo | OLMo-2-0425-1B-DPO | +14.10 | +19.23 | -1.40 | -2.62 | +11.3 | +9.0 | +32.0 | exp03 (AAU T4) |
-| olmo2-1b | rlvr | OLMo-2-0425-1B-Instruct | +14.66 | +19.66 | -0.88 | -1.54 | +28.0 | +22.7 | +30.0 | exp03 (AAU T4) |
-| qwen2.5-0.5b | instruct | Qwen2.5-0.5B-Instruct | +1.61 | +2.76 | -0.22 | -0.34 | +1.0 | +0.0 | +4.5 | exp03 (AAU T4) |
-| qwen2.5-0.5b | rl-zero | Qwen-2.5-0.5B-SimpleRL-Zoo | +0.18 | +0.40 | -0.15 | +0.13 | +9.3 | -4.0 | +1.5 | exp03 (AAU T4) |
-| qwen2.5-1.5b | instruct | Qwen2.5-1.5B-Instruct | +0.91 | +1.58 | -1.78 | -3.33 | -6.0 | -11.3 | +7.5 | exp03 (AAU T4) |
-| qwen2.5-1.5b | rl-zero | Qwen-2.5-1.5B-SimpleRL-Zoo | +0.12 | +0.28 | -1.57 | -2.73 | +7.0 | -4.7 | +1.0 | exp03 (AAU T4) |
-| qwen2.5-1.5b | math-cpt | Qwen2.5-Math-1.5B | +23.84 | +58.72 | +13.90 | +30.08 | +14.3 | +13.7 | -9.5 | exp03 (AAU T4) |
-| qwen2.5-1.5b | r1-distill | DeepSeek-R1-Distill-Qwen-1.5B | +42.95 | +74.30 | +21.61 | +46.05 | +10.3 | +9.7 | -6.5 | exp03 (AAU T4) |
-| qwen2.5-3b | instruct | Qwen2.5-3B-Instruct | +2.08 | +6.18 | -0.44 | -0.87 | -10.3 | -54.3 | +20.5 | exp03 (AAU T4) |
-| smollm2 | instruct | SmolLM2-1.7B-Instruct | +3.57 | +12.51 | +3.79 | +7.04 | -29.7 | -29.3 | -8.5 | exp01 (Mac MPS) |
-| qwen3 | instruct | Qwen3-1.7B | +16.18 | +24.93 | +4.67 | +10.69 | -6.3 | -4.0 | -8.0 | exp01 (Mac MPS) |
-| qwen2.5-1.5b | r1-distill vs parent | DeepSeek-R1-Distill-Qwen-1.5B vs Qwen2.5-Math-1.5B | +15.81 | +9.81 | +8.95 | +22.83 | -4.0 | -4.0 | +3.0 | exp03 (AAU T4), vs parent |
+| family | stage | model | Δbpb fresh % | Δbpb enwik8 % | forgetting % | forgetting (chance-adj.) % | gsm8k gain (flex) pts | gsm8k gain (strict) pts | ifeval gain pts | gsm8k gain, chat (flex) pts | ifeval gain, chat pts | bpb source |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| olmo2-1b | sft | OLMo-2-0425-1B-SFT | +6.99 | +9.35 | +0.01 | +0.45 | +6.7 | -1.0 | +9.5 | +9.3 | +31.5 | exp03 (AAU T4) |
+| olmo2-1b | dpo | OLMo-2-0425-1B-DPO | +14.10 | +19.23 | -1.40 | -2.62 | +11.3 | +9.0 | +32.0 | +20.0 | +43.5 | exp03 (AAU T4) |
+| olmo2-1b | rlvr | OLMo-2-0425-1B-Instruct | +14.66 | +19.66 | -0.88 | -1.54 | +28.0 | +22.7 | +30.0 | +29.7 | +50.5 | exp03 (AAU T4) |
+| qwen2.5-0.5b | instruct | Qwen2.5-0.5B-Instruct | +1.61 | +2.76 | -0.22 | -0.34 | +1.0 | +0.0 | +4.5 | +7.0 | +13.0 | exp03 (AAU T4) |
+| qwen2.5-0.5b | rl-zero | Qwen-2.5-0.5B-SimpleRL-Zoo | +0.18 | +0.40 | -0.15 | +0.13 | +9.3 | -4.0 | +1.5 | +9.7 | +5.5 | exp03 (AAU T4) |
+| qwen2.5-1.5b | instruct | Qwen2.5-1.5B-Instruct | +0.91 | +1.58 | -1.78 | -3.33 | -6.0 | -11.3 | +7.5 | +1.7 | +18.0 | exp03 (AAU T4) |
+| qwen2.5-1.5b | rl-zero | Qwen-2.5-1.5B-SimpleRL-Zoo | +0.12 | +0.28 | -1.57 | -2.73 | +7.0 | -4.7 | +1.0 | +4.0 | -6.0 | exp03 (AAU T4) |
+| qwen2.5-1.5b | math-cpt | Qwen2.5-Math-1.5B | +23.84 | +58.72 | +13.90 | +30.08 | +14.3 | +13.7 | -9.5 | +16.7 | +1.5 | exp03 (AAU T4) |
+| qwen2.5-1.5b | r1-distill | DeepSeek-R1-Distill-Qwen-1.5B | +42.95 | +74.30 | +21.61 | +46.05 | +10.3 | +9.7 | -6.5 | -44.7 | +5.5 | exp03 (AAU T4) |
+| qwen2.5-3b | instruct | Qwen2.5-3B-Instruct | +2.08 | +6.18 | -0.44 | -0.87 | -10.3 | -54.3 | +20.5 | -15.7 | +34.0 | exp03 (AAU T4) |
+| smollm2 | instruct | SmolLM2-1.7B-Instruct | +3.57 | +12.51 | +3.79 | +7.04 | -29.7 | -29.3 | -8.5 | +16.0 | +29.5 | exp01 (Mac MPS) |
+| qwen3 | instruct | Qwen3-1.7B | +16.18 | +24.93 | +4.67 | +10.69 | -6.3 | -4.0 | -8.0 | -3.7 | +46.5 | exp01 (Mac MPS) |
+| qwen2.5-1.5b | r1-distill vs parent | DeepSeek-R1-Distill-Qwen-1.5B vs Qwen2.5-Math-1.5B | +15.81 | +9.81 | +8.95 | +22.83 | -4.0 | -4.0 | +3.0 | -59.0 | +15.0 | exp03 (AAU T4), vs parent |
 
 Noise floor (± % of base) per row above: OLMo-2-0425-1B-SFT 2.2, OLMo-2-0425-1B-DPO 2.2, OLMo-2-0425-1B-Instruct 2.2, Qwen2.5-0.5B-Instruct 2.5, Qwen-2.5-0.5B-SimpleRL-Zoo 2.5, Qwen2.5-1.5B-Instruct 2.1, Qwen-2.5-1.5B-SimpleRL-Zoo 2.1, Qwen2.5-Math-1.5B 2.1, DeepSeek-R1-Distill-Qwen-1.5B 2.1, Qwen2.5-3B-Instruct 1.9, SmolLM2-1.7B-Instruct 2.1, Qwen3-1.7B 2.1.
 

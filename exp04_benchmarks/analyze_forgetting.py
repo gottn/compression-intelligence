@@ -451,22 +451,25 @@ def summary_markdown(table: pd.DataFrame, corr: pd.DataFrame, slopes: pd.DataFra
 
 
 def nudge_labels(anchors: list[tuple[float, float]], widths: list[float], height: float,
-                 dx: float = 5.0, dy: float = 4.0, marker: float = 0.0) -> list[tuple[float, float]]:
+                 dx: float = 5.0, dy: float = 4.0, marker: float = 0.0,
+                 left: list[bool] | None = None) -> list[tuple[float, float]]:
     """Label offsets (points) that keep label boxes from overlapping each other and every marker (a square of
     side 2 × marker around each anchor). anchors are point positions in points; each label starts up-right of
     its point and moves up by one line height until its box is clear. Labels are placed bottom-up, so the
-    result depends only on the inputs."""
+    result depends only on the inputs. A label with left[i] set goes up-left of its point instead (its box ends
+    dx points left of the anchor); the returned x offset is then −dx."""
+    left = left or [False] * len(anchors)
     order = sorted(range(len(anchors)), key=lambda i: (anchors[i][1], anchors[i][0]))
     boxes: list[tuple[float, float, float, float]] = [
         (x - marker, y - marker, x + marker, y + marker) for x, y in anchors] if marker > 0 else []
     out: list[tuple[float, float]] = [(dx, dy)] * len(anchors)
     for i in order:
-        x0 = anchors[i][0] + dx
+        x0 = anchors[i][0] - dx - widths[i] if left[i] else anchors[i][0] + dx
         y0 = anchors[i][1] + dy
         while any(x0 < bx1 and bx0 < x0 + widths[i] and y0 < by1 and by0 < y0 + height for bx0, by0, bx1, by1 in boxes):
             y0 += height
         boxes.append((x0, y0, x0 + widths[i], y0 + height))
-        out[i] = (dx, y0 - anchors[i][1])
+        out[i] = (-dx if left[i] else dx, y0 - anchors[i][1])
     return out
 
 
@@ -532,9 +535,13 @@ def place_labels(ax: plt.Axes, labels: list[Label]) -> None:
     """Annotate points with non-overlapping labels; call after the figure layout is final."""
     to_pt = 72.0 / ax.figure.dpi
     anchors = [tuple(v * to_pt for v in ax.transData.transform((x, y))) for _, x, y, _ in labels]
-    offsets = nudge_labels(anchors, [len(t) * 7 * 0.55 for t, _, _, _ in labels], height=9.0, marker=4.5)
-    for (text, x, y, color), (ox, oy) in zip(labels, offsets, strict=True):
+    widths = [len(t) * 7 * 0.55 for t, _, _, _ in labels]
+    right_pt = ax.get_window_extent().x1 * to_pt
+    left = [a[0] + 5 + w > right_pt for a, w in zip(anchors, widths, strict=True)]
+    offsets = nudge_labels(anchors, widths, height=9.0, marker=4.5, left=left)
+    for (text, x, y, color), (ox, oy), lf in zip(labels, offsets, left, strict=True):
         ax.annotate(text, (x, y), xytext=(ox, oy), textcoords="offset points", fontsize=7, color=color,
+                    ha="right" if lf else "left",
                     arrowprops={"arrowstyle": "-", "color": MUTED, "linewidth": 0.6} if oy > 8 else None)
 
 
@@ -564,7 +571,7 @@ def r_panel(ax: plt.Axes, corr: pd.DataFrame) -> None:
     ax.axvline(0, color=INK2, linewidth=1)
     ax.set_yticks(range(len(items)))
     ax.set_yticklabels([n for _, n in items], fontsize=8, color=INK2)
-    ax.set_ylim(len(items) - 0.4, -0.6)  # forgetting on top
+    ax.set_ylim(len(items) - 0.4, -1.45)  # forgetting on top, headroom for the legend
     ax.set_xlim(-1.02, 1.02)
     ax.set_xlabel("Pearson r (95% CI), Spearman ρ (diamond)", color=INK2, fontsize=8.5)
     ax.set_title("Predictor: fresh text vs enwik8", fontsize=8.5, color=INK, loc="left")

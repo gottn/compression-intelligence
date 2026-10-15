@@ -1,0 +1,33 @@
+commit c295d52 task 15 (job 1080860, array 1080843) on i256-a10-09.srv.aau.dk at 2026-10-15T07:24:10+02:00, gpu=NVIDIA A10, out=/home/id.aau.dk/pr04wm/runs/ci/exp04_eval/20261015-065101-c295d52
+WARNING: group: unknown groupid 255260
+15:4: not a valid test operator:  
+15:4: not a valid test operator: 13.0
+21:4: not a valid test operator: (
+21:4: not a valid test operator: 580.178.04
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+exp04 index 15: HuggingFaceTB/SmolLM2-1.7B-Instruct on i256-a10-09.srv.aau.dk gpu=NVIDIA A10 {'python': '3.12.3', 'lm_eval': '0.4.13', 'transformers': '5.19.0', 'torch': '2.9.0a0+50eac811a6.nv25.9', 'datasets': '5.1.0', 'accelerate': '1.15.0', 'nltk': '3.10.3'}
+/usr/local/lib/python3.12/dist-packages/requests/__init__.py:113: RequestsDependencyWarning: urllib3 (2.5.0) or chardet (6.0.0.post1)/charset_normalizer (3.4.3) doesn't match a supported version!
+  warnings.warn(
+[07:24:16] task index built in 1 s
+[07:24:48] model loaded in 27 s
+generation config: kept {'bos_token_id': 1, 'eos_token_id': 2, 'pad_token_id': 2}, dropped {'_from_model_config': True}
+chat: {'has_chat_template': True, 'chat_template_args': {}}
+[07:24:48] gsm8k_chat: simple_evaluate({'tasks': ['gsm8k'], 'log_samples': False, 'apply_chat_template': True, 'fewshot_as_multiturn': True, 'random_seed': 0, 'numpy_random_seed': 1234, 'torch_random_seed': 1234, 'fewshot_random_seed': 1234, 'limit': 300})
+Using the latest cached version of the dataset since openai/gsm8k couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'main' at /home/id.aau.dk/pr04wm/hf_cache/datasets/openai___gsm8k/main/0.0.0/740312add88f781978c0658806c59bc2815b9866 (last modified on Wed Oct 14 21:31:06 2026).
+  0%|          | 0/300 [00:00<?, ?it/s]  8%|▊         | 23/300 [00:00<00:01, 229.80it/s] 16%|█▌        | 48/300 [00:00<00:01, 239.68it/s] 24%|██▍       | 73/300 [00:00<00:00, 244.00it/s] 33%|███▎      | 99/300 [00:00<00:00, 247.36it/s] 42%|████▏     | 125/300 [00:00<00:00, 248.83it/s] 50%|█████     | 151/300 [00:00<00:00, 249.35it/s] 59%|█████▉    | 177/300 [00:00<00:00, 249.69it/s] 68%|██████▊   | 203/300 [00:00<00:00, 250.05it/s] 76%|███████▋  | 229/300 [00:00<00:00, 249.88it/s] 85%|████████▌ | 255/300 [00:01<00:00, 250.14it/s] 94%|█████████▎| 281/300 [00:01<00:00, 251.02it/s]100%|██████████| 300/300 [00:01<00:00, 248.76it/s]
+Passed argument batch_size = auto. Detecting largest batch size
+Determined Largest batch size: 19
+Running generate_until requests:   0%|          | 0/300 [00:00<?, ?it/s]Running generate_until requests:   0%|          | 1/300 [01:23<6:57:55, 83.87s/it]Running generate_until requests:   7%|▋         | 20/300 [01:38<17:28,  3.75s/it] Running generate_until requests:  13%|█▎        | 39/300 [01:53<08:47,  2.02s/it]Running generate_until requests:  19%|█▉        | 58/300 [02:07<05:50,  1.45s/it]Running generate_until requests:  26%|██▌       | 77/300 [02:21<04:20,  1.17s/it]Running generate_until requests:  32%|███▏      | 96/300 [02:35<03:25,  1.01s/it]Running generate_until requests:  38%|███▊      | 115/300 [02:49<02:48,  1.10it/s]Running generate_until requests:  45%|████▍     | 134/300 [03:02<02:20,  1.18it/s]Running generate_until requests:  51%|█████     | 153/300 [03:16<01:57,  1.25it/s]Running generate_until requests:  57%|█████▋    | 172/300 [03:29<01:37,  1.31it/s]Running generate_until requests:  64%|██████▎   | 191/300 [03:42<01:20,  1.36it/s]Running generate_until requests:  70%|███████   | 210/300 [03:54<01:04,  1.40it/s]Running generate_until requests:  76%|███████▋  | 229/300 [04:06<00:49,  1.44it/s]Running generate_until requests:  83%|████████▎ | 248/300 [04:17<00:34,  1.52it/s]Running generate_until requests:  89%|████████▉ | 267/300 [04:29<00:21,  1.55it/s]Running generate_until requests:  95%|█████████▌| 286/300 [04:39<00:08,  1.66it/s]Running generate_until requests: 100%|██████████| 300/300 [04:39<00:00,  1.07it/s]
+SCORE HuggingFaceTB/SmolLM2-1.7B-Instruct gsm8k: exact_match[flexible-extract]=0.4567±0.0288 exact_match[strict-match]=0.4500±0.0288 n=300 shot=[5] (gsm8k_chat group, 282 s)
+[07:29:30] ifeval_chat: simple_evaluate({'tasks': ['ifeval'], 'log_samples': False, 'apply_chat_template': True, 'fewshot_as_multiturn': True, 'random_seed': 0, 'numpy_random_seed': 1234, 'torch_random_seed': 1234, 'fewshot_random_seed': 1234, 'limit': 200})
+Using the latest cached version of the dataset since google/IFEval couldn't be found on the Hugging Face Hub (offline mode is enabled).
+Found the latest cached dataset configuration 'default' at /home/id.aau.dk/pr04wm/hf_cache/datasets/google___if_eval/default/0.0.0/966cd89545d6b6acfd7638bc708b98261ca58e84 (last modified on Wed Oct 14 21:31:15 2026).
+  0%|          | 0/200 [00:00<?, ?it/s]100%|██████████| 200/200 [00:00<00:00, 27080.99it/s]
+Passed argument batch_size = auto. Detecting largest batch size
+Determined Largest batch size: 19
+Running generate_until requests:   0%|          | 0/200 [00:00<?, ?it/s]Running generate_until requests:   0%|          | 1/200 [01:55<6:23:50, 115.73s/it]Running generate_until requests:  10%|█         | 20/200 [02:37<18:43,  6.24s/it]  Running generate_until requests:  20%|█▉        | 39/200 [03:19<10:26,  3.89s/it]Running generate_until requests:  29%|██▉       | 58/200 [04:00<07:21,  3.11s/it]Running generate_until requests:  38%|███▊      | 77/200 [04:41<05:36,  2.74s/it]Running generate_until requests:  48%|████▊     | 96/200 [05:22<04:22,  2.53s/it]Running generate_until requests:  57%|█████▊    | 115/200 [06:03<03:23,  2.40s/it]Running generate_until requests:  67%|██████▋   | 134/200 [06:43<02:32,  2.31s/it]Running generate_until requests:  76%|███████▋  | 153/200 [06:59<01:26,  1.84s/it]Running generate_until requests:  86%|████████▌ | 172/200 [07:39<00:53,  1.93s/it]Running generate_until requests:  96%|█████████▌| 191/200 [08:09<00:16,  1.81s/it]Running generate_until requests: 100%|██████████| 200/200 [08:09<00:00,  2.45s/it]
+SCORE HuggingFaceTB/SmolLM2-1.7B-Instruct ifeval: prompt_level_strict_acc[none]=0.4600±0.0353 inst_level_strict_acc[none]=0.6006±nan n=200 shot=[0] (ifeval_chat group, 491 s)
+exp04 index 15 HuggingFaceTB/SmolLM2-1.7B-Instruct: groups ok ['gsm8k_chat', 'ifeval_chat'], failed []
+exp04_eval task 15 done at 2026-10-15T07:37:44+02:00

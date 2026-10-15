@@ -163,6 +163,7 @@ def test_nudge_labels_separates_overlapping_boxes_only() -> None:
     # a marker sitting where the label would go pushes it up
     lone = nudge_labels([(0.0, 0.0), (20.0, 8.0)], [50.0, 50.0], height=9.0, marker=4.5)
     assert lone[0][1] > 4.0
+    assert nudge_labels([(100.0, 0.0)], [40.0], height=9.0, left=[True]) == [(-5.0, 4.0)]
 
 
 def test_chat_condition_scores_and_gain_use_the_base_prompted_reference() -> None:

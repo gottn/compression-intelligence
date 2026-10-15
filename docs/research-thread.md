@@ -55,5 +55,5 @@ exp04 done (2026-10-15, AAU array 1080344, `exp04_benchmarks/RESULTS.md`).
 - **Gate 1 passes as written but on leverage.** Pearson r(Δbpb_fresh, forgetting) = 0.89 [−0.01, 0.98] and Spearman 0.67, n = 12; without Qwen2.5-Math and R1-Distill, r = 0.32.
 - **Drift is a threshold alarm, not a ranking.** 8 of 12 checkpoints are within noise, including OLMo-2 DPO/RLVR at +14–15%; all 3 above +15% forget (Qwen3 −4.7%, Math −13.9%, R1 −21.6%). SmolLM2-Instruct loses 3.8% at +3.6%, so recipe is the missing variable.
 - **enwik8 predicts as well** (r = 0.95), so "fresh" adds nothing for this outcome.
-- **One-sidedness is not shown.** The gain r is +0.38 under base prompting, which is invalid for chat models; the chat-condition gsm8k/ifeval addendum is pending.
+- **One-sidedness fails.** The gain r is +0.38 under base prompting, which is invalid for chat models. The chat-condition addendum (job 1080843) gives ifeval gain vs drift r = +0.89 over the 8 chat-tuned checkpoints, while gsm8k is not interpretable because R1's `<think>` is truncated at 256 tokens. Drift measures the dose of post-training (gain plus, above ~15%, loss), not loss alone.
 - **Consequence for the chain.** Step 1 needs recipe-controlled fine-tunes (one base, several recipes, several checkpoints each) before the meter can be called predictive within the sub-15% range.

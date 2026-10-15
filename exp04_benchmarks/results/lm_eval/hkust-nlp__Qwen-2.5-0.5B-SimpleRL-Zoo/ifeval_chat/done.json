@@ -1,0 +1,57 @@
+{
+ "group": "ifeval_chat",
+ "kwargs": {
+  "tasks": [
+   "ifeval"
+  ],
+  "log_samples": false,
+  "apply_chat_template": true,
+  "fewshot_as_multiturn": true,
+  "random_seed": 0,
+  "numpy_random_seed": 1234,
+  "torch_random_seed": 1234,
+  "fewshot_random_seed": 1234,
+  "limit": 200
+ },
+ "samples_file": null,
+ "status": "ok",
+ "wall_s": 581.2,
+ "results_file": "ifeval_chat/results.json",
+ "tasks": {
+  "ifeval": {
+   "metrics": {
+    "prompt_level_strict_acc,none": 0.155,
+    "prompt_level_strict_acc_stderr,none": 0.0256547428197152,
+    "inst_level_strict_acc,none": 0.2893081761006289,
+    "prompt_level_loose_acc,none": 0.17,
+    "prompt_level_loose_acc_stderr,none": 0.026627903149340413,
+    "inst_level_loose_acc,none": 0.3050314465408805
+   },
+   "version": 4.0,
+   "leaf_versions": [
+    "4.0"
+   ],
+   "n_shot": [
+    0
+   ],
+   "n_effective": 200,
+   "n_original": 541,
+   "n_leaves": 1
+  }
+ },
+ "config": {
+  "batch_size": null,
+  "batch_sizes": [],
+  "model_dtype": "torch.float16",
+  "random_seed": 0,
+  "numpy_seed": 1234,
+  "torch_seed": 1234,
+  "fewshot_seed": 1234,
+  "limit": 200,
+  "model_num_parameters": 494032768
+ },
+ "lm_eval_version": "0.4.13",
+ "transformers_version": "5.19.0",
+ "max_length": 2048,
+ "chat_template": null
+}

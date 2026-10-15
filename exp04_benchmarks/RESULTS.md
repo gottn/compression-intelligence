@@ -1,10 +1,10 @@
 # exp04: does fresh-text drift predict benchmark forgetting, but not gain?
 
-Run 2026-10-14 on AAU. Job 1080344 was an 18-task array on NVIDIA A10s (commit 9f22ff0), 22:20–23:58 CEST: 6.2 GPU-hours, no failed task or group. lm-evaluation-harness 0.4.13, transformers 5.19.0, torch 2.9.0a0 (NGC 25.09), datasets 5.1.0. Every number below is in `results/summary.md`, written by `analyze_forgetting.py` (`bash run_all.sh analyze`). The rules were committed before any job ran and are reproduced unchanged under the line at the end.
+Run 2026-10-14 on AAU. Job 1080344 was an 18-task array on NVIDIA A10s (commit 9f22ff0), 22:20–23:58 CEST: 6.2 GPU-hours, no failed task or group. The chat-condition addendum (gsm8k and ifeval for the 12 post-trained checkpoints with their chat templates) is job 1080843 (commit c295d52), run 2026-10-15 06:51–07:45 CEST: 12 A10 tasks, 3.3 GPU-hours, no failures. lm-evaluation-harness 0.4.13, transformers 5.19.0, torch 2.9.0a0 (NGC 25.09), datasets 5.1.0. Every number below is in `results/summary.md`, written by `analyze_forgetting.py` (`bash run_all.sh analyze`). The rules were committed before any job ran and are reproduced unchanged under the line at the end.
 
 ## Verdict
 
-**Gate 1 passes as written, but on leverage. What fresh-text drift actually shows is a threshold, not a ranking.**
+**Gate 1 passes as written, but on leverage. What fresh-text drift actually shows is a threshold, not a ranking. One-sidedness fails: among chat-tuned checkpoints, drift tracks the instruction-following gain (r = 0.89) as closely as it tracks forgetting.**
 
 - **Pearson r(Δbpb_fresh, forgetting) = 0.89** [−0.01, 0.98], n = 12, which passes the pre-registered gate (≥ 0.8).
   - Two math-line checkpoints carry it: Qwen2.5-Math-1.5B (Δbpb +23.8%, general −13.9%) and R1-Distill-Qwen-1.5B (+43.0%, −21.6%).
@@ -16,10 +16,13 @@ Run 2026-10-14 on AAU. Job 1080344 was an 18-task array on NVIDIA A10s (commit 9
   - All 3 checkpoints above +14.7% are outside it: Qwen3-1.7B at +16.2% (−4.7%), Qwen2.5-Math at +23.8% (−13.9%) and R1-Distill at +43.0% (−21.6%).
   - The exception is SmolLM2-1.7B-Instruct, which loses 3.8% at only +3.6% drift, nearly all of it on ARC (ARC-Easy −10.6 points).
   - So large drift does come with real forgetting, but below about 15% the meter does not rank checkpoints. The recipe matters more than the size of the drift (see "Recipe is the missing variable").
-- **One-sidedness: not shown, and not testable with this gain measure.**
-  - Under base prompting, r(Δbpb_fresh, gsm8k gain) = +0.38 [0.08, 0.69], so the pre-registered rule fails.
-  - But gsm8k and ifeval under base prompting are **invalid as gain measures for chat-tuned checkpoints**. SmolLM2-Instruct scores 0.0 on gsm8k. Qwen2.5-3B-Instruct's strict-match falls from 71.3 to 17.0 because it stops writing "#### ". Several Instruct models score *below* their base.
-  - These are format failures, not capability numbers. The gain side is re-run in the chat condition (addendum below).
+- **One-sidedness: not supported.**
+  - The pre-registered gain, under base prompting, gives r(Δbpb_fresh, gsm8k gain) = +0.38 [0.08, 0.69], so the rule fails. That gain is also invalid for chat-tuned models: SmolLM2-Instruct scores 0.0, and several Instruct models score below their base.
+  - With each model's chat template (the addendum; now the primary gain):
+    - **gsm8k:** r = −0.47 [−0.88, 0.74] and ρ = +0.08. Pearson is driven by R1-Distill, whose `<think>` opening is cut off at lm-eval's 256-token cap (15.7%, strict 0.0). Without R1-Distill, r = +0.43; without both math-line points, r = +0.39.
+    - **ifeval:** over the 8 chat-style checkpoints, r = **+0.89** [0.70, 0.99] and ρ = 0.88.
+  - More drift, more instruction-following gain: OLMo-2 DPO and RLVR (+14–15%) gain +44 and +51 points, Qwen3 (+16%) gains +47, and the small-drift Qwen2.5-Instruct models gain +13 to +34.
+  - So drift measures *how much post-training happened*. That buys the target behaviour and, above about 15%, costs general accuracy. It is not a meter of loss alone.
 - **enwik8 is at least as good a predictor** (E3 met): r = 0.95 and ρ = 0.68. Freshness of the text adds nothing to this outcome.
 - **R1-Distill is not "big drift, modest loss"** (E4 not met). It loses the most of all 12 (−13.6 points of mean accuracy) and sits 2.1 points *above* the fitted line.
   - Against its parent Qwen2.5-Math, it drifts +15.8% and loses 9.0%: the distillation step itself also forgets.
@@ -28,8 +31,8 @@ Run 2026-10-14 on AAU. Job 1080344 was an 18-task array on NVIDIA A10s (commit 9
 
 `results/fig_forgetting.png`:
 - **Left:** forgetting against Δbpb_fresh for the 12 checkpoints. It shows the OLS fit with a 95% checkpoint-bootstrap band, the median noise floor as a shaded strip, and R1-Distill against its Math parent as a hollow point (not in the fit).
-- **Middle:** the pre-registered gsm8k gain under base prompting (see the validity note above).
-- **Right:** Pearson r with 95% CIs and Spearman ρ for the fresh and enwik8 predictors.
+- **Middle:** the gsm8k gain with each post-trained model's chat template, against its base prompted as in the main run (the addendum's primary gain).
+- **Right:** Pearson r with 95% CIs and Spearman ρ for the fresh and enwik8 predictors, for forgetting, the chat-template gain and the pre-registered base-prompting gain.
 
 ## Rules and expectations against the outcome
 
@@ -37,6 +40,7 @@ Run 2026-10-14 on AAU. Job 1080344 was an 18-task array on NVIDIA A10s (commit 9
 |---|---|---|---|
 | Gate 1 | Pearson r(Δbpb_fresh, forgetting) ≥ 0.8 pass, ≥ 0.6 soft | r = 0.887 [−0.01, 0.98] | **pass** (on leverage, see below) |
 | One-sidedness | \|r(Δbpb_fresh, gsm8k gain)\| < 0.3 and Gate 1 ≥ soft | r = +0.383 [0.08, 0.69] | **not shown** (gain measure invalid for chat models) |
+| One-sidedness, chat-template gain (measure changed after the run) | same test on the chat-condition gsm8k gain | r = −0.473 [−0.88, 0.74], ρ = +0.08 | **not shown** (R1 truncation drives r); ifeval chat gain over chat-style: r = +0.89 |
 | E1 | 0.6 ≤ r < 0.8 | 0.887 | not met (higher) |
 | E2 | r(fresh, gain) < 0.3 | +0.383 | not met |
 | E3 | r(enwik8, forgetting) ≥ r(fresh, forgetting) − 0.05 | 0.949 vs 0.887 | **met** |
@@ -53,26 +57,27 @@ The bootstrap CI of Pearson r reaches −0.01 because resamples that omit both m
 
 ## Per-checkpoint outcome
 
-| family | stage | Δbpb fresh % | Δbpb enwik8 % | general (base → post) | forgetting % (floor ±) | gsm8k gain pts (base prompting) | ifeval gain pts |
-|---|---|---|---|---|---|---|---|
-| olmo2-1b | SFT | +6.99 | +9.35 | 58.89 → 58.88 | +0.0 (2.2) | +6.7 | +9.5 |
-| olmo2-1b | DPO | +14.10 | +19.23 | 58.89 → 59.71 | −1.4 (2.2) | +11.3 | +32.0 |
-| olmo2-1b | RLVR | +14.66 | +19.66 | 58.89 → 59.41 | −0.9 (2.2) | +28.0 | +30.0 |
-| qwen2.5-0.5b | Instruct | +1.61 | +2.76 | 52.74 → 52.85 | −0.2 (2.5) | +1.0 | +4.5 |
-| qwen2.5-0.5b | SimpleRL-Zoo | +0.18 | +0.40 | 52.74 → 52.82 | −0.1 (2.5) | +9.3 | +1.5 |
-| qwen2.5-1.5b | Instruct | +0.91 | +1.58 | 62.69 → 63.81 | −1.8 (2.1) | −6.0 | +7.5 |
-| qwen2.5-1.5b | SimpleRL-Zoo | +0.12 | +0.28 | 62.69 → 63.67 | −1.6 (2.1) | +7.0 | +1.0 |
-| qwen2.5-1.5b | Qwen2.5-Math | +23.84 | +58.72 | 62.69 → 53.97 | **+13.9** (2.1) | +14.3 | −9.5 |
-| qwen2.5-1.5b | R1-Distill | +42.95 | +74.30 | 62.69 → 49.14 | **+21.6** (2.1) | +10.3 | −6.5 |
-| qwen2.5-3b | Instruct | +2.08 | +6.18 | 66.27 → 66.56 | −0.4 (1.9) | −10.3 | +20.5 |
-| smollm2 | Instruct | +3.57 | +12.51 | 62.68 → 60.30 | **+3.8** (2.1) | −29.7 | −8.5 |
-| qwen3 | Instruct | +16.18 | +24.93 | 62.54 → 59.62 | **+4.7** (2.1) | −6.3 | −8.0 |
-| *qwen2.5-1.5b* | *R1-Distill vs Math parent* | *+15.81* | *+9.81* | *53.97 → 49.14* | ***+9.0*** *(2.1)* | *−4.0* | *+3.0* |
+| family | stage | Δbpb fresh % | Δbpb enwik8 % | general (base → post) | forgetting % (floor ±) | gsm8k gain pts (base prompting) | ifeval gain pts | gsm8k gain, chat | ifeval gain, chat |
+|---|---|---|---|---|---|---|---|---|---|
+| olmo2-1b | SFT | +6.99 | +9.35 | 58.89 → 58.88 | +0.0 (2.2) | +6.7 | +9.5 | +9.3 | +31.5 |
+| olmo2-1b | DPO | +14.10 | +19.23 | 58.89 → 59.71 | −1.4 (2.2) | +11.3 | +32.0 | +20.0 | +43.5 |
+| olmo2-1b | RLVR | +14.66 | +19.66 | 58.89 → 59.41 | −0.9 (2.2) | +28.0 | +30.0 | +29.7 | +50.5 |
+| qwen2.5-0.5b | Instruct | +1.61 | +2.76 | 52.74 → 52.85 | −0.2 (2.5) | +1.0 | +4.5 | +7.0 | +13.0 |
+| qwen2.5-0.5b | SimpleRL-Zoo | +0.18 | +0.40 | 52.74 → 52.82 | −0.1 (2.5) | +9.3 | +1.5 | +9.7 | +5.5 |
+| qwen2.5-1.5b | Instruct | +0.91 | +1.58 | 62.69 → 63.81 | −1.8 (2.1) | −6.0 | +7.5 | +1.7 | +18.0 |
+| qwen2.5-1.5b | SimpleRL-Zoo | +0.12 | +0.28 | 62.69 → 63.67 | −1.6 (2.1) | +7.0 | +1.0 | +4.0 | −6.0 |
+| qwen2.5-1.5b | Qwen2.5-Math | +23.84 | +58.72 | 62.69 → 53.97 | **+13.9** (2.1) | +14.3 | −9.5 | +16.7 | +1.5 |
+| qwen2.5-1.5b | R1-Distill | +42.95 | +74.30 | 62.69 → 49.14 | **+21.6** (2.1) | +10.3 | −6.5 | −44.7 (truncated) | +5.5 |
+| qwen2.5-3b | Instruct | +2.08 | +6.18 | 66.27 → 66.56 | −0.4 (1.9) | −10.3 | +20.5 | −15.7 | +34.0 |
+| smollm2 | Instruct | +3.57 | +12.51 | 62.68 → 60.30 | **+3.8** (2.1) | −29.7 | −8.5 | +16.0 | +29.5 |
+| qwen3 | Instruct | +16.18 | +24.93 | 62.54 → 59.62 | **+4.7** (2.1) | −6.3 | −8.0 | −3.7 | +46.5 |
+| *qwen2.5-1.5b* | *R1-Distill vs Math parent* | *+15.81* | *+9.81* | *53.97 → 49.14* | ***+9.0*** *(2.1)* | *−4.0* | *+3.0* | *−59.0 (truncated)* | *+15.0* |
 
 How to read the table:
 - **general** is the mean of the 6 primary accuracies, in %; **forgetting** is the relative drop, and positive means a loss.
 - Bold marks forgetting outside the noise floor. The floor is 1.96 × √(SE_post² + SE_base²) of the 6-task means from lm-eval's standard errors, as a percent of the base. It treats the two models as independent and so is a little conservative.
 - The last row is the same R1-Distill model measured against its parent; it is not one of the 12.
+- **Chat columns:** the post-trained model with its own chat template (5 shots as turns), minus its reference prompted as in the main run.
 - Chance-adjusted forgetting (the aggregate form of Harmon et al.'s adjustment) ranks the 12 identically, with r = 0.89.
 - Raw per-task scores for all 18 checkpoints are in `results/summary.md` and `results/scores.csv`.
 
@@ -100,7 +105,7 @@ Plausible reasons, untested here:
 
 The data tie the size of forgetting to *what* was trained, at least as much as to how far the model moved. The meter is a coarse alarm (Δbpb above ~15% was always followed by forgetting in this set), not a fine-grained predictor.
 
-## Gain side under base prompting (pre-registered measure, invalid for chat models)
+## Gain side under base prompting (pre-registered measure, invalid for chat models; superseded by the chat condition below)
 
 - **Pre-registered gain:** r(Δbpb_fresh, gsm8k flexible gain) = +0.38 [0.08, 0.69] and ρ = 0.37.
   - Without the 5 instruct-stage checkpoints (n = 7): r = 0.19 and ρ = 0.64.
@@ -114,6 +119,46 @@ The data tie the size of forgetting to *what* was trained, at least as much as t
 - The cap also truncates long chains of thought (R1-Distill; SimpleRL-Zoo writes longer solutions too). The positive r comes mostly from the math-line models, whose gsm8k gains are real (Qwen2.5-Math +14.3, R1 +10.3).
 - The addendum re-measures the post-trained side with each model's chat template.
 
+## Chat condition (addendum, run after the main result; its gain is the primary gain measure)
+
+**Setup.** gsm8k (300, 5-shot) and ifeval (200) were re-run for the 12 post-trained checkpoints:
+- with each model's own chat template (`apply_chat_template`), the gsm8k shots as separate turns (`fewshot_as_multiturn`);
+- with the same limits, seeds, greedy decoding and caps (256 / 1,280 new tokens);
+- for Qwen3 only, `enable_thinking=False`, since it is the only template with that switch.
+
+Bases keep their base-prompted scores. Gain = post (chat) − base (as before).
+
+| gain measure | n | Pearson r with Δbpb_fresh [95% CI] | Spearman ρ | enwik8 r |
+|---|---|---|---|---|
+| gsm8k, chat, all 12 | 12 | −0.47 [−0.88, 0.74] | +0.08 | −0.44 |
+| gsm8k, chat, without Qwen2.5-Math and R1-Distill | 10 | +0.39 [−0.40, 0.92] | +0.26 | +0.33 |
+| gsm8k, chat, without the 5 instruct-stage checkpoints | 7 | −0.64 [−0.96, 0.94] | +0.11 | −0.58 |
+| ifeval, chat, chat-style checkpoints (sft/dpo/rlvr/instruct) | 8 | **+0.89** [0.70, 0.99] | **+0.88** | +0.91 |
+| ifeval, chat, all 12 | 12 | −0.03 [−0.53, 0.91] | +0.31 | −0.16 |
+| gsm8k, base prompting (pre-registered, for reference) | 12 | +0.38 [0.08, 0.69] | +0.37 | +0.30 |
+
+**What changed for each model.**
+- **Format failures resolved.** SmolLM2-Instruct goes from 0.0 to 45.7 on gsm8k and from 8.0 to 46.0 on ifeval. Qwen2.5-1.5B-Instruct goes from 54.3 to 62.0.
+- **Qwen3-1.7B with thinking off:** gsm8k 69.3 (base 73.0), ifeval 69.0 (base 22.5).
+- **R1-Distill:** its template opens a `<think>` block and lm-eval's 256-token gsm8k cap ends generation inside the trace. gsm8k falls to 15.7 (strict 0.0). This is a truncation artefact, not a capability number.
+- **Qwen2.5-3B-Instruct:** 60.3 against its base's 76.0, with strict-match 1.3. Its chat answers probably outrun 256 tokens and do not end in "#### ". Without logged samples this cannot be confirmed.
+- **Neither number can support or refute a gain claim.** The gsm8k correlation is therefore not interpretable for one-sidedness in either direction: Pearson is pulled negative by R1, and ρ ≈ 0.
+
+**ifeval is the clean gain measure here.** Its 1,280-token cap and 0-shot format suit chat models, and the chat-style subset has no reasoning models. On it, drift predicts gain about as well as it predicts forgetting:
+- OLMo-2 SFT, DPO and RLVR at +7, +14 and +15% gain +32, +44 and +51 points.
+- Qwen3 at +16% gains +47.
+- The Qwen2.5 Instruct models at +1 to +2% gain +13 to +34.
+- SmolLM2-Instruct at +3.6% gains +30.
+
+This is the opposite of the one-sided meter the thread hoped for.
+
+**Reading.** Δbpb_fresh is a dose measure of post-training:
+- Larger doses buy more instruction following.
+- Above about 15%, the math-line and Qwen3 recipes also cost general accuracy.
+- OLMo-2 shows that a large dose need not cost anything.
+
+As a forgetting alarm it is usable only together with the recipe. As a one-sided meter, decoupled from gain, it fails on this set.
+
 ## Cost: benchmark pass vs drift score (measured)
 
 - **Benchmarks:** per checkpoint, the three groups took a median **18.2 min** on an A10, excluding about 2.5 min of job setup.
@@ -121,6 +166,7 @@ The data tie the size of forgetting to *what* was trained, at least as much as t
   - Per group, for Qwen2.5-0.5B (A10 dry run 1080328): log-likelihood 126 s, gsm8k 201 s, ifeval 577 s.
   - The array reproduced the dry run's scores exactly, with loglik in 93 s.
 - **Drift score:** scoring the 3 fresh corpora (about 300 KB) took a median **19 s** per model on exp03's T4 (10–33 s).
+- **Chat addendum:** 13–26 min per checkpoint for the two generative groups (3.3 GPU-hours for 12).
 - **Ratio:** the median is **67×**, and it is a lower bound on equal hardware, because the T4 is the slower card. For the 4 models scored on the Mac in exp01 (MPS), the ratio is 9–24×.
 
 ## Method as run, and deviations from the brief
@@ -142,13 +188,15 @@ The data tie the size of forgetting to *what* was trained, at least as much as t
 
 ## Failures
 
-- No array task or group failed.
+- No array task or group failed, in either the main array or the chat addendum.
+- A duplicate copy of the addendum (job 1080844, submitted 6 s after 1080843 from the coordinating session) ran 4 tasks for 29 s before it was cancelled; its outputs were discarded.
+- The AAU SSH session expired between the main run and the addendum. Submission waited until the user logged in again.
 - The first dry run (1080307, T4) was cancelled because of the generation-config bug; it is the reason for the two driver changes above.
 - The setup job used 28.5 of its 30 minutes: pip took about 21 min on the network file system (21:02 to 21:24), and the dataset and nltk prefetch about 7 min.
 
 ## Next steps
 
-1. **Chat-condition gain (running as the addendum).** Re-score gsm8k and ifeval for the 12 post-trained checkpoints with their chat templates and multi-turn few-shot; that becomes the primary gain measure.
+1. **Gain with reasoning-length caps.** The chat addendum is done (above). gsm8k needs a cap that fits long chains of thought before it can say anything about R1-style models: about 4,096 tokens for R1-Distill, with samples logged to check truncation. ifeval already says drift tracks the instruction-following gain.
 2. **Recipe-controlled drift.** The thread's step 1 (own fine-tunes of one base with SFT-chat, SFT-CoT, DPO and GRPO at 5 checkpoints each) is now the only way to separate "how far" from "what was trained". Public checkpoints confound the two.
 3. **Report the meter as a threshold alarm.** Report the fraction of checkpoints above a Δbpb cut that forget beyond noise (here 3 of 3 above +15%, and 1 of 9 below it), with a recipe-held-out test, rather than as a correlation.
 4. **Drop "fresh" from the claim for this outcome.** enwik8 predicts at least as well (r = 0.95, ρ = 0.68).

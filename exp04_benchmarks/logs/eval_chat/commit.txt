@@ -1,0 +1,2 @@
+c295d528565468aba5f2990933788a25eb0f5fa0
+feat(exp04): chat-condition gsm8k/ifeval groups — 12 post-trained indices, Qwen3 thinking off

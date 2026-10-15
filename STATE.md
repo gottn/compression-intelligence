@@ -4,7 +4,7 @@
 
 ## Next thread
 
-See `docs/research-thread.md` (2026-10-14): fresh-text bpb as a forgetting meter for post-training. exp03 (staged public checkpoints) and exp04 (benchmarks for the same 18 checkpoints) are done on AAU. exp04 says drift is a threshold alarm, not a ranking, and the recipe matters. The exp04 chat-condition addendum (gain measured with chat templates) is next, then recipe-controlled fine-tunes (thread step 1).
+See `docs/research-thread.md` (2026-10-14): fresh-text bpb as a forgetting meter for post-training. exp03 (staged public checkpoints) and exp04 (benchmarks for the same 18 checkpoints) are done on AAU. exp04 says drift is a threshold alarm, not a ranking, and the recipe matters. Its chat-condition addendum shows drift also tracks the instruction-following gain (ifeval r = 0.89 over 8 chat-tuned checkpoints), so the one-sided meter fails. Next: recipe-controlled fine-tunes (thread step 1).
 
 ## Status (2026-10-13)
 
@@ -92,7 +92,7 @@ The full write-up is `exp03_staged_drift/RESULTS.md`.
 - **Control.** Against the base, the enwik8 control drifts 1.3–3× more than fresh text.
 - **Reproduction.** exp01's 4 shared models reproduce on the T4 within 5e-5 bpb.
 
-## exp04_benchmarks: done (2026-10-15; chat-condition addendum pending)
+## exp04_benchmarks: done (2026-10-15, including the chat-condition addendum)
 
 The full write-up is `exp04_benchmarks/RESULTS.md`.
 
@@ -104,6 +104,7 @@ The full write-up is `exp04_benchmarks/RESULTS.md`.
 - General tasks: ARC-e/c, HellaSwag (2,000), PIQA, WinoGrande, MMLU (40 per subject).
 - Target tasks: gsm8k (300) and ifeval (200).
 - Array job 1080344, 6.2 GPU-hours, no failures.
+- Chat addendum, array job 1080843 (3.3 GPU-hours): gsm8k and ifeval with each post-trained model's chat template.
 
 **Verdict.** Gate 1 passes as written, but on leverage: drift is a threshold alarm, not a ranking.
 
@@ -118,7 +119,11 @@ The full write-up is `exp04_benchmarks/RESULTS.md`.
   - Qwen2.5-Math −13.9%;
   - R1-Distill −21.6%.
 - **Recipe.** SmolLM2-Instruct (SmolTalk SFT + DPO) loses 3.8% at only +3.6% drift, mostly on ARC. Recipe is the missing variable.
-- **Gain.** Gain under base prompting has r = +0.38, so one-sidedness is not shown. That measure is invalid for chat-tuned models (format failures: SmolLM2-Instruct gsm8k 0.0), so the chat-condition addendum re-measures it.
+- **Gain: one-sidedness fails.**
+  - Under base prompting, r = +0.38. That measure is invalid for chat models (SmolLM2-Instruct gsm8k 0.0).
+  - With chat templates, gsm8k gives r = −0.47 and ρ = 0.08. R1-Distill's `<think>` is truncated by the 256-token cap (15.7%), so this is not interpretable.
+  - ifeval over the 8 chat-tuned checkpoints gives r = **+0.89** and ρ = 0.88.
+  - Drift is a dose of post-training: it buys instruction following and, above ~15%, costs general accuracy.
 - **R1-Distill** is not "big drift, modest loss". It forgets the most, and −9.0% against its Math parent.
 - **Cost.** A benchmark pass takes a median 18 min on an A10. The drift score takes a median 19 s on a T4, at least 67× cheaper.
 
@@ -176,4 +181,5 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
    - Still open: larger corpora (about 3M characters per domain), and a pre-cutoff same-domain control to separate "fresh" from "old text with markup".
 2. ~~Test calibration vs knowledge with one temperature.~~ Done in exp02: T > 1 recovers 35% (Qwen3) and 19% (R1). Next: richer calibrators, and a per-token decomposition of the residual (see exp02 RESULTS).
 3. ~~Run one benchmark harness across all models.~~ Done in exp04 for 18 checkpoints: drift is a threshold alarm (all 3 checkpoints above +15% forget; 1 of 9 below does), Pearson 0.89 rests on the 2 math-line points.
-   - Next: gain in the chat condition (addendum), then recipe-controlled fine-tunes to separate "how far" from "what was trained".
+   - Chat addendum done: ifeval gain tracks drift (r = 0.89, chat-tuned), so the one-sided meter fails.
+   - Next: recipe-controlled fine-tunes to separate "how far" from "what was trained", and gsm8k with a reasoning-length cap.
