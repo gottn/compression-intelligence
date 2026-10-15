@@ -13,6 +13,20 @@
   - drift hook: Δbpb_fresh +0.21% at update 20, +0.43% at 40 and +0.50% at 50;
   - the final checkpoint saved in 51 s.
 
+**Pre-registered budget extension: stage 2. Written 2026-10-15 at 20:40, before any stage-2 update; hypotheses, thresholds and expectations unchanged.**
+- **Why.** At update 860 of 1,500, Δbpb_fresh is 1.6% (tulu), 2.7% (smoltalk) and 2.2% (mathcot). At that rate no recipe reaches the 6% or 10% marks within stage 1.
+- **Start point.** Each recipe continues from its own stage-1 final checkpoint, `<stage-1 run>/<recipe>/ckpt/step01500/` (named in that run's `checkpoints.txt`; bf16 weights loaded into fp32 master weights).
+  - Optimizer state was not saved, so this is a **warm restart** with a fresh AdamW.
+- **Schedule.** The same peak learning rate, 2e-5, with a fresh 90-update warmup (3%) and cosine decay over 3,000 updates.
+- **Stop.** At 3,000 further updates or after 8.5 h of training wall time, whichever comes first. At about 15–17 s per update on an A40, the wall-time stop is expected to bind, after roughly 1,800–2,000 updates. So the recipes may end at different update counts; the analysis compares them at drift marks, not at a step.
+- **Data.** Each recipe uses its own subset again, with micro-batch and packing unchanged. The data order **continues the stage-1 stream**: the trainer skips the 1,500 × 32 rows stage 1 consumed, in the same seed-0 per-epoch order.
+- **Step numbering** continues from the init checkpoint's update (`--step-offset`, 1,500).
+- **Drift reference.** Drift is measured against the **original OLMo-2-0425-1B base** (`--drift-ref base`), not the stage-2 initial weights. The base is scored in bf16 on the stage-2 GPU at startup. The first stage-2 row (update 1,500) re-scores the init weights and must reproduce stage 1's final Δbpb_fresh.
+- **Marks.** 6% and 10%, plus 3% for any recipe whose stage-1 run has no 3% checkpoint (`remaining_marks`). Plus the stage-2 final checkpoint.
+- **Outputs.** Checkpoints go to a new run directory with its own `checkpoints.txt`. A stage-2 eval array (12 slots, at most 4 at once, A10) is queued with `afterany` on the stage-2 training array, exactly like stage 1.
+- **GPU.** An A40, or an L40S if that frees first; `--time=09:00:00`.
+- **Analysis.** Stage-1 and stage-2 mark checkpoints together form the set of mark checkpoints for H1–H4.
+
 **Status: pre-registered, no results yet.** Everything below was written on 2026-10-15, before any training step, drift score or benchmark of an exp06 checkpoint existed. The outcome sections will be added above this text after the run; the definitions and rules are not edited.
 
 ## Question

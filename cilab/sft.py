@@ -195,3 +195,33 @@ def parse_checkpoint_line(line: str) -> dict[str, str]:
 
 def checkpoint_line(label: str, path: str, recipe: str, step: int, marks: Sequence[str]) -> str:
     return "\t".join((label, path, recipe, str(step), ",".join(marks) or "-")) + "\n"
+
+
+# ----------------------------------------------------------------------------- continuing from a checkpoint (stage 2)
+def parse_marks(text: str) -> tuple[float, ...]:
+    """'3,6,10' -> (3.0, 6.0, 10.0), sorted; empty text gives no marks."""
+    return tuple(sorted(float(t) for t in text.split(",") if t.strip()))
+
+
+def recipe_lines(lines: Sequence[str], recipe: str) -> list[dict[str, str]]:
+    return [c for c in (parse_checkpoint_line(ln) for ln in lines if ln.strip()) if c["recipe"] == recipe]
+
+
+def final_checkpoint(lines: Sequence[str], recipe: str) -> tuple[str, int]:
+    """(path, step) of the recipe's last checkpoint tagged 'final' in a checkpoints list. Raises if there is none."""
+    finals = [c for c in recipe_lines(lines, recipe) if "final" in c["marks"].split(",")]
+    if not finals:
+        raise ValueError(f"no final checkpoint for {recipe}")
+    best = max(finals, key=lambda c: int(c["step"]))
+    return best["path"], int(best["step"])
+
+
+def saved_marks(lines: Sequence[str], recipe: str) -> frozenset[float]:
+    """Drift marks (%) a recipe already has a checkpoint for."""
+    return frozenset(float(t) for c in recipe_lines(lines, recipe) for t in c["marks"].split(",")
+                     if t not in ("final", "-", ""))
+
+
+def remaining_marks(marks: Sequence[float], saved: frozenset[float]) -> tuple[float, ...]:
+    """Marks still to be checkpointed: those not saved by an earlier stage."""
+    return tuple(m for m in marks if m not in saved)

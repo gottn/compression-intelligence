@@ -47,13 +47,18 @@ import torch.nn.functional as F
 from cilab.drift import drift_row
 from cilab.io import append_rows, load_corpora, read_tokenizer_config
 from cilab.pairs import CORPORA, FRESH_CORPORA
+from cilab.score import release_device_memory
 from cilab.sft import (
     checkpoint_label,
     checkpoint_line,
+    final_checkpoint,
     lr_at,
     marks_due,
+    parse_marks,
+    remaining_marks,
     row_arrays,
     row_stream,
+    saved_marks,
     stop_reason,
     warmup_steps,
 )
@@ -117,11 +122,22 @@ def load_examples(path: Path) -> list[tuple[np.ndarray, np.ndarray]]:
     return [(ids[a:b], mask[a:b]) for a, b in example_slices(offsets)]
 
 
-def batches(examples: Sequence[tuple[np.ndarray, np.ndarray]], pad_id: int) -> Iterator[dict[str, object]]:
-    """Endless updates: 32 packed rows each, as numpy arrays, with the epoch of the last row."""
+def batches(examples: Sequence[tuple[np.ndarray, np.ndarray]], pad_id: int,
+            skip_updates: int = 0) -> Iterator[dict[str, object]]:
+    """Endless updates: 32 packed rows each, as numpy arrays, with the epoch of the last row. The first
+    `skip_updates` updates of the stream (an earlier stage's data) are consumed without building rows; the first item
+    yielded is then their totals (keys skipped_*), so a continued run resumes the same data order."""
     stream = row_stream([len(i) for i, _ in examples], ROW_LEN, SEED)
     n_ex = len(examples)
     seen = 0
+    if skip_updates:
+        nonpad = loss = 0
+        for _ in range(skip_updates * ROWS_PER_STEP):
+            _, r = next(stream)
+            seen += len(r)
+            nonpad += sum(len(examples[i][0]) for i in r)
+            loss += sum(int(examples[i][1].sum()) for i in r)
+        yield {"skipped_updates": skip_updates, "skipped_nonpad": nonpad, "skipped_loss": loss, "epochs": seen / n_ex}
     while True:
         rows, epoch, nonpad = [], 0, 0
         for _ in range(ROWS_PER_STEP):
@@ -150,6 +166,18 @@ def corpus_setup(tok: object, base_id: str) -> dict[str, object]:
             classes[c] = {"pos": z["pos"], "freq": z["freq"]}
     return {"texts": texts, "ids": ids, "wins": wins, "start_id": start_id, "start_str": start_str,
             "classes": classes}
+
+
+def resolve_init(path: Path, recipe: str) -> tuple[str, int, list[str]]:
+    """(checkpoint dir, its update, the earlier stage's checkpoint lines) from a checkpoint dir or a run dir."""
+    if (path / "config.json").exists():
+        meta = json.loads((path / "exp06_checkpoint.json").read_text())
+        lines_path = path.parents[1] / "checkpoints.txt"  # <run>/<recipe>/ckpt/stepNNNNN -> <run>/<recipe>/
+        lines = lines_path.read_text().splitlines(keepends=True) if lines_path.exists() else []
+        return str(path), int(meta["step"]), lines
+    lines = (path / "checkpoints.txt").read_text().splitlines(keepends=True)
+    ckpt, step = final_checkpoint(lines, recipe)
+    return ckpt, step, lines
 
 
 def score_corpora(model: object, corp: Mapping[str, object], device: str) -> dict[str, np.ndarray]:
@@ -221,7 +249,22 @@ def cmd_train(args: argparse.Namespace) -> int:
     corp = corpus_setup(tok, BASE)
     examples = load_examples(Path(args.data) / f"{recipe}.npz")
     n_tokens = sum(len(i) for i, _ in examples)
-    weights = args.base_weights or BASE
+    weights, offset, marks, init_meta = args.base_weights or BASE, args.step_offset or 0, parse_marks(args.marks), {}
+    base_ref: dict[str, np.ndarray] = {}
+    if args.init_from:
+        weights, init_step, prior = resolve_init(Path(args.init_from), recipe)
+        offset = init_step if args.step_offset is None else args.step_offset
+        if offset != init_step:
+            raise ValueError(f"--step-offset {offset} but the init checkpoint is at update {init_step}")
+        marks = remaining_marks(marks, saved_marks(prior, recipe))
+        init_meta = json.loads((Path(weights) / "exp06_checkpoint.json").read_text())
+    if args.drift_ref == "base" and weights != BASE:  # score the original base once, on this GPU, then free it
+        t0 = time.time()
+        ref_model = load_model(BASE, torch.bfloat16, device)
+        base_ref = score_corpora(ref_model, corp, device)
+        del ref_model
+        release_device_memory()
+        print(json.dumps({"drift_ref": "base", "base_scored_s": round(time.time() - t0, 1)}), flush=True)
     model = AutoModelForCausalLM.from_pretrained(weights, dtype=torch.float32, attn_implementation="sdpa").to(device)
     model.train()
     if args.grad_ckpt:
@@ -230,7 +273,7 @@ def cmd_train(args: argparse.Namespace) -> int:
     sync_shadow(shadow, model)  # identical rounding path for step 0 and every later score
     opt = torch.optim.AdamW(model.parameters(), lr=PEAK_LR, betas=BETAS, eps=EPS, weight_decay=WEIGHT_DECAY,
                             fused=device == "cuda")
-    warm = warmup_steps(TOTAL_STEPS, WARMUP_FRAC)
+    warm = warmup_steps(args.schedule_steps, WARMUP_FRAC)
     accum = ROWS_PER_STEP // args.micro_batch
     if accum * args.micro_batch != ROWS_PER_STEP:
         raise ValueError(f"micro-batch {args.micro_batch} does not divide {ROWS_PER_STEP}")
@@ -239,14 +282,17 @@ def cmd_train(args: argparse.Namespace) -> int:
            "weights": weights, "micro_batch": args.micro_batch, "accum": accum, "warmup": warm,
            "max_steps": args.max_steps, "max_wall_s": args.max_wall_s, "score_every": args.score_every,
            "doc_start": corp["start_str"], "setup_s": round(time.time() - t_job, 1),
+           "schedule_steps": args.schedule_steps, "step_offset": offset, "marks": list(marks),
+           "drift_ref": args.drift_ref, "init_from": args.init_from, "init_checkpoint": init_meta or None,
            "slurm_job": os.environ.get("SLURM_JOB_ID"), "restart": os.environ.get("SLURM_RESTART_COUNT")}
     (out / "started.json").write_text(json.dumps(env, indent=1))
     print(json.dumps(env), flush=True)
 
     lists = [root / "checkpoints.txt", out / "checkpoints.txt"]
     log: list[tuple[int, float]] = []
-    base_bits: dict[str, np.ndarray] = {}
-    stats = {"token_positions": 0, "nonpad": 0, "loss_tokens": 0, "epochs": 0.0, "lr": 0.0, "loss": float("nan")}
+    base_bits: dict[str, np.ndarray] = dict(base_ref)  # empty: the first score (update `offset`) is the reference
+    stats = {"token_positions": offset * ROWS_PER_STEP * ROW_LEN, "nonpad": 0, "loss_tokens": 0, "epochs": 0.0,
+             "lr": 0.0, "loss": float("nan")}
 
     def score(step: int, wall_s: float, final: bool) -> None:
         t0 = time.time()
@@ -255,17 +301,18 @@ def cmd_train(args: argparse.Namespace) -> int:
         score_s = time.time() - t0
         for c, b in bits.items():
             np.save(out / "tokens" / f"step{step:05d}__{c}.npy", b.astype(np.float32))
-        if step == 0:
-            base_bits.update(bits)
+        if step == offset:
+            if not base_bits:
+                base_bits.update(bits)
             ref = pd.read_csv(EXP03_BPB)
             ref = ref[(ref.model == BASE) & (ref.condition == "raw")].drop_duplicates("corpus", keep="last")
-            chk = base_check({c: bpb_of(bits[c], corp["texts"][c]) for c in CORPORA},
+            chk = base_check({c: bpb_of(base_bits[c], corp["texts"][c]) for c in CORPORA},
                              dict(zip(ref.corpus, ref.bpb, strict=True)), BASE_BPB_TOL)
             (out / "base_check.json").write_text(json.dumps(chk, indent=1))
             print(json.dumps({"base_check": chk}), flush=True)
         d = drift_row(base_bits, bits, corp["classes"], FRESH_CORPORA)
         log.append((step, d["dbpb_fresh"]))
-        due = marks_due(log, MARKS)
+        due = marks_due(log, marks)
         tags = [f"{m:g}" for m in due] + (["final"] if final else [])
         row = {"recipe": recipe, "step": step, "token_positions": stats["token_positions"],
                "nonpad_tokens": stats["nonpad"], "loss_tokens": stats["loss_tokens"], "epochs": stats["epochs"],
@@ -276,20 +323,25 @@ def cmd_train(args: argparse.Namespace) -> int:
         print(json.dumps({k: (round(v, 4) if isinstance(v, float) else v) for k, v in row.items()
                           if k in ("step", "dbpb_fresh", "contrast_ks", "contrast_rf", "train_loss", "epochs",
                                    "score_s", "checkpoint")}), flush=True)
-        if step > 0 and tags:
+        if step > offset and tags:
             meta = {"dbpb_fresh": d["dbpb_fresh"], "contrast_ks": d["contrast_ks"], "contrast_rf": d["contrast_rf"],
                     "token_positions": stats["token_positions"], "loss_tokens": stats["loss_tokens"],
-                    "epochs": stats["epochs"], "base": weights, "template_tokenizer": TEMPLATE_TOKENIZER}
+                    "epochs": stats["epochs"], "base": weights, "template_tokenizer": TEMPLATE_TOKENIZER,
+                    **({"init_from": weights, "drift_ref": args.drift_ref} if args.init_from else {})}
             save_checkpoint(shadow, tpl_tok, out, recipe, step, tags, meta, lists)
 
+    feed = batches(examples, int(tok.pad_token_id), offset if args.init_from else 0)
+    if args.init_from:  # resume the data order where the earlier stage stopped
+        sk = next(feed)
+        stats.update(nonpad=sk["skipped_nonpad"], loss_tokens=sk["skipped_loss"], epochs=sk["epochs"])
+        print(json.dumps(sk), flush=True)
     t_train = time.time()
-    score(0, 0.0, False)
-    feed = batches(examples, int(tok.pad_token_id))
-    step, recent_loss, recent_tgt, since_loss, since_tgt = 0, 0.0, 0, 0.0, 0
+    score(offset, 0.0, False)
+    local, step, recent_loss, recent_tgt, since_loss, since_tgt = 0, offset, 0.0, 0, 0.0, 0
     if device == "cuda":
         torch.cuda.reset_peak_memory_stats()
     while True:
-        lr = lr_at(step, PEAK_LR, warm, TOTAL_STEPS)
+        lr = lr_at(local, PEAK_LR, warm, args.schedule_steps)
         for g in opt.param_groups:
             g["lr"] = lr
         b = next(feed)
@@ -306,7 +358,8 @@ def cmd_train(args: argparse.Namespace) -> int:
         gnorm = float(torch.nn.utils.clip_grad_norm_(model.parameters(), CLIP))
         opt.step()
         opt.zero_grad(set_to_none=True)
-        step += 1
+        local += 1
+        step = offset + local
         stats["token_positions"] += ROWS_PER_STEP * ROW_LEN
         stats["nonpad"] += b["nonpad"]
         stats["loss_tokens"] += n_tgt
@@ -325,7 +378,7 @@ def cmd_train(args: argparse.Namespace) -> int:
             append_rows(out / "train.csv", [tr], TRAIN_COLS)
             print(json.dumps(tr), flush=True)
             recent_loss, recent_tgt = 0.0, 0
-        reason = stop_reason(step, args.max_steps, wall, args.max_wall_s)
+        reason = stop_reason(local, args.max_steps, wall, args.max_wall_s)
         if step % args.score_every == 0 or reason:
             stats["loss"] = since_loss / since_tgt  # mean target loss (nats) since the previous score
             score(step, wall, final=reason is not None)
@@ -388,7 +441,14 @@ def main() -> None:
     t.add_argument("--recipe", choices=RECIPES, required=True)
     t.add_argument("--data", required=True, help="prep_data.py output directory")
     t.add_argument("--out", required=True, help="run directory ($CI_OUT)")
-    t.add_argument("--max-steps", type=int, default=TOTAL_STEPS)
+    t.add_argument("--max-steps", type=int, default=TOTAL_STEPS, help="updates in this run (after the offset)")
+    t.add_argument("--schedule-steps", type=int, default=TOTAL_STEPS, help="cosine length; warmup = 3%% of it")
+    t.add_argument("--marks", default=",".join(f"{m:g}" for m in MARKS), help="Δbpb_fresh marks, %%")
+    t.add_argument("--init-from", default=None, help="stage 2: a checkpoint dir, or a run dir whose checkpoints.txt "
+                   "names this recipe's final checkpoint; continues its data order and step numbering")
+    t.add_argument("--drift-ref", choices=("init", "base"), default="init",
+                   help="drift reference: the first scored weights (init) or the original OLMo-2 base")
+    t.add_argument("--step-offset", type=int, default=None, help="first update number (default: the init's step)")
     t.add_argument("--max-wall-s", type=float, default=MAX_WALL_S)
     t.add_argument("--score-every", type=int, default=SCORE_EVERY)
     t.add_argument("--micro-batch", type=int, default=2)

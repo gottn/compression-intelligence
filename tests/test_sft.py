@@ -177,3 +177,20 @@ def test_real_template_and_offsets_give_reply_and_eos_tokens() -> None:
     targets = [tok.decode([i]) for i, m in zip(enc["input_ids"], mask, strict=True) if m]
     assert "".join(targets) == "Hello." + EOS + "4" + EOS
     assert enc["input_ids"][0] == tok.bos_token_id and targets[-1] == EOS
+
+
+def test_stage2_helpers() -> None:
+    from cilab.sft import final_checkpoint, parse_marks, remaining_marks, saved_marks
+    lines = [checkpoint_line("exp06__tulu__step00300", "/r/tulu/ckpt/step00300", "tulu", 300, ["3"]),
+             checkpoint_line("exp06__smoltalk__step01500", "/r/smoltalk/ckpt/step01500", "smoltalk", 1500,
+                             ["3", "final"]),
+             checkpoint_line("exp06__tulu__step01500", "/r/tulu/ckpt/step01500", "tulu", 1500, ["final"]),
+             "\n"]
+    assert parse_marks("10,3,6") == (3.0, 6.0, 10.0) and parse_marks("") == ()
+    assert final_checkpoint(lines, "tulu") == ("/r/tulu/ckpt/step01500", 1500)
+    assert final_checkpoint(lines, "smoltalk") == ("/r/smoltalk/ckpt/step01500", 1500)
+    with pytest.raises(ValueError):
+        final_checkpoint(lines, "mathcot")
+    assert saved_marks(lines, "tulu") == {3.0} and saved_marks(lines, "mathcot") == frozenset()
+    assert remaining_marks((3.0, 6.0, 10.0), saved_marks(lines, "tulu")) == (6.0, 10.0)
+    assert remaining_marks((3.0, 6.0, 10.0), frozenset()) == (3.0, 6.0, 10.0)
