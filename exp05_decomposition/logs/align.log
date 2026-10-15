@@ -1,0 +1,20 @@
+{"group": "olmo2", "corpus": "wiki2026", "tokens": 21633, "windows": 22}
+{"group": "olmo2", "corpus": "arxiv2026", "tokens": 20620, "windows": 21}
+{"group": "olmo2", "corpus": "gutenberg2026", "tokens": 24634, "windows": 25}
+{"group": "olmo2", "corpus": "enwik8_ctrl", "tokens": 29255, "windows": 29}
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (22435 > 16384). Running this sequence through the model will result in indexing errors
+{"group": "qwen2.5", "corpus": "wiki2026", "tokens": 22435, "windows": 22}
+{"group": "qwen2.5", "corpus": "arxiv2026", "tokens": 20702, "windows": 21}
+{"group": "qwen2.5", "corpus": "gutenberg2026", "tokens": 24979, "windows": 25}
+{"group": "qwen2.5", "corpus": "enwik8_ctrl", "tokens": 30521, "windows": 30}
+{"group": "qwen3", "corpus": "wiki2026", "tokens": 22435, "windows": 22}
+{"group": "qwen3", "corpus": "arxiv2026", "tokens": 20702, "windows": 21}
+{"group": "qwen3", "corpus": "gutenberg2026", "tokens": 24979, "windows": 25}
+{"group": "qwen3", "corpus": "enwik8_ctrl", "tokens": 30521, "windows": 30}
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (23387 > 8192). Running this sequence through the model will result in indexing errors
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (23387 > 8192). Running this sequence through the model will result in indexing errors
+{"group": "smollm2", "corpus": "wiki2026", "tokens": 23387, "windows": 23}
+{"group": "smollm2", "corpus": "arxiv2026", "tokens": 21645, "windows": 22}
+{"group": "smollm2", "corpus": "gutenberg2026", "tokens": 26285, "windows": 26}
+{"group": "smollm2", "corpus": "enwik8_ctrl", "tokens": 34453, "windows": 34}
+verified 72 (model, corpus) pairs

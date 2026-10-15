@@ -55,6 +55,14 @@ def paired_pct_change(base: np.ndarray, post: np.ndarray) -> Callable[[np.ndarra
     return lambda ix: 100 * (post[ix].sum(1) - base[ix].sum(1)) / base[ix].sum(1)
 
 
+def paired_share(base_part: np.ndarray, post_part: np.ndarray, base_all: np.ndarray,
+                 post_all: np.ndarray) -> Callable[[np.ndarray], np.ndarray]:
+    """bootstrap_ci statistic: 100 * (Σ post_part − Σ base_part) / (Σ post_all − Σ base_all) over each row of
+    resampled windows, the percentage of the total change in bits that falls on one part (a token class)."""
+    return lambda ix: (100 * (post_part[ix].sum(1) - base_part[ix].sum(1))
+                       / (post_all[ix].sum(1) - base_all[ix].sum(1)))
+
+
 def stratified_mean_ci(stats: list[Callable[[np.ndarray], np.ndarray]], idxs: list[np.ndarray],
                        level: float = 0.95) -> tuple[float, float, float]:
     """(point, lo, hi) of the mean over strata (corpora) of a per-stratum window statistic.
