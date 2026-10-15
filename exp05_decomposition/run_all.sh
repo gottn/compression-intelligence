@@ -13,15 +13,27 @@
 #   VIRTUAL_ENV=.venv uv pip install -r exp05_decomposition/requirements.txt   (once)
 #   bash run_all.sh align     classes per tokenizer group and corpus + alignment checks on all 72 (model, corpus)
 #                             pairs -> results/{classes/, alignment.json, class_counts.csv, class_examples.md}
+#   bash run_all.sh analyze   per-class drift and share with window-bootstrap CIs, correlations with exp04's
+#                             outcomes, H1-H4 -> results/{decomposition.csv, correlations.csv, summary.md,
+#                             fig_decomposition.png}
+#   bash run_all.sh           both, in that order
 set -euo pipefail
 cd "$(dirname "$0")/.."
 PY=.venv/bin/python
 OUT=exp05_decomposition
 mkdir -p $OUT/logs $OUT/results
 export TOKENIZERS_PARALLELISM=false
-case "${1:-align}" in
-  align)
-    $PY $OUT/analyze_decomposition.py align > $OUT/logs/align.log 2>&1
-    echo "done: $OUT/results/{classes/,alignment.json,class_counts.csv,class_examples.md}" ;;
-  *) echo "usage: run_all.sh [align]"; exit 1 ;;
+align() {
+  $PY $OUT/analyze_decomposition.py align > $OUT/logs/align.log 2>&1
+  echo "done: $OUT/results/{classes/,alignment.json,class_counts.csv,class_examples.md}"
+}
+analyze() {
+  $PY $OUT/analyze_decomposition.py analyze > $OUT/logs/analyze.log 2>&1
+  echo "done: $OUT/results/{decomposition.csv,correlations.csv,summary.md,fig_decomposition.png}"
+}
+case "${1:-all}" in
+  align) align ;;
+  analyze) analyze ;;
+  all) align; analyze ;;
+  *) echo "usage: run_all.sh [align|analyze|all]"; exit 1 ;;
 esac

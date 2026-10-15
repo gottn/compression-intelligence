@@ -4,7 +4,7 @@
 
 ## Next thread
 
-See `docs/research-thread.md` (2026-10-14): fresh-text bpb as a forgetting meter for post-training. exp03 (staged public checkpoints) and exp04 (benchmarks for the same 18 checkpoints) are done on AAU. exp04 says drift is a threshold alarm, not a ranking, and the recipe matters. Its chat-condition addendum shows drift also tracks the instruction-following gain (ifeval r = 0.89 over 8 chat-tuned checkpoints), so the one-sided meter fails. Next: recipe-controlled fine-tunes (thread step 1).
+See `docs/research-thread.md` (2026-10-14): fresh-text bpb as a forgetting meter for post-training. exp03 (staged public checkpoints) and exp04 (benchmarks for the same 18 checkpoints) are done on AAU. exp04 says drift is a threshold alarm, not a ranking, and the recipe matters. Its chat-condition addendum shows drift also tracks the instruction-following gain (ifeval r = 0.89 over 8 chat-tuned checkpoints), so the one-sided meter fails. exp05 (Mac, no new scoring) split the drift by token class. Knowledge and style drift move together (r = 0.93, which triggers the pre-registered fail rule), but their *difference* tracks forgetting (r = 0.81 without the math line) and not the ifeval gain (r = 0.17). That is a post-hoc lead for a one-sided meter. Next: recipe-controlled fine-tunes (thread step 1), with the rare − frequent contrast pre-registered as the forgetting meter.
 
 ## Status (2026-10-13)
 
@@ -132,6 +132,43 @@ Gotchas:
 - Each lm-eval CLI call indexes every task YAML (about 6.5 min over the network file system), so the driver calls `simple_evaluate` in-process with a TaskManager limited to 7 directories.
 - `--limit` is global to one call; per-task limits go in `samples`.
 
+## exp05_decomposition: done (2026-10-15)
+
+The full write-up is `exp05_decomposition/RESULTS.md`.
+
+**Question.** Does the drift sit on different tokens for "behaviour" post-training (chat SFT, DPO, RLVR) than for "knowledge-losing" post-training (math continued pretraining, R1 distillation, SmolTalk SFT)? Concretely: does knowledge-token drift predict forgetting, and style-token drift the ifeval chat gain?
+
+**Method.** Mac, CPU, no new scoring, 68 s in total.
+- Input: the per-token RAW bits already on disk (exp03's 14 models plus exp01's SmolLM2 and Qwen3 pairs).
+- Token classes: each token takes the spaCy `en_core_web_sm` POS of the word under its first non-space character.
+  - KNOWLEDGE = PROPN, NUM, and NOUN/ADJ/VERB outside wordfreq's top 2,000;
+  - STYLE = function words, punctuation and whitespace;
+  - MIDDLE = the rest.
+- Robustness variant: a frequency-only split (rare vs frequent token ids).
+- Alignment verified on all 72 (model, corpus) pairs. Pre-registered in 1eb436a before any class-level drift existed.
+
+**Verdict: the fail rule triggers.** Drift is one-dimensional at this scale:
+- r(knowledge drift, style drift) = 0.925 [0.72, 1.00] over the 12 checkpoints.
+- **H1 fails.** Knowledge drift ranks the 12 exactly as total drift does (ρ = 0.671), and r = 0.48 without the math line (bar 0.6).
+- **H2 fails.** Style drift vs ifeval chat gain gives r = 0.81, but knowledge drift gives 0.84 (needed < 0.5).
+- **H3 passes.** SmolLM2-Instruct puts 63.0% [60.1, 66.2] of its Δbits on knowledge tokens, OLMo-2 DPO 44.7% [42.6, 46.8].
+- **H4 passes weakly.** ρ(enwik8 − fresh excess, MMLU loss) = 0.42 vs 0.34; both CIs span 0.
+
+**Lead (a pre-registered secondary reading, no threshold).** The *direction* of the drift carries what its size does not:
+- The contrast drift_K − drift_S tracks forgetting at r = 0.92 over 12 and r = 0.81 [0.41, 0.98] without the math line. Total drift gives 0.32 there.
+- It does not track the ifeval chat gain (r = 0.17, n = 8).
+- The frequency split replicates it with no tagger (rare − frequent: 0.82 / 0.74 / gain −0.07).
+- Same dose, opposite direction:
+  - OLMo-2 DPO is +14.1% total, K − S −3.0 pp, and forgets nothing;
+  - Qwen3 is +16.2% total, K − S +14.1 pp, and forgets 4.7%.
+- Knowledge tokens take more than their proportional share of the drift in 9 of 12 checkpoints. Apart from the noisy SimpleRL 1.5B, only OLMo-2 DPO/RLVR shift it onto function words and whitespace.
+
+Gotchas:
+- spaCy tags arXiv LaTeX math as PROPN, so it lands in KNOWLEDGE.
+- Hyphen-led BPE pieces take PUNCT.
+- SimpleRL class shares are noise, because total Δ is only 0.1–0.2%.
+- The frequency variant is free of all three and gives the same verdicts.
+
 ## How to rerun
 
 ```bash
@@ -162,6 +199,10 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
   - `RUN=<run dir> bash exp04_benchmarks/run_all.sh fetch`.
   - Mac: `bash exp04_benchmarks/run_all.sh analyze`.
 
+- exp05 (Mac, CPU, about 70 s; needs exp01/exp03 `results/tokens/`, exp04 `scores.csv` and the 18 tokenizers in the HF cache):
+  - once: `VIRTUAL_ENV=.venv uv pip install -r exp05_decomposition/requirements.txt` (spaCy, `en_core_web_sm`, wordfreq);
+  - `bash exp05_decomposition/run_all.sh` (`align`, then `analyze`).
+
 ## Layout
 
 - `exp01_posttraining_bpc/`:
@@ -172,8 +213,9 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
 - `exp02_temperature/`: `RESULTS.md`; `results/` (runs.csv, windows.csv, grid/*.npy per-window bits on the T grid, summary.md, figure).
 - `exp03_staged_drift/`: `RESULTS.md`; `results/` (bpb.csv, windows.csv, tokens/*.npy from the AAU job; stage_deltas.csv, summary.md, fig_stages.png from the analysis); `logs/` (Slurm log, Mac preflight).
 - `exp04_benchmarks/`: `RESULTS.md`; `run_eval.py` (cluster driver); `analyze_forgetting.py`; `results/` (`lm_eval/<model>/` per-model lm-eval JSON and summaries, scores.csv, correlations.csv, summary.md, fig_forgetting.png); `logs/` (setup, dry runs, array Slurm logs).
+- `exp05_decomposition/`: `RESULTS.md`; `analyze_decomposition.py` (`align`, `analyze`); `results/` (`classes/*.npz` per tokenizer group and corpus, alignment.json, class_counts.csv, class_examples.md, decomposition.csv, correlations.csv, summary.md, fig_decomposition.png); `logs/`.
 - `infra/`: cluster submit script and Slurm jobs (`smoke`, `exp03`, `exp04_setup`, `exp04_eval`); rules in `docs/cluster-rules.md`.
-- `cilab/`: shared helpers (pairs, stages, text, score, stats, calib, io); `tests/`: pytest for them.
+- `cilab/`: shared helpers (pairs, stages, text, score, stats, calib, io, tokclass); `tests/`: pytest for them.
 
 ## Next (from RESULTS.md)
 
@@ -183,3 +225,5 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
 3. ~~Run one benchmark harness across all models.~~ Done in exp04 for 18 checkpoints: drift is a threshold alarm (all 3 checkpoints above +15% forget; 1 of 9 below does), Pearson 0.89 rests on the 2 math-line points.
    - Chat addendum done: ifeval gain tracks drift (r = 0.89, chat-tuned), so the one-sided meter fails.
    - Next: recipe-controlled fine-tunes to separate "how far" from "what was trained", and gsm8k with a reasoning-length cap.
+4. ~~Decompose the drift by token class.~~ Done in exp05: knowledge and style drift move together (the fail rule triggers), but the knowledge − style (or rare − frequent) contrast tracks forgetting and not the ifeval gain.
+   - Next: pre-register drift_rare − drift_frequent as the forgetting meter for the recipe-controlled sweep, and compare checkpoints at matched Δbpb to separate direction from dose.

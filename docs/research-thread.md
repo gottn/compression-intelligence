@@ -57,3 +57,10 @@ exp04 done (2026-10-15, AAU array 1080344, `exp04_benchmarks/RESULTS.md`).
 - **enwik8 predicts as well** (r = 0.95), so "fresh" adds nothing for this outcome.
 - **One-sidedness fails.** The gain r is +0.38 under base prompting, which is invalid for chat models. The chat-condition addendum (job 1080843) gives ifeval gain vs drift r = +0.89 over the 8 chat-tuned checkpoints, while gsm8k is not interpretable because R1's `<think>` is truncated at 256 tokens. Drift measures the dose of post-training (gain plus, above ~15%, loss), not loss alone.
 - **Consequence for the chain.** Step 1 needs recipe-controlled fine-tunes (one base, several recipes, several checkpoints each) before the meter can be called predictive within the sub-15% range.
+
+exp05 done (2026-10-15, Mac, no new scoring, `exp05_decomposition/RESULTS.md`). It is the token-class decomposition of the drift, inserted before the anchor experiment, which moves to exp06 or later.
+- **The fail rule triggers.** Knowledge-token drift (PROPN, NUM, rare content words) and style-token drift (function words, punctuation, whitespace) correlate at r = 0.93 across the 12, so the drift is one-dimensional.
+- **H1 and H2 fail.** Knowledge drift ranks the checkpoints exactly as total drift does, and both classes track the ifeval gain (r = 0.84 and 0.81).
+- **Lead (a secondary reading).** The contrast drift_K − drift_S tracks forgetting (r = 0.81 without the math line, against 0.32 for total drift) and not the ifeval gain (r = 0.17). A frequency-only split, which needs no tagger, replicates it.
+- **Same dose, opposite direction.** OLMo-2 DPO (+14%, style-heavy) forgets nothing; Qwen3 (+16%, knowledge-heavy) forgets 4.7%.
+- **Consequence for the chain.** Step 1's recipe-controlled sweep should pre-register drift_rare − drift_frequent as the one-sided forgetting meter, alongside total Δbpb.
