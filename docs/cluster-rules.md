@@ -35,7 +35,7 @@ https://hpc.aau.dk/ai-cloud/getting-started/run-jobs, and `scontrol`/`sacctmgr` 
 ## How this repo uses the cluster
 
 - `infra/cluster/setup.sh`: one-time; deploy key, clone to `~/projects/compression-intelligence`, directories `~/runs/ci`, `~/hf_cache`.
-- `infra/cluster/submit.sh <job>`: pulls fast-forward, refuses local edits, records the commit SHA, submits `infra/slurm/<job>.sbatch` with output under `~/runs/ci/<job>/<timestamp>-<sha>/`.
+- `infra/cluster/submit.sh <job>`: pulls fast-forward, refuses local edits, records the commit SHA, submits `infra/slurm/<job>.sbatch` with output under `~/runs/ci/<job>/<timestamp>-<sha>/`. With `RUN_IN=<existing run>` it writes into that run instead and records the commit as `commit-<job>-<timestamp>.txt` (exp06: evaluations queued behind the training array they read).
 - Every job: explicit `--time`, `--mem`, `--cpus-per-task`, one GPU, `HF_HOME=~/hf_cache`, container from `/home/container`, `set -euo pipefail`, exits when done.
 - Results come back with `rsync` to the Mac and are committed there; the cluster copy is deleted after.
 

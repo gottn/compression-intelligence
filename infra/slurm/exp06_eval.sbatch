@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 # exp06: exp04's lm-eval driver on one exp06 checkpoint per array task (groups loglik, gsm8k_chat, ifeval_chat).
-# Submit only via submit.sh. Checkpoints come from the train run's list (sorted, one line per checkpoint):
-#   CKPT_LIST=~/runs/ci/exp06_train/<run>/checkpoints.txt infra/cluster/submit.sh exp06_eval --array=0-11%4
+# Submit only via submit.sh. Checkpoints come from the train run's list (sorted, one line per checkpoint), read at
+# run time, so the array can be queued behind the training array; it is sized for the most checkpoints possible
+# (3 recipes x 4) and an index without a checkpoint exits 0. Results go into the train run directory (RUN_IN):
+#   T=~/runs/ci/exp06_train/<run>; RUN_IN=$T CKPT_LIST=$T/checkpoints.txt \
+#     infra/cluster/submit.sh exp06_eval --array=0-11%4 --dependency=afterany:<train array job id>
 # The base, with the Instruct tokenizer's chat template (no list; the target comes in JOB_ARGS):
 #   JOB_ARGS="--model-path allenai/OLMo-2-0425-1B --tokenizer allenai/OLMo-2-0425-1B-Instruct --label exp06__base" \
 #     infra/cluster/submit.sh exp06_eval --array=0
@@ -18,8 +21,9 @@ IDX="${SLURM_ARRAY_TASK_ID:?submit as an array}"
 EVAL_GROUPS="loglik,gsm8k_chat,ifeval_chat"
 TARGET=""
 if [ -n "${CKPT_LIST:-}" ]; then
-  LINE="$(LC_ALL=C sort -u "$CKPT_LIST" | sed -n "$((IDX + 1))p")"
-  [ -n "$LINE" ] || { echo "no line $IDX in $CKPT_LIST"; exit 1; }
+  LINE="$( [ -f "$CKPT_LIST" ] && LC_ALL=C sort -u "$CKPT_LIST" | sed -n "$((IDX + 1))p" || true)"
+  # the array is sized for the most checkpoints possible (3 recipes x 4); an index without one has nothing to do
+  [ -n "$LINE" ] || { echo "no checkpoint at index $IDX in $CKPT_LIST: nothing to evaluate"; exit 0; }
   TARGET="--model-path $(printf '%s' "$LINE" | cut -f2) --label $(printf '%s' "$LINE" | cut -f1)"
 fi
 export HF_HOME="$HOME/hf_cache" PYTHONUNBUFFERED=1 TOKENIZERS_PARALLELISM=false HF_HUB_DISABLE_PROGRESS_BARS=1
