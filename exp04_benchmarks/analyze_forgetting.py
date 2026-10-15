@@ -51,7 +51,8 @@ TARGET: tuple[tuple[str, str, str], ...] = (  # (column, task, metric key)
 )
 CHAT_STAGES: tuple[str, ...] = ("sft", "dpo", "rlvr", "instruct")
 PREDICTORS: tuple[str, ...] = ("dbpb_fresh", "dbpb_enwik8")
-OUTCOMES: tuple[str, ...] = ("forgetting", "forgetting_chance", "gain_gsm8k", "gain_gsm8k_strict", "gain_ifeval")
+OUTCOMES: tuple[str, ...] = ("forgetting", "forgetting_chance", "gain_gsm8k", "gain_gsm8k_strict", "gain_ifeval",
+                             "gain_gsm8k_chat", "gain_gsm8k_chat_strict", "gain_ifeval_chat")
 GATE_PASS, GATE_SOFT, ONE_SIDED_MAX = 0.8, 0.6, 0.3
 Z95 = 1.96
 MATH_STAGES: tuple[str, ...] = ("math-cpt", "r1-distill")
@@ -87,9 +88,10 @@ def point_label(st: Stage) -> str:
     return lab
 
 
-def score_row(summary: Mapping[str, object]) -> dict[str, object]:
+def score_row(summary: Mapping[str, object], chat: Mapping[str, object] | None = None) -> dict[str, object]:
     """Flat per-model scores from a run_eval.py summary.json: primary accuracy per general task, target
-    metrics, the GPU, total wall time and the groups that did not finish."""
+    metrics, the GPU, total wall time and the groups that did not finish; with the chat-condition summary
+    (summary_chat.json), the same target metrics as *_chat columns."""
     tasks, wall, bad = {}, 0.0, []
     for g, rec in summary["groups"].items():
         wall += float(rec.get("wall_s", 0.0))
@@ -104,6 +106,15 @@ def score_row(summary: Mapping[str, object]) -> dict[str, object]:
         row[f"{task}_se"] = m.get(key.replace(",", "_stderr,", 1), np.nan)
     for col, task, key in TARGET:
         row[col] = tasks.get(task, {}).get("metrics", {}).get(key, np.nan)
+    ctasks, cwall = {}, 0.0
+    for g, rec in (chat or {}).get("groups", {}).items():
+        cwall += float(rec.get("wall_s", 0.0))
+        if rec.get("status") != "ok":
+            bad.append(g)
+        ctasks.update(rec.get("tasks", {}))
+    for col, task, key in TARGET:
+        row[f"{col}_chat"] = ctasks.get(task, {}).get("metrics", {}).get(key, np.nan)
+    row["chat_wall_s"], row["failed_groups"] = cwall if chat else np.nan, ",".join(bad)
     return row
 
 
@@ -177,7 +188,11 @@ def outcome_fields(post: Mapping[str, float], ref: Mapping[str, float]) -> dict[
             "forgetting_chance": 100 * (ref["general_chance"] - post["general_chance"]) / ref["general_chance"],
             "gain_gsm8k": 100 * (post["gsm8k_flex"] - ref["gsm8k_flex"]),
             "gain_gsm8k_strict": 100 * (post["gsm8k_strict"] - ref["gsm8k_strict"]),
-            "gain_ifeval": 100 * (post["ifeval_prompt_strict"] - ref["ifeval_prompt_strict"])}
+            "gain_ifeval": 100 * (post["ifeval_prompt_strict"] - ref["ifeval_prompt_strict"]),
+            # chat condition: the post-trained model with its chat template vs the reference as prompted above
+            "gain_gsm8k_chat": 100 * (post.get("gsm8k_flex_chat", np.nan) - ref["gsm8k_flex"]),
+            "gain_gsm8k_chat_strict": 100 * (post.get("gsm8k_strict_chat", np.nan) - ref["gsm8k_strict"]),
+            "gain_ifeval_chat": 100 * (post.get("ifeval_prompt_strict_chat", np.nan) - ref["ifeval_prompt_strict"])}
 
 
 def checkpoint_table(scores: pd.DataFrame, preds: pd.DataFrame, stages: tuple[Stage, ...] = STAGES) -> pd.DataFrame:
@@ -219,6 +234,8 @@ def post_rows(table: pd.DataFrame) -> pd.DataFrame:
 def corr_row(df: pd.DataFrame, pred: str, out: str, subset: str) -> dict[str, object]:
     """Pearson and Spearman with checkpoint-bootstrap CIs and the leave-one-out range of Pearson r."""
     d = df[[pred, out, "model"]].dropna()
+    if len(d) < 3:
+        return {"predictor": pred, "outcome": out, "subset": subset, "n": len(d)}
     x, y = d[pred].to_numpy(), d[out].to_numpy()
     p, plo, phi, pn = bootstrap_corr(x, y, pearson, N_BOOT, SEED)
     s, slo, shi, sn = bootstrap_corr(x, y, spearman, N_BOOT, SEED)
@@ -243,8 +260,9 @@ def subsets(table: pd.DataFrame, r1_parent: Mapping[str, object] | None) -> dict
 
 
 SUBSET_OUTCOMES: dict[str, tuple[str, ...]] = {
-    ALL12: OUTCOMES, NO_MATH: ("forgetting", "gain_gsm8k"), R1_PARENT: ("forgetting", "gain_gsm8k"),
-    NO_INSTRUCT: ("gain_gsm8k",), CHAT: ("gain_ifeval",),
+    ALL12: OUTCOMES, NO_MATH: ("forgetting", "gain_gsm8k", "gain_gsm8k_chat"),
+    R1_PARENT: ("forgetting", "gain_gsm8k", "gain_gsm8k_chat"),
+    NO_INSTRUCT: ("gain_gsm8k", "gain_gsm8k_chat"), CHAT: ("gain_ifeval", "gain_ifeval_chat"),
 }
 
 
@@ -315,6 +333,8 @@ def rule_table(corr: pd.DataFrame, table: pd.DataFrame) -> pd.DataFrame:
     rho_nm = lookup_r(corr, "dbpb_fresh", "forgetting", NO_MATH, "spearman")
     gate = gate_verdict(r_f)
     one_sided = abs(r_g) < ONE_SIDED_MAX and gate in ("pass", "soft pass")
+    r_gc = lookup_r(corr, "dbpb_fresh", "gain_gsm8k_chat")
+    rho_gc = lookup_r(corr, "dbpb_fresh", "gain_gsm8k_chat", stat="spearman")
     post = post_rows(table).dropna(subset=["dbpb_fresh", "forgetting"])
     slope, icpt = ols_line(post.dbpb_fresh.to_numpy(), post.forgetting.to_numpy())
     r1 = post[post.stage == "r1-distill"]
@@ -335,6 +355,11 @@ def rule_table(corr: pd.DataFrame, table: pd.DataFrame) -> pd.DataFrame:
         {"rule": "E4", "test": "R1-Distill largest Δbpb_fresh and below the all-12 OLS line",
          "observed": f"largest: {r1_largest}; residual {r1_resid:+.2f} points",
          "verdict": "met" if r1_largest and r1_resid < 0 else "not met"},
+        {"rule": "One-sidedness, chat-condition gain (gain measure changed after the run)",
+         "test": "abs r(Δbpb_fresh, gsm8k gain, chat) < 0.3 and Gate 1 ≥ soft pass",
+         "observed": f"r = {r_gc:.3f}; ρ = {rho_gc:.3f}" if np.isfinite(r_gc) else "chat condition not run",
+         "verdict": ("holds" if abs(r_gc) < ONE_SIDED_MAX and gate in ("pass", "soft pass") else "not shown")
+         if np.isfinite(r_gc) else "n/a"},
         {"rule": "Gate 1 on Spearman (not pre-registered)", "test": "same thresholds on Spearman ρ",
          "observed": f"ρ = {rho_f:.3f}", "verdict": gate_verdict(rho_f)},
         {"rule": "Gate 1 without Qwen2.5-Math and R1-Distill (not pre-registered)",
@@ -382,28 +407,34 @@ def summary_markdown(table: pd.DataFrame, corr: pd.DataFrame, slopes: pd.DataFra
             for r in slopes.itertuples()]
     gen = [t for t, _, _ in GENERAL]
     out += ["", "## Per-checkpoint scores (accuracy %, primary metric per task)", "",
-            "| family | stage | model | " + " | ".join(gen) + " | general | gsm8k flex | gsm8k strict | ifeval prompt-strict |",
-            "|---|---|---|" + "---|" * (len(gen) + 4)]
+            "| family | stage | model | " + " | ".join(gen) + " | general | gsm8k flex | gsm8k strict | ifeval prompt-strict "
+            "| gsm8k flex, chat | gsm8k strict, chat | ifeval prompt-strict, chat |",
+            "|---|---|---|" + "---|" * (len(gen) + 7)]
     for r in table.itertuples():
         cells = [f"{100 * getattr(r, t):.1f}" for t in gen]
         out.append(f"| {r.family} | {r.stage} | {short(r.model)} | " + " | ".join(cells) +
                    f" | {100 * r.general:.2f} | {100 * r.gsm8k_flex:.1f} | {100 * r.gsm8k_strict:.1f} | "
-                   f"{100 * r.ifeval_prompt_strict:.1f} |")
+                   f"{100 * r.ifeval_prompt_strict:.1f} | " + " | ".join(
+                       "–" if not np.isfinite(v) else f"{100 * v:.1f}"
+                       for v in (r.gsm8k_flex_chat, r.gsm8k_strict_chat, r.ifeval_prompt_strict_chat)) + " |")
     post = post_rows(table)
     out += ["", "## Post-trained checkpoints: predictors and outcomes (last row: R1-Distill against its parent, "
             "a second reference for the same model, not one of the 12)", "",
             "| family | stage | model | Δbpb fresh % | Δbpb enwik8 % | forgetting % | forgetting (chance-adj.) % | "
-            "gsm8k gain (flex) pts | gsm8k gain (strict) pts | ifeval gain pts | bpb source |",
-            "|---|---|---|---|---|---|---|---|---|---|---|"]
+            "gsm8k gain (flex) pts | gsm8k gain (strict) pts | ifeval gain pts | gsm8k gain, chat (flex) pts | "
+            "ifeval gain, chat pts | bpb source |",
+            "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     out += [f"| {r.family} | {r.stage} | {short(r.model)} | {fmt(r.dbpb_fresh)} | {fmt(r.dbpb_enwik8)} | "
             f"{fmt(r.forgetting)} | {fmt(r.forgetting_chance)} | {fmt(r.gain_gsm8k, 1)} | {fmt(r.gain_gsm8k_strict, 1)} | "
-            f"{fmt(r.gain_ifeval, 1)} | {r.bpb_source} |" for r in post.itertuples()]
+            f"{fmt(r.gain_ifeval, 1)} | {fmt(r.gain_gsm8k_chat, 1)} | {fmt(r.gain_ifeval_chat, 1)} | {r.bpb_source} |"
+            for r in post.itertuples()]
     if r1_parent is not None:
         r = r1_parent
         out.append(f"| {r['family']} | {r['stage']} vs parent | {short(r['model'])} vs {short(r['reference'])} | "
                    f"{fmt(r['dbpb_fresh'])} | {fmt(r['dbpb_enwik8'])} | {fmt(r['forgetting'])} | "
                    f"{fmt(r['forgetting_chance'])} | {fmt(r['gain_gsm8k'], 1)} | {fmt(r['gain_gsm8k_strict'], 1)} | "
-                   f"{fmt(r['gain_ifeval'], 1)} | {r['bpb_source']} |")
+                   f"{fmt(r['gain_ifeval'], 1)} | {fmt(r['gain_gsm8k_chat'], 1)} | {fmt(r['gain_ifeval_chat'], 1)} | "
+                   f"{r['bpb_source']} |")
     out += ["", "Noise floor (± % of base) per row above: " + ", ".join(
         f"{short(r.model)} {r.floor_pct:.1f}" for r in post.itertuples()) + "."]
     out += ["", "## Runs", "", "| model | gpu | eval wall s | failed groups |", "|---|---|---|---|"]
@@ -510,7 +541,9 @@ def place_labels(ax: plt.Axes, labels: list[Label]) -> None:
 def r_panel(ax: plt.Axes, corr: pd.DataFrame) -> None:
     """Pearson r with 95% CI for each predictor, for forgetting and for gsm8k gain."""
     allp = corr[corr.subset == ALL12]
-    items = [("forgetting", "forgetting"), ("gain_gsm8k", "gsm8k gain")]
+    items = [("forgetting", "forgetting"), ("gain_gsm8k", "gsm8k gain,\nbase prompting")]
+    if allp[allp.outcome == "gain_gsm8k_chat"].pearson.notna().any():
+        items.insert(1, ("gain_gsm8k_chat", "gsm8k gain,\nchat template"))
     for i, (out, _name) in enumerate(items):
         for dy, pred, color, lab in ((-0.14, "dbpb_fresh", INK, "fresh 2026 text"),
                                      (0.14, "dbpb_enwik8", MUTED, "enwik8 control")):
@@ -523,7 +556,7 @@ def r_panel(ax: plt.Axes, corr: pd.DataFrame) -> None:
     # rule zones in data coordinates: Gate 1 on the forgetting row, the one-sidedness band on the gain row
     ax.add_patch(Rectangle((GATE_SOFT, -0.45), GATE_PASS - GATE_SOFT, 0.9, color=GRID, linewidth=0))
     ax.add_patch(Rectangle((GATE_PASS, -0.45), 1.02 - GATE_PASS, 0.9, color=GRID, alpha=0.5, linewidth=0))
-    ax.add_patch(Rectangle((-ONE_SIDED_MAX, 0.55), 2 * ONE_SIDED_MAX, 0.9, color=GRID, linewidth=0))
+    ax.add_patch(Rectangle((-ONE_SIDED_MAX, 0.55), 2 * ONE_SIDED_MAX, len(items) - 1 - 0.1, color=GRID, linewidth=0))
     ax.annotate("soft | pass", (GATE_SOFT, -0.45), xytext=(2, 2), textcoords="offset points", fontsize=6.5,
                 color=INK2, va="bottom")
     ax.annotate("one-sided zone", (-ONE_SIDED_MAX, 0.55), xytext=(2, 2), textcoords="offset points", fontsize=6.5,
@@ -535,7 +568,7 @@ def r_panel(ax: plt.Axes, corr: pd.DataFrame) -> None:
     ax.set_xlim(-1.02, 1.02)
     ax.set_xlabel("Pearson r (95% CI), Spearman ρ (diamond)", color=INK2, fontsize=8.5)
     ax.set_title("Predictor: fresh text vs enwik8", fontsize=8.5, color=INK, loc="left")
-    ax.legend(frameon=False, fontsize=6.8, labelcolor=INK2, loc="lower left")
+    ax.legend(frameon=False, fontsize=6.8, labelcolor=INK2, loc="upper left")
     style_axis(ax)
 
 
@@ -546,15 +579,20 @@ def figure(table: pd.DataFrame, corr: pd.DataFrame, r1_parent: Mapping[str, obje
     fig, axes = plt.subplots(1, 3, figsize=(15, 6.0), facecolor=SURFACE, gridspec_kw={"width_ratios": [1, 1, 0.62]})
     lab0 = scatter_panel(axes[0], post, "forgetting", "forgetting: drop in mean general accuracy vs base (% of base)",
                          allp.loc["forgetting"], r1_parent, floor)
-    lab1 = scatter_panel(axes[1], post, "gain_gsm8k", "gain: gsm8k (flexible-extract) post − base (points)",
-                         allp.loc["gain_gsm8k"], r1_parent, None)
+    chat = "gain_gsm8k_chat" in allp.index and np.isfinite(allp.loc["gain_gsm8k_chat"].get("pearson", np.nan))
+    gain = "gain_gsm8k_chat" if chat else "gain_gsm8k"
+    ylab = ("gain: gsm8k flexible-extract, post with its chat template − base (points)" if chat
+            else "gain: gsm8k (flexible-extract) post − base, base prompting (points)")
+    lab1 = scatter_panel(axes[1], post, gain, ylab, allp.loc[gain], r1_parent, None)
     r_panel(axes[2], corr)
     handles = [Line2D([], [], color=c, marker=m, linestyle="", markersize=7, label=FAMILY_LABEL[f])
                for f, (c, m) in FAMILY_STYLE.items()]
     handles.append(Line2D([], [], color=INK2, linewidth=2, label="OLS fit, 95% bootstrap band"))
     fig.legend(handles=handles, loc="lower center", ncol=7, frameon=False, fontsize=8, labelcolor=INK2)
+    cond = ("general tasks without chat template; gain with each model's chat template" if chat
+            else "no chat template")
     fig.suptitle("Does fresh-text drift predict what post-training loses (left) but not what it gains (middle)? "
-                 "12 post-trained checkpoints, no chat template", fontsize=10, color=INK, x=0.01, ha="left")
+                 f"12 post-trained checkpoints; {cond}", fontsize=10, color=INK, x=0.01, ha="left")
     fig.tight_layout(rect=(0, 0.06, 1, 0.96))
     place_labels(axes[0], lab0)
     place_labels(axes[1], lab1)
@@ -563,12 +601,15 @@ def figure(table: pd.DataFrame, corr: pd.DataFrame, r1_parent: Mapping[str, obje
 
 # ----------------------------------------------------------------------------- effects
 def load_inputs(res: Path, exp03: Path, exp01: Path) -> dict[str, object]:
-    summaries = {}
+    summaries, chats = {}, {}
     for s in STAGES:
         p = res / "lm_eval" / model_slug(s.model) / "summary.json"
         if p.exists():
             summaries[s.model] = json.loads(p.read_text())
-    return {"summaries": summaries, "stage_deltas": pd.read_csv(exp03 / "stage_deltas.csv"),
+        c = p.with_name("summary_chat.json")
+        if c.exists():
+            chats[s.model] = json.loads(c.read_text())
+    return {"summaries": summaries, "chats": chats, "stage_deltas": pd.read_csv(exp03 / "stage_deltas.csv"),
             "exp03_bpb": pd.read_csv(exp03 / "bpb.csv"), "exp01_bpb": pd.read_csv(exp01 / "bpb.csv")}
 
 
@@ -594,7 +635,7 @@ def main() -> None:
     args = ap.parse_args()
     res = Path(args.results)
     d = load_inputs(res, here.parent / "exp03_staged_drift" / "results", here.parent / "exp01_posttraining_bpc" / "results")
-    scores = pd.DataFrame([score_row(s) for s in d["summaries"].values()])
+    scores = pd.DataFrame([score_row(s, d["chats"].get(m)) for m, s in d["summaries"].items()])
     preds = predictor_table(d["stage_deltas"], d["exp01_bpb"])
     table = checkpoint_table(scores, preds)
     r1 = next(s.model for s in STAGES if s.stage == "r1-distill")

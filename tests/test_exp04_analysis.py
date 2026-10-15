@@ -163,3 +163,18 @@ def test_nudge_labels_separates_overlapping_boxes_only() -> None:
     # a marker sitting where the label would go pushes it up
     lone = nudge_labels([(0.0, 0.0), (20.0, 8.0)], [50.0, 50.0], height=9.0, marker=4.5)
     assert lone[0][1] > 4.0
+
+
+def test_chat_condition_scores_and_gain_use_the_base_prompted_reference() -> None:
+    chat = {"model": "o/sft", "groups": {"gsm8k_chat": {"status": "ok", "wall_s": 30.0, "tasks": {
+        "gsm8k": {"metrics": {"exact_match,flexible-extract": 0.5, "exact_match,strict-match": 0.45}}}},
+        "ifeval_chat": {"status": "failed", "wall_s": 5.0}}}
+    r = score_row(summary("o/sft", 0.45, 0.3), chat)
+    assert (r["gsm8k_flex_chat"], r["gsm8k_strict_chat"], r["chat_wall_s"]) == (0.5, 0.45, 35.0)
+    assert np.isnan(r["ifeval_prompt_strict_chat"]) and r["failed_groups"] == "ifeval_chat"
+    assert np.isnan(score_row(summary("o/b", 0.5, 0.2))["gsm8k_flex_chat"])
+    scores = pd.DataFrame([score_row(summary("o/base", 0.5, 0.2)), r])
+    preds = pd.DataFrame({"model": ["o/sft"], "dbpb_fresh": [7.0], "dbpb_enwik8": [9.0], "bpb_source": ["a"]})
+    t = checkpoint_table(scores, preds, TOY[:2]).set_index("model")
+    assert np.isclose(t.loc["o/sft", "gain_gsm8k_chat"], 30.0)  # 0.5 chat vs the base's 0.2 base-prompted
+    assert np.isclose(t.loc["o/sft", "gain_gsm8k"], 10.0)
