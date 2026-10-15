@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from exp04_benchmarks.run_eval import (
     GROUPS,
     MMLU_SUBJECTS,
@@ -99,3 +101,17 @@ def test_neutral_generation_config_keeps_only_token_ids() -> None:
     assert kept == {"bos_token_id": 151643, "eos_token_id": [151645, 151643], "pad_token_id": 151643}
     assert list(dropped) == ["do_sample", "max_new_tokens", "repetition_penalty", "temperature", "top_k", "top_p"]
     assert neutral_generation_config({"eos_token_id": 2, "pad_token_id": None}) == ({"eos_token_id": 2}, {})
+
+
+def test_run_target_keeps_exp04_indices_and_adds_model_paths() -> None:
+    from cilab.stages import model_at
+    from exp04_benchmarks.run_eval import run_target
+    assert run_target(4, None, None) == (model_at(4), "Qwen__Qwen2.5-0.5B")
+    assert run_target(None, "/r/tulu/ckpt/step00340/", "exp06__tulu__step00340") == \
+        ("/r/tulu/ckpt/step00340/", "exp06__tulu__step00340")
+    assert run_target(None, "allenai/OLMo-2-0425-1B", None) == ("allenai/OLMo-2-0425-1B", "allenai__OLMo-2-0425-1B")
+    for bad in ((None, None, None), (1, "/p", None), (1, None, "lbl")):
+        with pytest.raises(ValueError):
+            run_target(*bad)
+    assert model_kwargs("o/base", None) == model_kwargs("o/base")
+    assert model_kwargs("o/base", "o/inst") == {**model_kwargs("o/base"), "tokenizer": "o/inst"}

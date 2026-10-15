@@ -3,6 +3,7 @@
     python exp04_benchmarks/run_eval.py prefetch                      # setup job: datasets + nltk data
     python exp04_benchmarks/run_eval.py run --index I --out DIR [--groups loglik,gsm8k,ifeval]
     python exp04_benchmarks/run_eval.py run --index I --out DIR --groups gsm8k_chat,ifeval_chat   # chat addendum
+    python exp04_benchmarks/run_eval.py run --model-path P [--tokenizer T] [--label L] --out DIR --groups ...   # exp06
 
 `run` maps the Slurm array index to a model (cilab.stages.model_at), loads it once (lm-eval HFLM) and calls
 `lm_eval.simple_evaluate` once per task group, each in its own try/except:
@@ -31,6 +32,10 @@ Chat condition (addendum, post-trained checkpoints only): gsm8k_chat and ifeval_
 groups with the model's own chat template and the few-shot examples as separate turns
 (apply_chat_template, fewshot_as_multiturn); limits, seeds and generation caps are unchanged. Templates that
 read `enable_thinking` (Qwen3) get enable_thinking=False. Its summary is summary_chat.json.
+
+exp06 addition: --model-path evaluates a local checkpoint directory (or any hub id) instead of a stage-table index,
+--tokenizer loads the tokenizer (and its chat template) from elsewhere, and --label names the output folder (default:
+the slug of the path). Everything else is identical; with --index the behaviour is exp04's, unchanged.
 
 Outputs under DIR/<model slug>/: <group>/results.json (lm-eval's results dict), <group>/done.json,
 loglik_samples.json, summary.json. A group with a done.json is skipped (resumable after a Slurm requeue).
@@ -109,10 +114,23 @@ def samples_spec(hellaswag_n: int = HELLASWAG_N, mmlu_n: int = MMLU_N,
     return spec
 
 
-def model_kwargs(model: str) -> dict[str, object]:
-    """HFLM arguments; identical for every checkpoint except the id."""
-    return {"pretrained": model, "dtype": "float16", "max_length": MAX_LENGTH, "batch_size": "auto",
-            "device": "cuda"}
+def model_kwargs(model: str, tokenizer: str | None = None) -> dict[str, object]:
+    """HFLM arguments; identical for every checkpoint except the id (and, for exp06, an optional tokenizer)."""
+    kw: dict[str, object] = {"pretrained": model, "dtype": "float16", "max_length": MAX_LENGTH, "batch_size": "auto",
+                             "device": "cuda"}
+    return {**kw, "tokenizer": tokenizer} if tokenizer else kw
+
+
+def run_target(index: int | None, model_path: str | None, label: str | None) -> tuple[str, str]:
+    """(model id or path, output folder name): exp04's stage-table index, or exp06's --model-path with a label."""
+    if (index is None) == (model_path is None):
+        raise ValueError("give exactly one of --index and --model-path")
+    if index is not None:
+        if label:
+            raise ValueError("--label only goes with --model-path")
+        model = model_at(index)
+        return model, model_slug(model)
+    return model_path, label or model_slug(model_path.strip("/"))
 
 
 GEN_KEEP: tuple[str, ...] = ("bos_token_id", "eos_token_id", "pad_token_id", "decoder_start_token_id")
@@ -279,11 +297,12 @@ def _free_cuda() -> None:
 
 
 def cmd_run(args: argparse.Namespace) -> int:
-    model = model_at(args.index)
-    root = Path(args.out) / model_slug(model)
+    model, folder = run_target(args.index, args.model_path, args.label)
+    root = Path(args.out) / folder
     root.mkdir(parents=True, exist_ok=True)
     wanted = [g for g in GROUPS if g.name in args.groups.split(",")]
-    print(f"exp04 index {args.index}: {model} on {platform.node()} gpu={gpu_name()} {env_versions()}", flush=True)
+    print(f"exp04 index {args.index}: {model} on {platform.node()} gpu={gpu_name()} {env_versions()}"
+          f"{f' tokenizer={args.tokenizer}' if args.tokenizer else ''}", flush=True)
     todo = [g for g in wanted if not (root / g.name / "done.json").exists()]
     gen_kept: dict[str, object] = {}
     gen_dropped: dict[str, object] = {}
@@ -298,7 +317,7 @@ def cmd_run(args: argparse.Namespace) -> int:
         try:
             from lm_eval.models.huggingface import HFLM
             t0 = time.time()
-            lm = HFLM(**model_kwargs(model))
+            lm = HFLM(**model_kwargs(model, args.tokenizer))
             print(f"[{time.strftime('%H:%M:%S')}] model loaded in {time.time() - t0:.0f} s", flush=True)
             gen_kept, gen_dropped = set_neutral_generation_config(lm)
             print(f"generation config: kept {gen_kept}, dropped {gen_dropped}", flush=True)
@@ -316,7 +335,7 @@ def cmd_run(args: argparse.Namespace) -> int:
             for g in todo:
                 recs[g.name] = run_group(lm, tm, model, g, root)
     summary = {"model": model, "index": args.index, "host": platform.node(), "gpu": gpu_name(),
-               "versions": env_versions(), "model_kwargs": model_kwargs(model),
+               "versions": env_versions(), "model_kwargs": model_kwargs(model, args.tokenizer),
                "generation_config_kept": gen_kept, "generation_config_dropped": gen_dropped, "chat": chat_info,
                "groups": {g.name: recs[g.name] for g in wanted}}
     (root / summary_name(wanted)).write_text(json.dumps(summary, indent=1, default=str))
@@ -341,7 +360,10 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     r = sub.add_parser("run")
-    r.add_argument("--index", type=int, required=True, help="Slurm array index into cilab.stages.STAGES")
+    r.add_argument("--index", type=int, default=None, help="Slurm array index into cilab.stages.STAGES")
+    r.add_argument("--model-path", default=None, help="exp06: local checkpoint directory or hub id, instead of --index")
+    r.add_argument("--tokenizer", default=None, help="exp06: tokenizer (and chat template) to load instead of the model's")
+    r.add_argument("--label", default=None, help="exp06: output folder name for --model-path")
     r.add_argument("--out", required=True, help="results root, e.g. $CI_OUT/results")
     r.add_argument("--groups", default=DEFAULT_GROUPS)
     sub.add_parser("prefetch")
