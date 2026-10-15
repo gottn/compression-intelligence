@@ -1,5 +1,18 @@
 # exp06: at matched drift, does the knowledge − style contrast predict forgetting and ignore the gain?
 
+**Deviation, decided after the dry run and before any update of the main run (2026-10-15, 16:40).**
+- **Speed.** The 50-update dry run of `tulu` (job 1082570, NVIDIA A40) took 15.4 s per update: 4,250 token positions/s, peak memory 41.7 of 46 GB.
+- **Problem.** At that speed, 1,500 updates take about 6.4 h for tulu and about 7.1 h for mathcot, whose longer examples and higher target share make each update about 10% slower. The pre-registered 5 h cap would therefore stop every run early, at an update count that depends on wall time and so differs by recipe and GPU type.
+- **Change.** The training recipe stays exactly as registered: 1,500 updates and the full cosine schedule. Only the compute limits change:
+  - the wall-time safety stop becomes 8.5 h (`--max-wall-s 30600`);
+  - the job limit becomes `--time=09:00:00`.
+- **GPU.** Training runs on whichever 48 GB GPU frees first: an A40 or an L40S, via `--gres=gpu:1` with every other node type excluded. No A40 was free for the next 6 h. Each run's drift is measured against its own step-0 base score on the same GPU, so the GPU type does not enter Δbpb.
+- **Dry-run checks.**
+  - selftest ok on the GPU;
+  - step-0 bf16 bpb within 2.2e-4 (relative) of exp03 on all 4 corpora;
+  - drift hook: Δbpb_fresh +0.21% at update 20, +0.43% at 40 and +0.50% at 50;
+  - the final checkpoint saved in 51 s.
+
 **Status: pre-registered, no results yet.** Everything below was written on 2026-10-15, before any training step, drift score or benchmark of an exp06 checkpoint existed. The outcome sections will be added above this text after the run; the definitions and rules are not edited.
 
 ## Question
