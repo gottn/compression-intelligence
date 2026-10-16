@@ -27,6 +27,14 @@
 - **GPU.** An A40, or an L40S if that frees first; `--time=09:00:00`.
 - **Analysis.** Stage-1 and stage-2 mark checkpoints together form the set of mark checkpoints for H1–H4.
 
+**Exploratory reading, NOT pre-registered.** Stated on 2026-10-16 at 08:40, after the benchmark results were seen but before any per-corpus drift at the marks was looked at. Requested by the coordinator.
+- **Hypothesis.** At equal mean drift, a recipe that forgets has a different per-corpus drift *shape* than one that does not. Concretely, at both the 3% and the 6% marks, mathcot (the only recipe that forgets) has:
+  - a lower arXiv share, Δbpb_arxiv2026 / Δbpb_fresh, than both tulu and smoltalk;
+  - a higher Gutenberg share, Δbpb_gutenberg2026 / Δbpb_fresh, than both.
+- **Also reported, with no prediction:** the wiki2026 share and the enwik8 ratio, Δbpb_enwik8 / Δbpb_fresh.
+- **Data.** The per-corpus Δbpb already in the drift logs, at the 6 mark checkpoints. No new scoring.
+- **Status.** A lead only: 2 marks × 3 recipes, one seed, no test.
+
 **Status: pre-registered, no results yet.** Everything below was written on 2026-10-15, before any training step, drift score or benchmark of an exp06 checkpoint existed. The outcome sections will be added above this text after the run; the definitions and rules are not edited.
 
 ## Question
