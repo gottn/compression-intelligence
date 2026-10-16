@@ -8,12 +8,15 @@ FIGS   := figures/fig1_staged_drift.pdf figures/fig2_temperature.pdf figures/fig
 all: main.pdf
 
 figures: $(FIGS)
+derived_numbers.md: derived.py
+	cd .. && $(PY) -m paper.derived > /dev/null
+
 # One script writes all four figures; the first stands for the set (GNU make 3.81 has no grouped targets).
-$(firstword $(FIGS)): figures/make_figures.py
+$(firstword $(FIGS)): figures/make_figures.py derived.py
 	cd .. && $(PY) -m paper.figures.make_figures
 $(wordlist 2,4,$(FIGS)): $(firstword $(FIGS))
 
-main.pdf: main.tex refs.bib $(FIGS)
+main.pdf: main.tex refs.bib $(FIGS) derived_numbers.md
 	PATH=$(TEXBIN):$$PATH latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
 
 check: main.pdf

@@ -10,6 +10,7 @@ import pytest
 from paper.figures.make_figures import (
     RC,
     Inputs,
+    contrast_cis,
     f1_counts,
     f1_data,
     f1_figure,
@@ -20,6 +21,7 @@ from paper.figures.make_figures import (
     f3_figure,
     f4_data,
     f4_figure,
+    read_derived,
     read_inputs,
 )
 
@@ -72,7 +74,7 @@ def test_figures_build(inp: Inputs) -> None:
     with plt.rc_context(RC):
         f3, s3 = f3_data(inp)
         traj, ck, s4 = f4_data(inp)
-        figs = [f1_figure(f1_data(inp)), f2_figure(f2_data(inp)), f3_figure(f3, s3), f4_figure(traj, ck, s4)]
+        figs = [f1_figure(f1_data(inp)), f2_figure(f2_data(inp)), f3_figure(f3, s3), f4_figure(traj, ck, s4, contrast_cis(read_derived(REPO)))]
     for fig in figs:
         assert fig.get_size_inches()[0] == pytest.approx(16 / 2.54)
         plt.close(fig)

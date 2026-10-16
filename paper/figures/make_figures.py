@@ -31,6 +31,9 @@ from cilab.calib import T_GRID, recovered_stat
 from cilab.pairs import FRESH_CORPORA, PAIRS, model_slug
 from cilab.stages import EXP03_FAMILIES, STAGES, family_base
 from cilab.stats import bootstrap_ci, paired_pct_change, pearson, resample_indices
+from paper.derived import Inputs as DerivedInputs
+from paper.derived import contrast_table
+from paper.derived import read_inputs as read_derived
 
 REPO = Path(__file__).resolve().parents[2]
 OUT = Path(__file__).resolve().parent
@@ -156,8 +159,14 @@ SHORT = {
 
 
 def stage_kind(stage: str) -> str:
-    """Colour class of a post-training stage: 'rl' (last step pure RL), 'math' (math line) or 'chat'."""
-    return "rl" if stage in ("rlvr", "rl-zero") else "math" if stage in ("math-cpt", "r1-distill") else "chat"
+    """Colour class of the whole path from the family base to a checkpoint: 'rl' when the path is RL only
+    (SimpleRL-Zoo), 'math' for the math line, else 'chat' (the path includes SFT or DPO)."""
+    return "rl" if stage == "rl-zero" else "math" if stage in ("math-cpt", "r1-distill") else "chat"
+
+
+def step_kind(stage: str) -> str:
+    """Colour class of the single step from the parent stage: 'rl' for RLVR, 'math' for R1 distillation, else 'chat'."""
+    return "rl" if stage == "rlvr" else "math" if stage == "r1-distill" else "chat"
 
 
 def exp01_fresh_delta(bpb: pd.DataFrame, base: str, post: str) -> tuple[float, list[float]]:
@@ -177,7 +186,7 @@ def f1_data(inp: Inputs) -> pd.DataFrame:
             continue
         base = family_base(s.family)
         row: dict[str, object] = {"model": s.model, "label": SHORT[s.model], "family": s.family,
-                                  "stage": s.stage, "kind": stage_kind(s.stage)}
+                                  "stage": s.stage, "kind": stage_kind(s.stage), "parent_kind": step_kind(s.stage)}
         if s.family in EXP03_FAMILIES:
             vb = d[(d.model == s.model) & (d.kind == "vs_base")].set_index("corpus")
             row.update(delta=vb.delta_pct["fresh_mean"], lo=vb.lo["fresh_mean"], hi=vb.hi["fresh_mean"],
@@ -213,7 +222,7 @@ def f1_counts(t: pd.DataFrame) -> dict[str, int]:
 
 
 def f1_figure(t: pd.DataFrame) -> Figure:
-    fig, ax = plt.subplots(figsize=(TEXT_W_IN, 3.25), layout="constrained")
+    fig, ax = plt.subplots(figsize=(TEXT_W_IN, 2.95), layout="constrained")
     y, ys, prev = 0.0, [], None
     for r in t.itertuples():
         if prev is not None and r.family != prev:
@@ -228,8 +237,9 @@ def f1_figure(t: pd.DataFrame) -> Figure:
         ax.plot([r.lo, r.hi], [yy, yy], color=c, linewidth=1.3, zorder=2)
         ax.plot([r.delta], [yy], "o", color=c, markersize=5, markeredgecolor="white", markeredgewidth=0.8, zorder=3)
         if pd.notna(r.parent_delta):
-            ax.plot([r.parent_lo, r.parent_hi], [yy, yy], color=c, linewidth=0.8, zorder=2)
-            ax.plot([r.parent_delta], [yy], "o", markerfacecolor="white", markeredgecolor=c, markersize=5,
+            cp = KIND_COLOR[r.parent_kind]
+            ax.plot([r.parent_lo, r.parent_hi], [yy, yy], color=cp, linewidth=0.8, zorder=2)
+            ax.plot([r.parent_delta], [yy], "o", markerfacecolor="white", markeredgecolor=cp, markersize=5,
                     markeredgewidth=1.0, zorder=3)
     ax.set_xscale("log")
     ax.set_xlim(0.07, 60)
@@ -247,8 +257,7 @@ def f1_figure(t: pd.DataFrame) -> Figure:
     ax.set_xlabel(r"increase in code length on fresh text, $\Delta$ (%, log scale)")
     handles = [Line2D([], [], color=KIND_COLOR[k], marker="o", markersize=5, markeredgecolor="white",
                       linewidth=1.3, label=lab)
-               for k, lab in (("chat", "SFT, DPO or instruct"), ("rl", "last step pure RL"),
-                              ("math", "math line"))]
+               for k, lab in (("chat", "includes SFT or DPO"), ("rl", "RL only"), ("math", "math line"))]
     handles.append(Line2D([], [], color=INK2, marker="o", markerfacecolor="white", markersize=5, linewidth=0.8,
                           label="step against the parent stage"))
     fig.legend(handles=handles, loc="outside upper center", ncol=4, handletextpad=0.4)
@@ -303,7 +312,7 @@ def f2_means(t: pd.DataFrame) -> pd.DataFrame:
 
 
 def f2_figure(t: pd.DataFrame) -> Figure:
-    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(TEXT_W_IN, 1.95), layout="constrained", sharey=True,
+    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(TEXT_W_IN, 1.85), layout="constrained", sharey=True,
                                   gridspec_kw={"width_ratios": [1.45, 1]})
     means = f2_means(t)
     shapes = dict(zip(FRESH_CORPORA, ("o", "s", "^"), strict=True))
@@ -395,7 +404,7 @@ def dot(ax: plt.Axes, x: float, y: float, color: str, marker: str = "o", size: f
 
 
 def f3_figure(t: pd.DataFrame, stats: dict[str, float]) -> Figure:
-    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(TEXT_W_IN, 2.45), layout="constrained",
+    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(TEXT_W_IN, 2.3), layout="constrained",
                                   gridspec_kw={"width_ratios": [1.3, 1]})
     fl = stats["floor_median"]
     ax.axhspan(-fl, fl, color=BAND, zorder=0, linewidth=0)
@@ -429,7 +438,7 @@ def f3_figure(t: pd.DataFrame, stats: dict[str, float]) -> Figure:
     ax2.text(0.0, 1.0, "(b)", transform=ax2.transAxes, ha="left", va="bottom")
     handles = [Line2D([], [], color=KIND_COLOR[k], marker="o", linestyle="", markersize=5, markeredgecolor="white",
                       label=lab)
-               for k, lab in (("chat", "SFT, DPO or instruct pipeline"), ("rl", "last step pure RL"),
+               for k, lab in (("chat", "path from base includes SFT or DPO"), ("rl", "RL only"),
                               ("math", "math line"))]
     fig.legend(handles=handles, loc="outside upper center", ncol=3, handletextpad=0.3)
     return fig
@@ -460,8 +469,9 @@ def f4_data(inp: Inputs) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, float]]:
     return traj, ck, stats
 
 
-def f4_figure(traj: pd.DataFrame, ck: pd.DataFrame, stats: dict[str, float]) -> Figure:
-    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(TEXT_W_IN, 2.5), layout="constrained",
+def f4_figure(traj: pd.DataFrame, ck: pd.DataFrame, stats: dict[str, float], ci: pd.DataFrame) -> Figure:
+    """ci: 95% window-bootstrap interval of K − S per checkpoint (paper.derived.contrast_table, contrast 'ks')."""
+    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(TEXT_W_IN, 2.35), layout="constrained",
                                   gridspec_kw={"width_ratios": [1.3, 1]})
     for v in (1, 2, 3, 4):
         ax.axvline(v, color=GRID, linewidth=0.5, zorder=0)
@@ -474,6 +484,8 @@ def f4_figure(traj: pd.DataFrame, ck: pd.DataFrame, stats: dict[str, float]) -> 
     for r in ck.itertuples():  # open marks in (a), where tulu and mathcot reach 6% at the same place
         ax.plot([r.epochs], [r.dbpb_fresh], MARK_SHAPE[r.shape], markerfacecolor="white",
                 markeredgecolor=RECIPE_COLOR[r.recipe], markersize=MARK_SIZE[r.shape], markeredgewidth=1.0, zorder=3)
+        lo, hi = ci.loc[(r.recipe, int(r.step)), ["lo", "hi"]]
+        ax2.plot([lo, hi], [r.forgetting, r.forgetting], color=RECIPE_COLOR[r.recipe], linewidth=0.9, zorder=2)
         dot(ax2, r.contrast_ks, r.forgetting, RECIPE_COLOR[r.recipe], MARK_SHAPE[r.shape], MARK_SIZE[r.shape])
     ax.set_xlim(0, 4.15)
     ax.set_ylim(-0.3, 9.6)
@@ -481,9 +493,9 @@ def f4_figure(traj: pd.DataFrame, ck: pd.DataFrame, stats: dict[str, float]) -> 
     ax.set_ylabel(r"$\Delta$ on fresh text (%)")
     fl = stats["floor_median"]
     ax2.axhspan(-fl, fl, color=BAND, zorder=0, linewidth=0)
-    ax2.text(4.75, -fl + 0.15, "noise floor", color=INK2, ha="right", va="bottom")
+    ax2.text(5.35, -fl + 0.15, "noise floor", color=INK2, ha="right", va="bottom")
     ax2.axhline(0, color=AXIS, linewidth=0.6, zorder=1)
-    ax2.set_xlim(1.2, 4.8)
+    ax2.set_xlim(0.9, 5.4)
     ax2.set_ylim(-2.9, 5.6)
     ax2.set_xlabel("contrast K − S (percentage points)")
     ax2.set_ylabel("forgetting (% of base score)")
@@ -514,6 +526,12 @@ def read_inputs(repo: Path) -> Inputs:
         exp06_ckpts=pd.read_csv(e6 / "checkpoints.csv"), exp06_traj=pd.read_csv(e6 / "trajectories.csv"))
 
 
+def contrast_cis(derived_inputs: DerivedInputs) -> pd.DataFrame:
+    """K − S intervals per (recipe, update), from paper.derived."""
+    t, _ = contrast_table(derived_inputs)
+    return t[t.contrast == "ks"].set_index(["recipe", "step"])
+
+
 def save(fig: Figure, path: Path) -> None:
     fig.savefig(path, format="pdf", metadata={"CreationDate": None, "ModDate": None})
     plt.close(fig)
@@ -526,10 +544,11 @@ def main() -> None:
     f2 = f2_data(inp)
     f3, s3 = f3_data(inp)
     traj, ck, s4 = f4_data(inp)
+    ci = contrast_cis(read_derived(REPO))
     save(f1_figure(f1), OUT / "fig1_staged_drift.pdf")
     save(f2_figure(f2), OUT / "fig2_temperature.pdf")
     save(f3_figure(f3, s3), OUT / "fig3_benchmarks.pdf")
-    save(f4_figure(traj, ck, s4), OUT / "fig4_matched.pdf")
+    save(f4_figure(traj, ck, s4, ci), OUT / "fig4_matched.pdf")
     print("F1", f1_counts(f1))
     print("F2", f2_means(f2).round(2).to_dict("index"))
     print("F3", {k: round(v, 4) for k, v in s3.items()})
