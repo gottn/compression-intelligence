@@ -1,0 +1,2 @@
+0acc66510873aad23c5cff2dbb1f262a3c597bf8
+feat(exp06): matched-drift SFT trainer, drift hook, eval path — packed = unpacked logits to 2e-7

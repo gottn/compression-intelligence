@@ -1,0 +1,15 @@
+{
+ "recipe": "smoltalk",
+ "step": 920,
+ "marks": [
+  "3"
+ ],
+ "dbpb_fresh": 3.0189429010752824,
+ "contrast_ks": 1.5485171332298777,
+ "contrast_rf": 2.5886482051877344,
+ "token_positions": 60293120,
+ "loss_tokens": 33900457,
+ "epochs": 1.0204639837222103,
+ "base": "allenai/OLMo-2-0425-1B",
+ "template_tokenizer": "allenai/OLMo-2-0425-1B-Instruct"
+}

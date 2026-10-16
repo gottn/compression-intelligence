@@ -1,0 +1,3 @@
+exp06__mathcot__step01660	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-204027-0454f34/mathcot/ckpt/step01660	mathcot	1660	3
+exp06__mathcot__step02780	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-204027-0454f34/mathcot/ckpt/step02780	mathcot	2780	6
+exp06__mathcot__step03464	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-204027-0454f34/mathcot/ckpt/step03464	mathcot	3464	final

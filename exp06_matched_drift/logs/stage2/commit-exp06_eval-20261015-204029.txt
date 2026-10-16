@@ -1,0 +1,2 @@
+0454f345e970785c49e8d2c23629c5aab26029fe
+feat(exp06): stage-2 extension — init-from, drift vs base, marks 6/10

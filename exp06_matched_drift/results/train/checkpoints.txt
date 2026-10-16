@@ -1,0 +1,4 @@
+exp06__smoltalk__step00920	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/smoltalk/ckpt/step00920	smoltalk	920	3
+exp06__tulu__step01500	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/tulu/ckpt/step01500	tulu	1500	final
+exp06__smoltalk__step01500	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/smoltalk/ckpt/step01500	smoltalk	1500	final
+exp06__mathcot__step01500	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/mathcot/ckpt/step01500	mathcot	1500	final

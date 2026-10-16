@@ -1,0 +1,20 @@
+{
+ "recipe": "tulu",
+ "out": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/tulu",
+ "device": "cuda",
+ "examples": 79249,
+ "tokens": 45001366,
+ "gpu": "NVIDIA A40",
+ "torch": "2.9.0a0+50eac811a6.nv25.09",
+ "weights": "allenai/OLMo-2-0425-1B",
+ "micro_batch": 2,
+ "accum": 16,
+ "warmup": 45,
+ "max_steps": 1500,
+ "max_wall_s": 30600.0,
+ "score_every": 20,
+ "doc_start": "<|endoftext|>",
+ "setup_s": 89.8,
+ "slurm_job": "1082591",
+ "restart": null
+}

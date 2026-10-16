@@ -1,0 +1,2 @@
+exp06__smoltalk__step02500	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-204027-0454f34/smoltalk/ckpt/step02500	smoltalk	2500	6
+exp06__smoltalk__step03487	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-204027-0454f34/smoltalk/ckpt/step03487	smoltalk	3487	final

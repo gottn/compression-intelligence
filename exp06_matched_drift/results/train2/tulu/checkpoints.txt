@@ -1,0 +1,3 @@
+exp06__tulu__step01760	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-204027-0454f34/tulu/ckpt/step01760	tulu	1760	3
+exp06__tulu__step02660	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-204027-0454f34/tulu/ckpt/step02660	tulu	2660	6
+exp06__tulu__step03489	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-204027-0454f34/tulu/ckpt/step03489	tulu	3489	final

@@ -64,3 +64,15 @@ exp05 done (2026-10-15, Mac, no new scoring, `exp05_decomposition/RESULTS.md`). 
 - **Lead (a secondary reading).** The contrast drift_K − drift_S tracks forgetting (r = 0.81 without the math line, against 0.32 for total drift) and not the ifeval gain (r = 0.17). A frequency-only split, which needs no tagger, replicates it.
 - **Same dose, opposite direction.** OLMo-2 DPO (+14%, style-heavy) forgets nothing; Qwen3 (+16%, knowledge-heavy) forgets 4.7%.
 - **Consequence for the chain.** Step 1's recipe-controlled sweep should pre-register drift_rare − drift_frequent as the one-sided forgetting meter, alongside total Δbpb.
+
+exp06 done (2026-10-16, AAU, `exp06_matched_drift/RESULTS.md`). It is the recipe-controlled sweep: one base (OLMo-2-1B), three token-matched SFT recipes (tulu, smoltalk, mathcot), checkpoints at matched Δbpb_fresh (3% and 6%; 10% was not reached even after a pre-registered warm-restart extension to about 3,480 updates).
+- **exp05's lead is not supported.** The pre-registered fail rule triggers: r(knowledge − style contrast, forgetting) = 0.43 over the 6 mark checkpoints and 0.29 over all 12. At the 6% mark, tulu (which forgets nothing) has the same contrast as mathcot (which forgets 4.1%).
+- **Forgetting is set by the recipe as an early step, not a dose.**
+  - mathcot forgets 4.1–4.4% (ARC-led) at every checkpoint from 2.5% to 7.1% drift; tulu and smoltalk forget nothing up to 9%.
+  - Total drift gives r = −0.04 against forgetting.
+  - The IFEval gain is likewise a recipe constant.
+- **Repetition confounds the dose.** Drift jumps 0.5–1.9 pp in the 20–40 updates after each epoch boundary, with no benchmark change.
+- **Consequence for the chain.**
+  - Fresh-text drift, in total or by token class, is not a forgetting meter within the sub-10% range for SFT recipes on this base.
+  - The next tests are single-pass recipes (no repetition) and a per-domain drift profile (post hoc: the forgetting recipe drifts least on Wikipedia), before the anchor experiment.
+

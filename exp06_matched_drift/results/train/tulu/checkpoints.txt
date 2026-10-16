@@ -1,0 +1,1 @@
+exp06__tulu__step01500	/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/tulu/ckpt/step01500	tulu	1500	final

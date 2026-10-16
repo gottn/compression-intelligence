@@ -4,7 +4,7 @@
 
 ## Next thread
 
-See `docs/research-thread.md` (2026-10-14): fresh-text bpb as a forgetting meter for post-training. exp03 (staged public checkpoints) and exp04 (benchmarks for the same 18 checkpoints) are done on AAU. exp04 says drift is a threshold alarm, not a ranking, and the recipe matters. Its chat-condition addendum shows drift also tracks the instruction-following gain (ifeval r = 0.89 over 8 chat-tuned checkpoints), so the one-sided meter fails. exp05 (Mac, no new scoring) split the drift by token class. Knowledge and style drift move together (r = 0.93, which triggers the pre-registered fail rule), but their *difference* tracks forgetting (r = 0.81 without the math line) and not the ifeval gain (r = 0.17). That is a post-hoc lead for a one-sided meter. Next: recipe-controlled fine-tunes (thread step 1), with the rare − frequent contrast pre-registered as the forgetting meter.
+See `docs/research-thread.md`. exp03–exp05 (public checkpoints) found that fresh-text drift is a dose of post-training that tracks both forgetting and the IFEval gain, and exp05's post-hoc lead was that the knowledge − style direction of the drift tracks forgetting alone. exp06 (2026-10-16) tested that lead under recipe control: one base (OLMo-2-1B), three SFT recipes, checkpoints at matched drift. The lead is not supported (the pre-registered fail rule triggers). Forgetting is set by the recipe as an early step that does not grow with dose: mathcot forgets 4.1–4.4% from 2.5% to 7.1% drift, while tulu and smoltalk forget nothing up to 9%. Neither total drift nor the contrast separates the recipes. Drift also jumps at every epoch boundary (repetition), without any benchmark change. Next: single-pass recipes to remove repetition, a per-domain drift profile (the forgetting recipe drifts least on Wikipedia, a post-hoc lead), and gsm8k with a long generation cap.
 
 ## Status (2026-10-13)
 
@@ -169,6 +169,48 @@ Gotchas:
 - SimpleRL class shares are noise, because total Δ is only 0.1–0.2%.
 - The frequency variant is free of all three and gives the same verdicts.
 
+## exp06_matched_drift: done (2026-10-16)
+
+The full write-up is `exp06_matched_drift/RESULTS.md`.
+
+**Question.** At matched fresh-text drift, does the knowledge − style contrast (exp05's lead) predict forgetting and ignore the instruction-following gain?
+
+**Setup.**
+- Base `allenai/OLMo-2-0425-1B`, with three SFT recipes:
+  - tulu (Tülu 3 mix);
+  - smoltalk (SmolTalk `all`);
+  - mathcot (OpenR1-Math `all` R1 answers).
+- Token-matched subsets of 45.0M template tokens each, with the OLMo-2-Instruct chat template, loss on assistant tokens, ≤ 2,048 tokens, packed.
+- Full fine-tune: AdamW at 2e-5, 32 × 2,048 tokens per update.
+- **Stage 1:** 1,500 updates, AAU array 1082589, 3 A40s, 6.5 h.
+- **Stage 2:** a pre-registered budget extension, warm-restarted from each stage-1 final. Array 1084160, stopped at the 8.5 h wall at about update 3,480.
+- **Drift:** scored in bf16 every 20 updates against the base, with checkpoints at the first crossing of 3%, 6% and 10% (10% was never reached).
+- **Benchmarks:** exp04's loglik, gsm8k_chat and ifeval_chat groups on 12 checkpoints and the base (A10, arrays 1082590 and 1084161, job 1082554).
+
+**Verdict: the pre-registered fail rule triggers.**
+
+| reading | value | verdict |
+|---|---|---|
+| H1, r(contrast_ks, forgetting), 6 mark checkpoints | 0.43 | fail |
+| H2, r(contrast_ks, IFEval gain), 6 mark checkpoints | −0.41 | fail |
+| H3, forgetting spread at matched drift | 5.0–5.8 pp vs a 2.2 pp floor | pass |
+| H4, contrast order at 6% | mathcot 3.41 ≈ tulu 3.37 > smoltalk 2.38 | fail |
+| H1 / H2 over all 12 checkpoints | 0.29 / −0.20 | |
+| total Δbpb_fresh vs forgetting, all 12 | −0.04 | |
+
+- **Forgetting is a recipe step.**
+  - mathcot loses 4.1–4.4% of the base's general score (ARC-led) at every checkpoint, from 2.5% to 7.1% drift.
+  - tulu and smoltalk forget nothing (−1.7 to −0.3%) up to 9% drift, and their MMLU rises from 0.38 to 0.42–0.44.
+- **The IFEval chat gain is also a recipe constant:** +10.5 to +16.5 points for tulu and smoltalk, 0 to +3.5 for mathcot.
+- **mathcot's gsm8k score is not a loss.** Its gsm8k chat (0.13–0.15 vs the base's 0.38) is truncation by the 256-token cap.
+- **Rare − frequent variant:** H1 = 0.69 (soft) and the H4 order holds, but on a 0.07 pp margin.
+
+Gotchas:
+- **Fresh-text drift jumps 0.5–1.9 pp in the 20–40 updates after each epoch boundary,** with the training loss dropping at the same time (memorisation of the SFT set). tulu's 3% and 6% marks were both reached that way.
+- **The dry run measured 15.4 s per update on an A40** (HF eager, SDPA with a packed mask, fp32 master weights; 4,250 token positions/s, 42 GB). 1,500 updates take 6.4 h.
+- **The stage-2 warm restart re-warms a fresh AdamW.** Its first row reproduced stage 1's final Δbpb exactly.
+- **Exploratory, not pre-registered:** the forgetting recipe drifts least on wiki2026 (0.70 and 0.82 of its fresh mean, against 0.97–1.09 for the other two). The stated arXiv/Gutenberg hypothesis was not supported.
+
 ## How to rerun
 
 ```bash
@@ -203,6 +245,13 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
   - once: `VIRTUAL_ENV=.venv uv pip install -r exp05_decomposition/requirements.txt` (spaCy, `en_core_web_sm`, wordfreq);
   - `bash exp05_decomposition/run_all.sh` (`align`, then `analyze`).
 
+- exp06 (all on AAU, see `exp06_matched_drift/run_all.sh`):
+  - `submit.sh exp06_setup`: CPU, 29 min; downloads the three SFT datasets and writes the token-matched subsets.
+  - `submit.sh exp06_train --array=0-2`: A40, about 6.5 h. Stage 2 adds `--init-from <stage-1 run> --drift-ref base`, about 8.6 h.
+  - `submit.sh exp06_eval` with `RUN_IN`/`CKPT_LIST`: A10, 13–19 min per checkpoint.
+  - `SETUP=… TRAIN=… TRAIN2=… BASE_EVAL=… bash exp06_matched_drift/run_all.sh fetch`.
+  - Mac: `bash exp06_matched_drift/run_all.sh analyze` (about 20 s).
+
 ## Layout
 
 - `exp01_posttraining_bpc/`:
@@ -214,8 +263,13 @@ bash run_all.sh        # resumable; ~1 h after the ~27 GB model download (HF cac
 - `exp03_staged_drift/`: `RESULTS.md`; `results/` (bpb.csv, windows.csv, tokens/*.npy from the AAU job; stage_deltas.csv, summary.md, fig_stages.png from the analysis); `logs/` (Slurm log, Mac preflight).
 - `exp04_benchmarks/`: `RESULTS.md`; `run_eval.py` (cluster driver); `analyze_forgetting.py`; `results/` (`lm_eval/<model>/` per-model lm-eval JSON and summaries, scores.csv, correlations.csv, summary.md, fig_forgetting.png); `logs/` (setup, dry runs, array Slurm logs).
 - `exp05_decomposition/`: `RESULTS.md`; `analyze_decomposition.py` (`align`, `analyze`); `results/` (`classes/*.npz` per tokenizer group and corpus, alignment.json, class_counts.csv, class_examples.md, decomposition.csv, correlations.csv, summary.md, fig_decomposition.png); `logs/`.
-- `infra/`: cluster submit script and Slurm jobs (`smoke`, `exp03`, `exp04_setup`, `exp04_eval`); rules in `docs/cluster-rules.md`.
-- `cilab/`: shared helpers (pairs, stages, text, score, stats, calib, io, tokclass); `tests/`: pytest for them.
+- `exp06_matched_drift/`: `RESULTS.md`; `prep_data.py`, `train_sft.py` and `analyze_matched.py`; `results/`:
+  - `train/` and `train2/`: per-recipe drift and train logs, checkpoint metadata, and per-token bits at the reference and checkpoint updates;
+  - `lm_eval/`: per-checkpoint lm-eval summaries;
+  - `checkpoints.csv`, `trajectories.csv`, `correlations.csv`, `tests.csv`, `exploratory_corpus_profile.csv`, `summary.md` and `fig_matched.png`;
+  - plus `logs/`.
+- `infra/`: cluster submit script (with `RUN_IN` to write into an existing run) and Slurm jobs (`smoke`, `exp03`, `exp04_setup`, `exp04_eval`, `exp06_setup`, `exp06_train`, `exp06_eval`); rules in `docs/cluster-rules.md`.
+- `cilab/`: shared helpers (pairs, stages, text, score, stats, calib, io, tokclass, bench, drift, sft); `tests/`: pytest for them.
 
 ## Next (from RESULTS.md)
 

@@ -1,0 +1,28 @@
+commit 0acc665 on a512-mi100-01.srv.aau.dk at 2026-10-15T15:46:34+02:00, out=/home/id.aau.dk/pr04wm/runs/ci/exp06_setup/20261015-154627-0acc665
+15:4: not a valid test operator:  
+15:4: not a valid test operator: 13.0
+21:4: not a valid test operator: (
+21:4: not a valid test operator: 
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+datasets 5.1.0 transformers 5.19.0 tokenizers 0.23.3 torch 2.9.0a0+50eac811a6.nv25.09 numpy 2.1.0
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+{"recipe": "tulu", "loaded_s": 175}
+{"recipe": "tulu", "rows": 939343, "revision": "b14afda60f1bbebe55d5d2fa1e4df5042f97f8be"}
+{"recipe": "tulu", "scanned": 4096, "kept": 3906, "tokens": 2239484, "wall_s": 3}
+{"recipe": "tulu", "scanned": 45056, "kept": 42836, "tokens": 24367423, "wall_s": 36}
+{"recipe": "smoltalk", "loaded_s": 408}
+{"recipe": "smoltalk", "rows": 1043917, "revision": "5feaf2fd3ffca7c237fc38d1861bc30365d48ffa"}
+{"recipe": "smoltalk", "scanned": 4096, "kept": 3948, "tokens": 2962697, "wall_s": 3}
+{"recipe": "smoltalk", "scanned": 45056, "kept": 43303, "tokens": 32570564, "wall_s": 42}
+{"recipe": "mathcot", "loaded_s": 447}
+{"recipe": "mathcot", "rows": 225129, "revision": "e4e141ec9dea9f8326f4d347be56105859b2bd68"}
+{"recipe": "mathcot", "scanned": 4096, "kept": 986, "tokens": 1438390, "wall_s": 10}
+{"recipe": "mathcot", "scanned": 45056, "kept": 10857, "tokens": 15961019, "wall_s": 131}
+{"recipe": "mathcot", "scanned": 86016, "kept": 20696, "tokens": 30512142, "wall_s": 262}
+{"recipe": "tulu", "kept": 79249, "candidates_scanned": 83384, "drops": {"empty_content": 58, "template_not_prefix": 2, "too_long": 4075}, "tokens": {"n": 79249, "sum": 45001366, "mean": 567.8477457128797, "median": 417.0, "p10": 102.0, "p90": 1275.0, "max": 2048}, "loss_token_share": 0.7033580047325675}
+{"recipe": "smoltalk", "kept": 59959, "candidates_scanned": 62347, "drops": {"empty_content": 2, "too_long": 2386}, "tokens": {"n": 59959, "sum": 45000207, "mean": 750.516302806918, "median": 562.0, "p10": 166.0, "p90": 1572.0, "max": 2048}, "loss_token_share": 0.7379858052652958}
+{"recipe": "mathcot", "kept": 30512, "candidates_scanned": 126772, "drops": {"too_long": 96260}, "tokens": {"n": 30512, "sum": 45000293, "mean": 1474.8391780283168, "median": 1499.0, "p10": 986.0, "p90": 1934.0, "max": 2048}, "loss_token_share": 0.9448662256487974}
+exp06_setup done at 2026-10-15T16:15:39+02:00

@@ -1,0 +1,17 @@
+{
+ "recipe": "mathcot",
+ "step": 2780,
+ "marks": [
+  "6"
+ ],
+ "dbpb_fresh": 6.06374901511176,
+ "contrast_ks": 3.4144349569259607,
+ "contrast_rf": 2.9352185080037607,
+ "token_positions": 182190080,
+ "loss_tokens": 128542597,
+ "epochs": 3.022745149449397,
+ "base": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/mathcot/ckpt/step01500",
+ "template_tokenizer": "allenai/OLMo-2-0425-1B-Instruct",
+ "init_from": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/mathcot/ckpt/step01500",
+ "drift_ref": "base"
+}

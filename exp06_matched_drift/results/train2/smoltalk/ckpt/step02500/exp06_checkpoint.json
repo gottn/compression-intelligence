@@ -1,0 +1,17 @@
+{
+ "recipe": "smoltalk",
+ "step": 2500,
+ "marks": [
+  "6"
+ ],
+ "dbpb_fresh": 6.002748154811019,
+ "contrast_ks": 2.3762423708168905,
+ "contrast_rf": 2.8713853694197544,
+ "token_positions": 163840000,
+ "loss_tokens": 92158268,
+ "epochs": 2.7766140195800464,
+ "base": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/smoltalk/ckpt/step01500",
+ "template_tokenizer": "allenai/OLMo-2-0425-1B-Instruct",
+ "init_from": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/smoltalk/ckpt/step01500",
+ "drift_ref": "base"
+}

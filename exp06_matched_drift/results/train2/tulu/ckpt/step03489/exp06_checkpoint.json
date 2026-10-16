@@ -1,0 +1,17 @@
+{
+ "recipe": "tulu",
+ "step": 3489,
+ "marks": [
+  "final"
+ ],
+ "dbpb_fresh": 7.110920068646496,
+ "contrast_ks": 4.3485811416162345,
+ "contrast_rf": 2.9396413817244156,
+ "token_positions": 228655104,
+ "loss_tokens": 126653757,
+ "epochs": 4.0017918207169805,
+ "base": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/tulu/ckpt/step01500",
+ "template_tokenizer": "allenai/OLMo-2-0425-1B-Instruct",
+ "init_from": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/tulu/ckpt/step01500",
+ "drift_ref": "base"
+}

@@ -1,0 +1,73 @@
+{
+ "recipe": "smoltalk",
+ "dataset": "HuggingFaceTB/smoltalk",
+ "config": "all",
+ "split": "train",
+ "revision": "5feaf2fd3ffca7c237fc38d1861bc30365d48ffa",
+ "rows": 1043917,
+ "seed": 0,
+ "order": "numpy default_rng(0).permutation",
+ "template_tokenizer": "allenai/OLMo-2-0425-1B-Instruct",
+ "max_len": 2048,
+ "budget_tokens": 45000000,
+ "candidates_scanned": 62347,
+ "kept": 59959,
+ "kept_before_budget_cut": 59959,
+ "drops": {
+  "empty_content": 2,
+  "too_long": 2386
+ },
+ "tokens": {
+  "n": 59959,
+  "sum": 45000207,
+  "mean": 750.516302806918,
+  "median": 562.0,
+  "p10": 166.0,
+  "p90": 1572.0,
+  "max": 2048
+ },
+ "loss_tokens": {
+  "n": 59959,
+  "sum": 33209514,
+  "mean": 553.870378091696,
+  "median": 291.0,
+  "p10": 36.0,
+  "p90": 1381.0,
+  "max": 1979
+ },
+ "loss_token_share": 0.7379858052652958,
+ "rendered_tokens_scanned": {
+  "n": 62345,
+  "sum": 52572932,
+  "mean": 843.2581923169461,
+  "median": 604.0,
+  "p10": 169.0,
+  "p90": 1680.0,
+  "max": 22648
+ },
+ "fit_rate_scanned": 0.9617290881385837,
+ "source_columns": [
+  "source"
+ ],
+ "source_mix_top30": {
+  "smol-magpie-ultra": 22681,
+  "numina-cot-100k": 6238,
+  "openhermes-100k": 5685,
+  "smol-summarize": 5671,
+  "apigen-80k": 4912,
+  "smol-rewrite": 3177,
+  "self-oss-instruct": 2817,
+  "metamathqa-50k": 2808,
+  "systemchats-30k": 2047,
+  "smol-constraints": 1956,
+  "explore-instruct-rewriting": 1824,
+  "everyday-conversations": 143
+ },
+ "versions": {
+  "datasets": "5.1.0",
+  "transformers": "5.19.0",
+  "tokenizers": "0.23.3"
+ },
+ "date": "2026-10-15",
+ "wall_s": 60.3
+}

@@ -1,0 +1,21 @@
+id,subset,contrast,statistic,value,verdict
+H1,mark checkpoints,contrast_ks,"Pearson r(contrast_ks, forgetting), n = 6",0.4310089702059872,fail
+H2,mark checkpoints,contrast_ks,"Pearson r(contrast_ks, IFEval gain), n = 6",-0.4045191527128945,fail
+H3,marks,contrast_ks,marks whose forgetting range exceeds the 95% floor,2,pass
+H4,6% mark,contrast_ks,6% mark: contrast and forgetting mathcot > smoltalk > tulu,"contrast False, forgetting True",fail
+fail rule,mark checkpoints,contrast_ks,"r(contrast_ks, Δbpb_fresh) > 0.9, or H1 < 0.6 with the H4 contrast order violated",0.6087778542311139,triggered: lead not supported
+H1,mark checkpoints,contrast_rf,"Pearson r(contrast_rf, forgetting), n = 6",0.6944217116941777,soft
+H2,mark checkpoints,contrast_rf,"Pearson r(contrast_rf, IFEval gain), n = 6",-0.7579302339942271,fail
+H3,marks,contrast_rf,marks whose forgetting range exceeds the 95% floor,2,pass
+H4,6% mark,contrast_rf,6% mark: contrast and forgetting mathcot > smoltalk > tulu,"contrast True, forgetting True",pass
+fail rule,mark checkpoints,contrast_rf,"r(contrast_rf, Δbpb_fresh) > 0.9, or H1 < 0.6 with the H4 contrast order violated",0.21332804806461936,not triggered
+H1,all checkpoints (marks + finals),contrast_ks,"Pearson r(contrast_ks, forgetting), n = 12",0.28845398615819207,fail
+H2,all checkpoints (marks + finals),contrast_ks,"Pearson r(contrast_ks, IFEval gain), n = 12",-0.19837139082843488,pass
+H3,marks,contrast_ks,marks whose forgetting range exceeds the 95% floor,2,pass
+H4,6% mark,contrast_ks,6% mark: contrast and forgetting mathcot > smoltalk > tulu,"contrast False, forgetting True",fail
+fail rule,all checkpoints (marks + finals),contrast_ks,"r(contrast_ks, Δbpb_fresh) > 0.9, or H1 < 0.6 with the H4 contrast order violated",0.7995695956654085,triggered: lead not supported
+H1,all checkpoints (marks + finals),contrast_rf,"Pearson r(contrast_rf, forgetting), n = 12",0.3477354383039184,fail
+H2,all checkpoints (marks + finals),contrast_rf,"Pearson r(contrast_rf, IFEval gain), n = 12",-0.23038789607278104,pass
+H3,marks,contrast_rf,marks whose forgetting range exceeds the 95% floor,2,pass
+H4,6% mark,contrast_rf,6% mark: contrast and forgetting mathcot > smoltalk > tulu,"contrast True, forgetting True",pass
+fail rule,all checkpoints (marks + finals),contrast_rf,"r(contrast_rf, Δbpb_fresh) > 0.9, or H1 < 0.6 with the H4 contrast order violated",0.6869829762530962,not triggered

@@ -1,0 +1,81 @@
+{
+ "recipe": "tulu",
+ "dataset": "allenai/tulu-3-sft-mixture",
+ "config": null,
+ "split": "train",
+ "revision": "b14afda60f1bbebe55d5d2fa1e4df5042f97f8be",
+ "rows": 939343,
+ "seed": 0,
+ "order": "numpy default_rng(0).permutation",
+ "template_tokenizer": "allenai/OLMo-2-0425-1B-Instruct",
+ "max_len": 2048,
+ "budget_tokens": 45000000,
+ "candidates_scanned": 83384,
+ "kept": 79249,
+ "kept_before_budget_cut": 79249,
+ "drops": {
+  "empty_content": 58,
+  "template_not_prefix": 2,
+  "too_long": 4075
+ },
+ "tokens": {
+  "n": 79249,
+  "sum": 45001366,
+  "mean": 567.8477457128797,
+  "median": 417.0,
+  "p10": 102.0,
+  "p90": 1275.0,
+  "max": 2048
+ },
+ "loss_tokens": {
+  "n": 79249,
+  "sum": 31652071,
+  "mean": 399.40025741649737,
+  "median": 277.0,
+  "p10": 23.0,
+  "p90": 990.0,
+  "max": 1999
+ },
+ "loss_token_share": 0.7033580047325675,
+ "rendered_tokens_scanned": {
+  "n": 83324,
+  "sum": 69705194,
+  "mean": 836.5560222744947,
+  "median": 442.0,
+  "p10": 105.0,
+  "p90": 1481.0,
+  "max": 123642
+ },
+ "fit_rate_scanned": 0.9510945225865297,
+ "source_columns": [
+  "source"
+ ],
+ "source_mix_top30": {
+  "ai2-adapt-dev/personahub_math_v5_regen_149960": 12817,
+  "ai2-adapt-dev/evol_codealpaca_heval_decontaminated": 9432,
+  "ai2-adapt-dev/tulu_v3.9_aya_100k": 8458,
+  "ai2-adapt-dev/flan_v2_converted": 8075,
+  "ai2-adapt-dev/tulu_v3.9_wildchat_100k": 6410,
+  "ai2-adapt-dev/numinamath_tir_math_decontaminated": 5554,
+  "allenai/tulu-3-sft-personas-math-grade": 4419,
+  "ai2-adapt-dev/tulu_v3.9_wildjailbreak_decontaminated_50k": 4375,
+  "ai2-adapt-dev/tulu_v3.9_open_math_2_gsm8k_50k": 4372,
+  "ai2-adapt-dev/tulu_v3.9_synthetic_finalresp_wildguardmixtrain_decontaminated_50k": 4317,
+  "ai2-adapt-dev/personahub_code_v2_34999": 3104,
+  "ai2-adapt-dev/personahub_ifdata_manual_seed_v3_29980": 2533,
+  "ai2-adapt-dev/tulu_v3.9_personahub_math_interm_algebra_20k": 1860,
+  "ai2-adapt-dev/coconot_converted": 951,
+  "ai2-adapt-dev/no_robots_converted": 836,
+  "ai2-adapt-dev/tulu_v3.9_sciriff_10k": 683,
+  "ai2-adapt-dev/oasst1_converted": 623,
+  "ai2-adapt-dev/tulu_v3.9_table_gpt_5k": 410,
+  "ai2-adapt-dev/tulu_hard_coded_repeated_10": 20
+ },
+ "versions": {
+  "datasets": "5.1.0",
+  "transformers": "5.19.0",
+  "tokenizers": "0.23.3"
+ },
+ "date": "2026-10-15",
+ "wall_s": 71.6
+}

@@ -1,0 +1,2 @@
+afeacb2af46913cf75af93997cfd1f3db8fa915a
+fix(exp06): self-running eval chain — eval array reads the train run's list at run time

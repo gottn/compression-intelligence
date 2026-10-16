@@ -1,0 +1,15 @@
+{
+ "recipe": "tulu",
+ "step": 1500,
+ "marks": [
+  "final"
+ ],
+ "dbpb_fresh": 2.0160986701188484,
+ "contrast_ks": 1.689910805779041,
+ "contrast_rf": 1.8513921887632336,
+ "token_positions": 98304000,
+ "loss_tokens": 54531215,
+ "epochs": 1.7211952201289606,
+ "base": "allenai/OLMo-2-0425-1B",
+ "template_tokenizer": "allenai/OLMo-2-0425-1B-Instruct"
+}

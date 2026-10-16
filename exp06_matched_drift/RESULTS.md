@@ -1,5 +1,155 @@
 # exp06: at matched drift, does the knowledge − style contrast predict forgetting and ignore the gain?
 
+Run 2026-10-15/16 on AAU. Training ran in two stages on 3 A40s: stage 1 took 6.5 h, then stage 2, a warm restart, took 8.6 h. 12 checkpoints and the base were benchmarked on A10s. The analysis is `bash run_all.sh analyze` (Mac, about 20 s); every number below is in `results/summary.md`, `results/checkpoints.csv` or `results/correlations.csv`. The pre-registration, its post-dry-run deviation, the stage-2 extension and the exploratory hypothesis are reproduced unchanged under the line at the end.
+
+## Verdict
+
+**The pre-registered fail rule triggers: under recipe control, the knowledge − style contrast does not predict forgetting.** exp05's lead is not supported.
+
+- **Primary set: the 6 mark checkpoints**, 3 recipes × the 3% and 6% marks. The 10% mark was never reached.
+  - **H1 fails.** r(contrast_ks, forgetting) = 0.43 [−0.79, 1.00]. Dropping one recipe at a time gives 0.86 / 0.12 / −0.53 (tulu / smoltalk / mathcot dropped).
+  - **H2 fails.** r(contrast_ks, IFEval gain) = −0.41; it had to stay within ±0.3.
+  - **H3 passes** at both reached marks. The forgetting range across recipes is 5.0 pp at 3% and 5.8 pp at 6%, against a noise floor of 2.2 pp.
+  - **H4 fails.** At the 6% mark the contrast is mathcot 3.41 ≈ tulu 3.37 > smoltalk 2.38 pp, not the predicted mathcot > smoltalk > tulu.
+- **The set the coordinator asked for: all 12 checkpoints**, marks plus finals. H1 r = 0.29 [−0.29, 0.78] (fail); H2 r = −0.20 (pass). The fail rule triggers again.
+
+**What the run does show: at matched drift, the recipe decides forgetting, and neither total drift nor its direction tells the recipes apart.**
+
+- **Forgetting is a step, set by the recipe, that does not grow with dose.**
+  - mathcot forgets 4.1–4.4% of the base's general score at every checkpoint from 2.5% to 7.1% drift. The loss is ARC-led: ARC-e falls from 0.735 to 0.64–0.66, and MMLU loses 2–5% relative.
+  - tulu and smoltalk forget nothing at any checkpoint, from 2.0% to 9.0% drift (−1.7 to −0.3%, inside the noise). Their MMLU actually rises, from 0.383 to 0.42–0.44.
+  - Total drift does not predict forgetting: r = −0.09 over the 6 marks and −0.04 over all 12.
+- **The direction does not separate the forgetting recipe either.**
+  - At the 6% mark, tulu has the same contrast as mathcot (3.37 vs 3.41 pp) and forgets nothing.
+  - smoltalk has the lowest contrast at both marks (1.55 and 2.38 pp).
+  - Within each recipe, the contrast grows with dose: r(contrast_ks, Δbpb_fresh) = 0.80 over all 12.
+- **The rare − frequent variant (secondary) does slightly better, but rests on a 0.07 pp margin.**
+  - Over the marks, H1 = 0.69 (soft) and H2 = −0.76 (fail), and the H4 order holds: mathcot 2.94 > smoltalk 2.87 > tulu 2.36 pp.
+  - Over all 12, H1 = 0.35 (fail).
+- **The IFEval chat gain is also a recipe constant.** tulu gains +12.0 to +15.5 points, smoltalk +10.5 to +16.5 and mathcot +0.0 to +3.5.
+  - mathcot's gsm8k chat score, 0.13–0.15 against the base's 0.377, is not a loss. The 256-token generation cap cuts off its R1-style `<think>` chains, so its math gain is unmeasured.
+
+![matched drift](results/fig_matched.png)
+
+`results/fig_matched.png`:
+- **(a)** Δbpb_fresh against training tokens, with the stage-2 warm restart at 98M tokens and the marks.
+- **(b)** The knowledge − style contrast along each recipe's drift trajectory.
+- **(c)** Contrast against forgetting for all 12 checkpoints: circles are 3% marks, squares 6% marks, triangles finals, and the labels are update numbers.
+- **(d)** Contrast against the IFEval chat gain, same encoding.
+
+## Pre-registered tests against the outcome
+
+| id | set | rule | observed | verdict |
+|---|---|---|---|---|
+| H1 | 6 mark checkpoints (pre-registered) | Pearson r(contrast_ks, forgetting) ≥ 0.8 pass, ≥ 0.6 soft | 0.431 [−0.79, 1.00]; ρ 0.43; one recipe dropped: 0.86 / 0.12 / −0.53 | **fail** |
+| H2 | 6 mark checkpoints | \|r(contrast_ks, IFEval gain)\| < 0.3 | −0.405 [−0.99, 0.84] | **fail** |
+| H3 | 3% and 6% marks | forgetting range > 95% two-checkpoint floor at ≥ 2 marks | 3%: 5.04 vs 2.22 pp; 6%: 5.83 vs 2.22 pp; 10% not reached | **pass** (both reached marks) |
+| H4 | 6% mark | contrast **and** forgetting mathcot > smoltalk > tulu | contrast 3.41 / 2.38 / 3.37 (violated); forgetting +4.10 / −0.89 / −1.74 (holds) | **fail** |
+| fail rule | 6 mark checkpoints | r(contrast, Δbpb_fresh) > 0.9, or H1 < 0.6 with the H4 contrast order violated | r = 0.61; H1 0.43 with the order violated | **triggered** |
+| H1 / H2 / fail | all 12 checkpoints (asked for by the coordinator) | same thresholds | 0.288 [−0.29, 0.78] / −0.198 / r(contrast, Δbpb) 0.80, H1 < 0.6 with H4 violated | fail / pass / triggered |
+| H1 / H2 / H4 / fail, rare − frequent | 6 marks | same thresholds | 0.694 / −0.758 / order holds (2.94 > 2.87 > 2.36) / r 0.21 | soft / fail / pass / not triggered |
+| H1 / H2, rare − frequent | all 12 | same thresholds | 0.348 / −0.230 | fail / pass |
+| E0 | | all recipes reach 6% within 1,500 updates | none did; all reached 6% only after the stage-2 extension, and none reached 10% | not met |
+| E1 | | H1 at least soft and H2 pass | fail and fail | not met |
+| E2 | | the fail rule does not trigger | triggered | not met |
+
+Expected numbers at the 6% mark against observed:
+
+| | tulu | smoltalk | mathcot |
+|---|---|---|---|
+| forgetting, expected / observed | 0 ± 2 / **−1.74** (met) | 2 to 4 / **−0.89** (not met) | 3 to 8 / **+4.10** (met) |
+| contrast_ks, expected / observed (pp) | −3 to +1 / **+3.37** (not met) | +2 to +5 / **+2.38** (met) | +5 to +12 / **+3.41** (not met) |
+| IFEval gain, expected order tulu > smoltalk > mathcot | +13.5 | +13.5 | +0.0 (a tie, then met) |
+
+## Checkpoints
+
+The base is OLMo-2-0425-1B: general 0.58890 (exp04; this run's rerun gives 0.58890), chat-template IFEval 0.130, gsm8k 0.377.
+- Forgetting is the % of the base's general score lost; the noise floor is about 2.2 pp.
+- The IFEval gain is in points against the base with the same template.
+- Tokens are packed positions, 65,536 per update.
+
+| recipe | stage | update | marks | tokens (M) | passes | Δbpb_fresh % | contrast K−S pp | contrast R−F pp | forgetting % | IFEval gain | ARC-e | MMLU |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| tulu | 1 | 1500 | final | 98.3 | 1.72 | +2.02 | +1.69 | +1.85 | −1.45 | +14.0 | 0.730 | 0.418 |
+| tulu | 2 | 1760 | 3 | 115.3 | 2.02 | +3.28 | +2.47 | +2.26 | −0.30 | +15.5 | 0.708 | 0.438 |
+| tulu | 2 | 2660 | 6 | 174.3 | 3.05 | +6.01 | +3.37 | +2.36 | −1.74 | +13.5 | 0.726 | 0.439 |
+| tulu | 2 | 3489 | final | 228.7 | 4.00 | +7.11 | +4.35 | +2.94 | −0.82 | +12.0 | 0.714 | 0.431 |
+| smoltalk | 1 | 920 | 3 | 60.3 | 1.02 | +3.02 | +1.55 | +2.59 | −0.97 | +10.5 | 0.722 | 0.426 |
+| smoltalk | 1 | 1500 | final | 98.3 | 1.67 | +3.36 | +2.17 | +3.06 | −0.83 | +13.0 | 0.717 | 0.432 |
+| smoltalk | 2 | 2500 | 6 | 163.8 | 2.78 | +6.00 | +2.38 | +2.87 | −0.89 | +13.5 | 0.719 | 0.428 |
+| smoltalk | 2 | 3487 | final | 228.5 | 3.87 | +8.97 | +3.41 | +3.29 | −0.65 | +16.5 | 0.707 | 0.429 |
+| mathcot | 1 | 1500 | final | 98.3 | 1.63 | +2.50 | +2.10 | +2.28 | +4.24 | +1.5 | 0.641 | 0.371 |
+| mathcot | 2 | 1660 | 3 | 108.8 | 1.81 | +3.06 | +2.86 | +2.93 | +4.07 | +3.0 | 0.639 | 0.375 |
+| mathcot | 2 | 2780 | 6 | 182.2 | 3.02 | +6.06 | +3.41 | +2.94 | +4.10 | +0.0 | 0.663 | 0.363 |
+| mathcot | 2 | 3464 | final | 227.0 | 3.77 | +7.14 | +4.48 | +3.69 | +4.41 | +3.5 | 0.663 | 0.366 |
+
+Base: ARC-e 0.735, MMLU 0.383.
+
+## Drift jumps at epoch boundaries (observed, not pre-registered)
+
+- **What happens.** When a new pass over a recipe's 45M-token subset begins, Δbpb_fresh jumps within 20–40 updates while the training loss drops; the model has seen those examples before.
+  - tulu: +0.51 pp at pass 2.0, and +0.91 then +0.73 pp at pass 3.0 (4.06% → 5.70%; loss 0.73 → 0.56).
+  - smoltalk: +1.88 pp at pass 3.0 (6.19% → 8.07%; loss 0.73 → 0.59).
+  - mathcot drifts smoothly.
+- **How it touches the marks.** tulu's 3% mark (update 1760) and 6% mark (update 2660) were both reached right after a pass boundary, and smoltalk passed 6% → 8% at one boundary.
+- **The dose is partly repetition.** Repeating SFT data moves fresh-text bpb by up to 2 pp without moving any benchmark: neither recipe forgets at 9% drift.
+
+## Exploratory reading, not pre-registered: per-corpus drift shape
+
+The hypothesis was stated and committed (ec2e6f6) before this was computed. Each value is a corpus's Δbpb divided by Δbpb_fresh, at the mark checkpoints (`results/exploratory_corpus_profile.csv`).
+
+| recipe | mark | wiki2026 | arxiv2026 | gutenberg2026 | enwik8 |
+|---|---|---|---|---|---|
+| tulu | 3 | 0.97 | 1.16 | 0.87 | 1.85 |
+| tulu | 6 | 1.09 | 1.03 | 0.88 | 1.80 |
+| smoltalk | 3 | 0.99 | 0.97 | 1.05 | 1.28 |
+| smoltalk | 6 | 0.99 | 0.92 | 1.09 | 1.33 |
+| mathcot | 3 | **0.70** | 1.24 | 1.07 | 1.51 |
+| mathcot | 6 | **0.82** | 1.16 | 1.02 | 1.48 |
+
+- **The stated hypothesis is not supported.** mathcot's arXiv share is the highest at both marks, not the lowest. Its Gutenberg share is the highest only at 3%.
+- **What does differ (post hoc, a lead only):** the forgetting recipe drifts least on Wikipedia, at 0.70 and 0.82 of its fresh mean against 0.97–1.09 for the other two. A per-domain drift profile, rather than a token-class contrast, may be the place to look next.
+
+## Method as run
+
+- **Data.** Token-matched subsets of 45.0M template tokens each (`logs/setup/data/*.prov.json`):
+  - tulu: 79,249 examples, mean 568 tokens;
+  - smoltalk: 59,959 examples, mean 751 tokens;
+  - mathcot: 30,512 examples, mean 1,475 tokens. 96,260 of the 126,772 scanned OpenR1 answers were too long.
+  - Loss-token shares were 0.70, 0.74 and 0.94.
+- **Stage 1** (array 1082589, A40): 1,500 updates per recipe, 6.4–6.5 h each, about 4,250 token positions/s, peak memory 41.9–42.1 GB.
+- **Stage 2** (array 1084160, A40): a warm restart from each recipe's update-1500 checkpoint, with a fresh AdamW, a 90-update warmup and cosine decay over 3,000 updates. The data stream resumed after stage 1's rows.
+  - All three stopped at the 8.5 h wall: at update 3,489 (tulu), 3,487 (smoltalk) and 3,464 (mathcot), about 3.8–4.0 passes.
+  - Drift was measured against the base, rescored on the stage-2 GPU. The first stage-2 row reproduced stage 1's final Δbpb_fresh exactly (0.000 pp) for all three.
+- **Drift hook.** Base bf16 bpb was within 2.2e-4 (relative) of exp03 on all 4 corpora, in every run. Each score, taken every 20 updates, took about 5 s.
+- **Benchmarks.** exp04's driver with `--model-path`: 12 checkpoints and the base, 13–19 min each on an A10.
+  - Stage-1 evals were array 1082590 and stage-2 evals array 1084161; the base was job 1082554.
+  - The base rerun reproduces exp04's base on all 6 tasks; the general score differs by 1e-4 points.
+- **Matching quality.** Δbpb_fresh at the 3% mark ranges 3.02–3.28: tulu's score jumped from below 3% to 3.28% within one 20-update scoring interval, at a pass boundary. At the 6% mark the range is 6.00–6.06.
+- **Compute.** About 45 A40-hours of training and 4 A10-hours of evaluation; the data job took 29 min on CPU.
+
+## Failures and deviations
+
+- **Two deviations, both committed before the runs they affect:**
+  - becc72a: the 5 h cap was lifted to 8.5 h, because the dry run measured 15.4 s per update;
+  - 0454f34: the stage-2 budget extension, because no recipe had reached 6% by update 860.
+- **Stage 2 is a warm restart.** Optimizer state was not saved, so stage-2 checkpoints mix a second warmup into the dose. The 3% marks of tulu and mathcot, and every 6% mark, come from stage 2.
+- **The 10% mark was never reached**, so H3 is scored on 2 of its 3 marks and the n of H1 and H2 is 6, not 9.
+- **The checkpoint count.** The coordinator's brief said 11 checkpoints; there are 12: 4 from stage 1 (smoltalk's 3% mark and three finals) and 8 from stage 2.
+- **gsm8k is not interpretable for mathcot**, because the 256-token cap truncates its chains.
+- **One seed, one base.** Forgetting differences of about 1 pp between tulu and smoltalk are inside the noise.
+
+## Next steps
+
+1. **Separate repetition from content.** Drift jumps at every pass boundary, so a meter test needs single-pass training (more data, no repeats) or a drift reference that discounts memorisation of the SFT set.
+2. **Per-domain drift profile as a lead.** The forgetting recipe drifts least on Wikipedia. Test the profile, not the token-class contrast, on new recipe-controlled runs: other math or code SFT sets, and a second seed.
+3. **Measure the math gain properly.** Re-score gsm8k for mathcot with a long generation cap (≥ 2,048 tokens), so that "gain" is measured for the knowledge-heavy recipe too.
+4. **Forgetting as a step.** mathcot's 4% loss is already complete at 1,500 updates and 2.5% drift. An earlier checkpoint grid (updates 50–500) would show when it happens and whether drift moves at that moment.
+
+---
+
+*Everything below this line was written before the results existed: the post-dry-run deviation, the stage-2 extension (before any stage-2 update) and the exploratory hypothesis (before any per-corpus value at the marks was looked at), then the pre-registration of 9cca20f. None of it is edited.*
+
 **Deviation, decided after the dry run and before any update of the main run (2026-10-15, 16:40).**
 - **Speed.** The 50-update dry run of `tulu` (job 1082570, NVIDIA A40) took 15.4 s per update: 4,250 token positions/s, peak memory 41.7 of 46 GB.
 - **Problem.** At that speed, 1,500 updates take about 6.4 h for tulu and about 7.1 h for mathcot, whose longer examples and higher target share make each update about 10% slower. The pre-registered 5 h cap would therefore stop every run early, at an update count that depends on wall time and so differs by recipe and GPU type.

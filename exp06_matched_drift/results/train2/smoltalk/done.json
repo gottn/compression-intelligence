@@ -1,0 +1,51 @@
+{
+ "recipe": "smoltalk",
+ "out": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-204027-0454f34/smoltalk",
+ "device": "cuda",
+ "examples": 59959,
+ "tokens": 45000207,
+ "gpu": "NVIDIA A40",
+ "torch": "2.9.0a0+50eac811a6.nv25.09",
+ "weights": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/smoltalk/ckpt/step01500",
+ "micro_batch": 2,
+ "accum": 16,
+ "warmup": 90,
+ "max_steps": 3000,
+ "max_wall_s": 30600.0,
+ "score_every": 20,
+ "doc_start": "<|endoftext|>",
+ "setup_s": 57.9,
+ "schedule_steps": 3000,
+ "step_offset": 1500,
+ "marks": [
+  6.0,
+  10.0
+ ],
+ "drift_ref": "base",
+ "init_from": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2",
+ "init_checkpoint": {
+  "recipe": "smoltalk",
+  "step": 1500,
+  "marks": [
+   "final"
+  ],
+  "dbpb_fresh": 3.364684767818608,
+  "contrast_ks": 2.173125318857431,
+  "contrast_rf": 3.058601892443207,
+  "token_positions": 98304000,
+  "loss_tokens": 55256171,
+  "epochs": 1.6652045564469053,
+  "base": "allenai/OLMo-2-0425-1B",
+  "template_tokenizer": "allenai/OLMo-2-0425-1B-Instruct"
+ },
+ "slurm_job": "1084555",
+ "restart": null,
+ "stop": "max_wall",
+ "steps": 3487,
+ "train_wall_s": 30660.2,
+ "job_wall_s": 30719.4,
+ "token_positions": 228524032,
+ "loss_tokens": 128591551,
+ "epochs": 3.8714454877499627,
+ "peak_mem_gb": 42.15
+}

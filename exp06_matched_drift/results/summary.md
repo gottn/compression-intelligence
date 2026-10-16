@@ -1,0 +1,206 @@
+# exp06 summary (written by analyze_matched.py)
+
+## Tests
+
+| id | set | contrast | statistic | value | verdict |
+|---|---|---|---|---|---|
+| H1 | mark checkpoints | contrast_ks | Pearson r(contrast_ks, forgetting), n = 6 | +0.431 | fail |
+| H2 | mark checkpoints | contrast_ks | Pearson r(contrast_ks, IFEval gain), n = 6 | -0.405 | fail |
+| H3 | marks | contrast_ks | marks whose forgetting range exceeds the 95% floor | 2 | pass |
+| H4 | 6% mark | contrast_ks | 6% mark: contrast and forgetting mathcot > smoltalk > tulu | contrast False, forgetting True | fail |
+| fail rule | mark checkpoints | contrast_ks | r(contrast_ks, Δbpb_fresh) > 0.9, or H1 < 0.6 with the H4 contrast order violated | +0.609 | triggered: lead not supported |
+| H1 | mark checkpoints | contrast_rf | Pearson r(contrast_rf, forgetting), n = 6 | +0.694 | soft |
+| H2 | mark checkpoints | contrast_rf | Pearson r(contrast_rf, IFEval gain), n = 6 | -0.758 | fail |
+| H3 | marks | contrast_rf | marks whose forgetting range exceeds the 95% floor | 2 | pass |
+| H4 | 6% mark | contrast_rf | 6% mark: contrast and forgetting mathcot > smoltalk > tulu | contrast True, forgetting True | pass |
+| fail rule | mark checkpoints | contrast_rf | r(contrast_rf, Δbpb_fresh) > 0.9, or H1 < 0.6 with the H4 contrast order violated | +0.213 | not triggered |
+| H1 | all checkpoints (marks + finals) | contrast_ks | Pearson r(contrast_ks, forgetting), n = 12 | +0.288 | fail |
+| H2 | all checkpoints (marks + finals) | contrast_ks | Pearson r(contrast_ks, IFEval gain), n = 12 | -0.198 | pass |
+| H3 | marks | contrast_ks | marks whose forgetting range exceeds the 95% floor | 2 | pass |
+| H4 | 6% mark | contrast_ks | 6% mark: contrast and forgetting mathcot > smoltalk > tulu | contrast False, forgetting True | fail |
+| fail rule | all checkpoints (marks + finals) | contrast_ks | r(contrast_ks, Δbpb_fresh) > 0.9, or H1 < 0.6 with the H4 contrast order violated | +0.800 | triggered: lead not supported |
+| H1 | all checkpoints (marks + finals) | contrast_rf | Pearson r(contrast_rf, forgetting), n = 12 | +0.348 | fail |
+| H2 | all checkpoints (marks + finals) | contrast_rf | Pearson r(contrast_rf, IFEval gain), n = 12 | -0.230 | pass |
+| H3 | marks | contrast_rf | marks whose forgetting range exceeds the 95% floor | 2 | pass |
+| H4 | 6% mark | contrast_rf | 6% mark: contrast and forgetting mathcot > smoltalk > tulu | contrast True, forgetting True | pass |
+| fail rule | all checkpoints (marks + finals) | contrast_rf | r(contrast_rf, Δbpb_fresh) > 0.9, or H1 < 0.6 with the H4 contrast order violated | +0.687 | not triggered |
+
+## Checkpoints
+
+| recipe | stage | step | marks | tokens (M) | epochs | Δbpb_fresh % | contrast K−S pp | contrast R−F pp | forgetting % (floor) | IFEval gain | gsm8k gain | ARC loss % | MMLU loss % |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| tulu | 1 | 1500 | final | 98.3 | 1.72 | +2.02 | +1.69 | +1.85 | -1.45 (+2.21) | +14.0 | +0.3 | -0.30 | -9.29 |
+| tulu | 2 | 1760 | 3 | 115.3 | 2.02 | +3.28 | +2.47 | +2.26 | -0.30 (+2.22) | +15.5 | -1.7 | +3.28 | -14.56 |
+| tulu | 2 | 2660 | 6 | 174.3 | 3.05 | +6.01 | +3.37 | +2.36 | -1.74 (+2.21) | +13.5 | +0.7 | +0.21 | -14.79 |
+| tulu | 2 | 3489 | final | 228.7 | 4.00 | +7.11 | +4.35 | +2.94 | -0.82 (+2.21) | +12.0 | -2.3 | +1.60 | -12.61 |
+| smoltalk | 1 | 920 | 3 | 60.3 | 1.02 | +3.02 | +1.55 | +2.59 | -0.97 (+2.21) | +10.5 | +1.3 | +1.02 | -11.47 |
+| smoltalk | 1 | 1500 | final | 98.3 | 1.67 | +3.36 | +2.17 | +3.06 | -0.83 (+2.22) | +13.0 | +3.7 | +1.19 | -12.84 |
+| smoltalk | 2 | 2500 | 6 | 163.8 | 2.78 | +6.00 | +2.38 | +2.87 | -0.89 (+2.21) | +13.5 | +5.3 | +1.23 | -11.81 |
+| smoltalk | 2 | 3487 | final | 228.5 | 3.87 | +8.97 | +3.41 | +3.29 | -0.65 (+2.22) | +16.5 | +2.3 | +1.62 | -12.27 |
+| mathcot | 1 | 1500 | final | 98.3 | 1.63 | +2.50 | +2.10 | +2.28 | +4.24 (+2.21) | +1.5 | -23.0 | +12.19 | +3.10 |
+| mathcot | 2 | 1660 | 3 | 108.8 | 1.81 | +3.06 | +2.86 | +2.93 | +4.07 (+2.21) | +3.0 | -23.0 | +12.48 | +2.07 |
+| mathcot | 2 | 2780 | 6 | 182.2 | 3.02 | +6.06 | +3.41 | +2.94 | +4.10 (+2.21) | +0.0 | -24.0 | +9.53 | +5.05 |
+| mathcot | 2 | 3464 | final | 227.0 | 3.77 | +7.14 | +4.48 | +3.69 | +4.41 (+2.21) | +3.5 | -24.3 | +10.37 | +4.36 |
+
+## H3 per mark
+
+|   mark |   n | recipes               |   dbpb_min |   dbpb_max |   forgetting_range | most    | least    |   floor_diff |   exceeds_floor |
+|-------:|----:|:----------------------|-----------:|-----------:|-------------------:|:--------|:---------|-------------:|----------------:|
+|      3 |   3 | tulu,smoltalk,mathcot |      3.019 |      3.276 |              5.038 | mathcot | smoltalk |        2.217 |           1.000 |
+|      6 |   3 | tulu,smoltalk,mathcot |      6.003 |      6.064 |              5.833 | mathcot | tulu     |        2.219 |           1.000 |
+|     10 |   0 | nan                   |    nan     |    nan     |            nan     | nan     | nan      |      nan     |         nan     |
+
+## Correlations
+
+| subset | x | y | n | Pearson r [95% CI] | Spearman ρ | leave-one-recipe-out r (tulu / smoltalk / mathcot dropped) |
+|---|---|---|---|---|---|---|
+| mark checkpoints | contrast_ks | forgetting | 6 | +0.431 [-0.79, +1.00] | +0.429 | +0.86 / +0.12 / -0.53 |
+| mark checkpoints | contrast_ks | gain_ifeval | 6 | -0.405 [-0.99, +0.84] | -0.406 | -0.80 / -0.44 / +0.59 |
+| mark checkpoints | contrast_ks | gain_gsm8k | 6 | -0.532 [-1.00, +0.16] | -0.771 | -0.82 / -0.24 / -0.15 |
+| mark checkpoints | contrast_ks | arc_loss | 6 | +0.410 [-0.74, +1.00] | +0.314 | +0.79 / -0.02 / -0.24 |
+| mark checkpoints | contrast_ks | mmlu_loss | 6 | +0.428 [-0.90, +0.99] | +0.200 | +0.88 / +0.33 / -0.80 |
+| mark checkpoints | contrast_ks | dbpb_fresh | 6 | +0.609 [-0.10, +1.00] | +0.771 | +0.52 / +0.91 / +0.70 |
+| mark checkpoints | contrast_rf | forgetting | 6 | +0.694 [-0.32, +1.00] | +0.657 | +0.72 / +0.95 / -0.06 |
+| mark checkpoints | contrast_rf | gain_ifeval | 6 | -0.758 [-1.00, -0.26] | -0.899 | -0.55 / -0.99 / -0.43 |
+| mark checkpoints | contrast_rf | gain_gsm8k | 6 | -0.584 [-1.00, +0.99] | -0.429 | -0.64 / -0.98 / +0.97 |
+| mark checkpoints | contrast_rf | arc_loss | 6 | +0.634 [-0.60, +0.98] | +0.600 | +0.71 / +0.92 / -0.37 |
+| mark checkpoints | contrast_rf | mmlu_loss | 6 | +0.792 [+0.53, +1.00] | +0.886 | +0.70 / +0.99 / +0.84 |
+| mark checkpoints | contrast_rf | dbpb_fresh | 6 | +0.213 [-0.77, +0.99] | +0.257 | +0.51 / +0.06 / +0.38 |
+| mark checkpoints | dbpb_fresh | forgetting | 6 | -0.090 [-0.90, +0.99] | +0.200 | +0.03 / -0.15 / -0.63 |
+| mark checkpoints | dbpb_fresh | gain_ifeval | 6 | -0.044 [-1.00, +1.00] | -0.116 | -0.02 / -0.16 / +0.20 |
+| mark checkpoints | dbpb_fresh | gain_gsm8k | 6 | +0.073 [-1.00, +0.87] | -0.314 | +0.04 / +0.05 / +0.60 |
+| mark checkpoints | dbpb_fresh | arc_loss | 6 | -0.205 [-0.97, +0.98] | -0.029 | -0.12 / -0.33 / -0.58 |
+| mark checkpoints | dbpb_fresh | mmlu_loss | 6 | +0.042 [-0.80, +0.97] | -0.029 | +0.10 / +0.05 / -0.14 |
+| all checkpoints (marks + finals) | contrast_ks | forgetting | 12 | +0.288 [-0.29, +0.78] | +0.455 | +0.50 / +0.15 / +0.06 |
+| all checkpoints (marks + finals) | contrast_ks | gain_ifeval | 12 | -0.198 [-0.66, +0.33] | -0.130 | -0.28 / -0.17 / +0.19 |
+| all checkpoints (marks + finals) | contrast_ks | gain_gsm8k | 12 | -0.336 [-0.77, +0.20] | -0.476 | -0.49 / -0.18 / -0.38 |
+| all checkpoints (marks + finals) | contrast_ks | arc_loss | 12 | +0.242 [-0.31, +0.76] | +0.413 | +0.40 / +0.08 / +0.22 |
+| all checkpoints (marks + finals) | contrast_ks | mmlu_loss | 12 | +0.233 [-0.37, +0.72] | +0.084 | +0.50 / +0.10 / -0.47 |
+| all checkpoints (marks + finals) | contrast_ks | dbpb_fresh | 12 | +0.800 [+0.62, +0.96] | +0.874 | +0.73 / +0.96 / +0.81 |
+| all checkpoints (marks + finals) | contrast_rf | forgetting | 12 | +0.348 [-0.32, +0.76] | +0.385 | +0.04 / +0.59 / +0.44 |
+| all checkpoints (marks + finals) | contrast_rf | gain_ifeval | 12 | -0.230 [-0.72, +0.41] | -0.182 | +0.18 / -0.54 / +0.05 |
+| all checkpoints (marks + finals) | contrast_rf | gain_gsm8k | 12 | -0.253 [-0.69, +0.42] | -0.077 | -0.02 / -0.60 / +0.42 |
+| all checkpoints (marks + finals) | contrast_rf | arc_loss | 12 | +0.281 [-0.37, +0.74] | +0.301 | -0.06 / +0.52 / +0.30 |
+| all checkpoints (marks + finals) | contrast_rf | mmlu_loss | 12 | +0.287 [-0.36, +0.72] | +0.154 | +0.03 / +0.53 / -0.18 |
+| all checkpoints (marks + finals) | contrast_rf | dbpb_fresh | 12 | +0.687 [+0.27, +0.91] | +0.790 | +0.73 / +0.73 / +0.70 |
+| all checkpoints (marks + finals) | dbpb_fresh | forgetting | 12 | -0.038 [-0.56, +0.55] | +0.238 | -0.12 / +0.03 / +0.12 |
+| all checkpoints (marks + finals) | dbpb_fresh | gain_ifeval | 12 | +0.133 [-0.52, +0.66] | +0.109 | +0.32 / -0.10 / +0.33 |
+| all checkpoints (marks + finals) | dbpb_fresh | gain_gsm8k | 12 | +0.058 [-0.53, +0.57] | -0.063 | +0.13 / -0.07 / +0.09 |
+| all checkpoints (marks + finals) | dbpb_fresh | arc_loss | 12 | -0.106 [-0.61, +0.52] | +0.161 | -0.22 / -0.07 / +0.16 |
+| all checkpoints (marks + finals) | dbpb_fresh | mmlu_loss | 12 | -0.065 [-0.58, +0.50] | -0.105 | -0.10 / +0.01 / -0.29 |
+
+## Residual reading (r of the contrast with forgetting after OLS on Δbpb_fresh)
+
+- contrast_ks, mark checkpoints: r = +0.488
+- contrast_ks, all checkpoints (marks + finals): r = +0.319
+- contrast_rf, mark checkpoints: r = +0.716
+- contrast_rf, all checkpoints (marks + finals): r = +0.374
+
+## EXPLORATORY, not pre-registered: per-corpus drift shape at the marks
+
+Each corpus's Δbpb divided by Δbpb_fresh (the mean of the three fresh corpora).
+
+| recipe   |   mark |   step |   dbpb_fresh |   ratio_wiki2026 |   ratio_arxiv2026 |   ratio_gutenberg2026 |   ratio_enwik8_ctrl |
+|:---------|-------:|-------:|-------------:|-----------------:|------------------:|----------------------:|--------------------:|
+| tulu     |      3 |   1760 |        3.276 |            0.974 |             1.156 |                 0.870 |               1.845 |
+| tulu     |      6 |   2660 |        6.007 |            1.093 |             1.029 |                 0.878 |               1.795 |
+| smoltalk |      3 |    920 |        3.019 |            0.985 |             0.969 |                 1.046 |               1.281 |
+| smoltalk |      6 |   2500 |        6.003 |            0.993 |             0.920 |                 1.087 |               1.327 |
+| mathcot  |      3 |   1660 |        3.061 |            0.696 |             1.235 |                 1.069 |               1.513 |
+| mathcot  |      6 |   2780 |        6.064 |            0.817 |             1.162 |                 1.021 |               1.478 |
+
+Hypothesis (stated in RESULTS.md before this was computed), per mark: {"3": {"arxiv_lower": false, "gutenberg_higher": true}, "6": {"arxiv_lower": false, "gutenberg_higher": false}}
+
+## Sanity checks
+
+```
+{
+ "exp06 base general (rerun, Instruct tokenizer)": 0.5889013021686303,
+ "exp04 base general": 0.5889,
+ "base general diff (points)": 0.000130216863036825,
+ "base chat ifeval": 0.13,
+ "base chat gsm8k": 0.37666666666666665,
+ "base plain ifeval (exp04)": 0.095,
+ "base bpb vs exp03 (max |rel|), per stage and recipe": {
+  "1/tulu": 0.00021470517737438047,
+  "1/smoltalk": 0.00021470517737438047,
+  "1/mathcot": 0.00021470517737438047,
+  "2/tulu": 0.00021470517737438047,
+  "2/smoltalk": 0.00021470517737438047,
+  "2/mathcot": 0.00021470517737438047
+ },
+ "stage-2 first row minus stage-1 final, \u0394bpb_fresh (pp)": {
+  "tulu": 0.0,
+  "smoltalk": 0.0,
+  "mathcot": 0.0
+ },
+ "runs": {
+  "1/tulu": {
+   "gpu": "NVIDIA A40",
+   "slurm_job": "1082591",
+   "stop": "max_steps",
+   "steps": 1500,
+   "train_wall_s": 23109.9,
+   "token_positions": 98304000,
+   "epochs": 1.7211952201289606,
+   "peak_mem_gb": 41.93
+  },
+  "1/smoltalk": {
+   "gpu": "NVIDIA A40",
+   "slurm_job": "1082592",
+   "stop": "max_steps",
+   "steps": 1500,
+   "train_wall_s": 23195.1,
+   "token_positions": 98304000,
+   "epochs": 1.6652045564469053,
+   "peak_mem_gb": 42.09
+  },
+  "1/mathcot": {
+   "gpu": "NVIDIA A40",
+   "slurm_job": "1082589",
+   "stop": "max_steps",
+   "steps": 1500,
+   "train_wall_s": 23417.9,
+   "token_positions": 98304000,
+   "epochs": 1.6314237021499738,
+   "peak_mem_gb": 42.34
+  },
+  "2/tulu": {
+   "gpu": "NVIDIA A40",
+   "step_offset": 1500,
+   "drift_ref": "base",
+   "slurm_job": "1084554",
+   "stop": "max_wall",
+   "steps": 3489,
+   "train_wall_s": 30671.7,
+   "token_positions": 228655104,
+   "epochs": 4.0017918207169805,
+   "peak_mem_gb": 42.09
+  },
+  "2/smoltalk": {
+   "gpu": "NVIDIA A40",
+   "step_offset": 1500,
+   "drift_ref": "base",
+   "slurm_job": "1084555",
+   "stop": "max_wall",
+   "steps": 3487,
+   "train_wall_s": 30660.2,
+   "token_positions": 228524032,
+   "epochs": 3.8714454877499627,
+   "peak_mem_gb": 42.15
+  },
+  "2/mathcot": {
+   "gpu": "NVIDIA A40",
+   "step_offset": 1500,
+   "drift_ref": "base",
+   "slurm_job": "1084160",
+   "stop": "max_wall",
+   "steps": 3464,
+   "train_wall_s": 30662.6,
+   "token_positions": 227016704,
+   "epochs": 3.7668130571578393,
+   "peak_mem_gb": 42.33
+  }
+ }
+}
+```

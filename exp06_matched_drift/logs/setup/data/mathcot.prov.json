@@ -1,0 +1,91 @@
+{
+ "recipe": "mathcot",
+ "dataset": "open-r1/OpenR1-Math-220k",
+ "config": "all",
+ "split": "train",
+ "revision": "e4e141ec9dea9f8326f4d347be56105859b2bd68",
+ "rows": 225129,
+ "seed": 0,
+ "order": "numpy default_rng(0).permutation",
+ "template_tokenizer": "allenai/OLMo-2-0425-1B-Instruct",
+ "max_len": 2048,
+ "budget_tokens": 45000000,
+ "candidates_scanned": 126772,
+ "kept": 30512,
+ "kept_before_budget_cut": 30512,
+ "drops": {
+  "too_long": 96260
+ },
+ "tokens": {
+  "n": 30512,
+  "sum": 45000293,
+  "mean": 1474.8391780283168,
+  "median": 1499.0,
+  "p10": 986.0,
+  "p90": 1934.0,
+  "max": 2048
+ },
+ "loss_tokens": {
+  "n": 30512,
+  "sum": 42519257,
+  "mean": 1393.5257275825904,
+  "median": 1418.0,
+  "p10": 908.0,
+  "p90": 1849.0,
+  "max": 2025
+ },
+ "loss_token_share": 0.9448662256487974,
+ "rendered_tokens_scanned": {
+  "n": 126772,
+  "sum": 592525377,
+  "mean": 4673.945169280283,
+  "median": 3558.0,
+  "p10": 1411.0,
+  "p90": 9790.900000000009,
+  "max": 19974
+ },
+ "fit_rate_scanned": 0.24068406272678508,
+ "source_columns": [
+  "source",
+  "problem_type"
+ ],
+ "source_mix_top30": {
+  "cn_k12/Algebra": 13211,
+  "olympiads/Algebra": 4310,
+  "cn_k12/Geometry": 2773,
+  "olympiads/Number Theory": 1143,
+  "cn_k12/Combinatorics": 1086,
+  "cn_k12/Calculus": 1037,
+  "cn_k12/Inequalities": 918,
+  "olympiads/Combinatorics": 775,
+  "olympiads/Geometry": 759,
+  "cn_k12/Number Theory": 726,
+  "cn_k12/Logic and Puzzles": 711,
+  "olympiads/Logic and Puzzles": 539,
+  "olympiads/Calculus": 415,
+  "cn_contest/Algebra": 388,
+  "amc_aime/Algebra": 320,
+  "cn_k12/Other": 303,
+  "aops_forum/Algebra": 136,
+  "olympiads/Other": 135,
+  "cn_contest/Number Theory": 91,
+  "olympiads/Inequalities": 88,
+  "amc_aime/Geometry": 76,
+  "aops_forum/Geometry": 69,
+  "cn_contest/Geometry": 63,
+  "cn_contest/Combinatorics": 60,
+  "aops_forum/Number Theory": 54,
+  "aops_forum/Combinatorics": 52,
+  "amc_aime/Number Theory": 50,
+  "amc_aime/Combinatorics": 30,
+  "aops_forum/Logic and Puzzles": 28,
+  "number_theory/Number Theory": 26
+ },
+ "versions": {
+  "datasets": "5.1.0",
+  "transformers": "5.19.0",
+  "tokenizers": "0.23.3"
+ },
+ "date": "2026-10-15",
+ "wall_s": 399.0
+}

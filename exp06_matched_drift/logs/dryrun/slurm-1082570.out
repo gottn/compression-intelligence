@@ -1,0 +1,24 @@
+commit afeacb2 task 0=tulu (job 1082570, array 1082570) on a256-a40-04.srv.aau.dk at 2026-10-15T16:16:47+02:00, gpu=NVIDIA A40, 46068 MiB, prep=/home/id.aau.dk/pr04wm/runs/ci/exp06_setup/20261015-154627-0acc665/data, out=/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-161642-afeacb2
+15:4: not a valid test operator:  
+15:4: not a valid test operator: 13.0
+21:4: not a valid test operator: (
+21:4: not a valid test operator: 580.178.04
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+{"device": "cuda", "packed_vs_alone_max_abs_logit": 2.384185791015625e-07, "leak_without_restart": 0.6173539757728577, "hf_loss": 4.7807440757751465, "target_loss": 4.780744171142578, "packed_loss_sum": 43.126930236816406, "alone_loss_sum": 43.12693691253662, "ok": true}
+/usr/local/lib/python3.12/dist-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+{"recipe": "tulu", "out": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-161642-afeacb2/tulu", "device": "cuda", "examples": 79249, "tokens": 45001366, "gpu": "NVIDIA A40", "torch": "2.9.0a0+50eac811a6.nv25.09", "weights": "allenai/OLMo-2-0425-1B", "micro_batch": 2, "accum": 16, "warmup": 45, "max_steps": 50, "max_wall_s": 18000, "score_every": 20, "doc_start": "<|endoftext|>", "setup_s": 90.8, "slurm_job": "1082570", "restart": null}
+{"base_check": {"rel_diff": {"arxiv2026": 0.00021470517737438047, "enwik8_ctrl": 0.00016753376830113618, "gutenberg2026": 6.216186473254405e-05, "wiki2026": 0.00010519470791986614}, "max_abs_rel": 0.00021470517737438047, "ok": true}}
+{"step": 0, "epochs": 0.0, "train_loss": NaN, "dbpb_fresh": 0.0, "contrast_ks": 0.0, "contrast_rf": 0.0, "score_s": 6.0, "checkpoint": ""}
+{"recipe": "tulu", "step": 10, "lr": 4.444444444444445e-06, "loss": 1.0391985474484824, "grad_norm": 0.8847089409828186, "epochs": 0.01150803164708703, "token_positions": 655360, "loss_tokens": 352452, "wall_s": 157.7, "tok_per_s": 4155.9, "peak_mem_gb": 41.39}
+{"recipe": "tulu", "step": 20, "lr": 8.88888888888889e-06, "loss": 0.9530816136326474, "grad_norm": 0.7327117323875427, "epochs": 0.022435614329518353, "token_positions": 1310720, "loss_tokens": 714711, "wall_s": 308.2, "tok_per_s": 4253.1, "peak_mem_gb": 41.41}
+{"step": 20, "epochs": 0.0224, "train_loss": 0.9955, "dbpb_fresh": 0.2149, "contrast_ks": 0.2722, "contrast_rf": 0.6273, "score_s": 5.0, "checkpoint": ""}
+{"recipe": "tulu", "step": 30, "lr": 1.3333333333333335e-05, "loss": 0.9130751497874326, "grad_norm": 0.7160035371780396, "epochs": 0.03398150134386554, "token_positions": 1966080, "loss_tokens": 1084796, "wall_s": 464.8, "tok_per_s": 4229.8, "peak_mem_gb": 41.72}
+{"recipe": "tulu", "step": 40, "lr": 1.777777777777778e-05, "loss": 0.9837490241702848, "grad_norm": 0.7128648161888123, "epochs": 0.04535072997766533, "token_positions": 2621440, "loss_tokens": 1435289, "wall_s": 615.1, "tok_per_s": 4262.0, "peak_mem_gb": 41.72}
+{"step": 40, "epochs": 0.0454, "train_loss": 0.9475, "dbpb_fresh": 0.4323, "contrast_ks": 0.5464, "contrast_rf": 0.9884, "score_s": 4.9, "checkpoint": ""}
+{"recipe": "tulu", "step": 50, "lr": 1.9999627041039137e-05, "loss": 0.8888548915730918, "grad_norm": 0.7072673439979553, "epochs": 0.0566568663326982, "token_positions": 3276800, "loss_tokens": 1799870, "wall_s": 771.1, "tok_per_s": 4249.7, "peak_mem_gb": 41.72}
+{"step": 50, "epochs": 0.0567, "train_loss": 0.8889, "dbpb_fresh": 0.4963, "contrast_ks": 0.3848, "contrast_rf": 0.8827, "score_s": 5.0, "checkpoint": "final"}
+{"checkpoint": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-161642-afeacb2/tulu/ckpt/step00050", "marks": ["final"], "save_s": 51.1}
+{"done": {"recipe": "tulu", "out": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-161642-afeacb2/tulu", "device": "cuda", "examples": 79249, "tokens": 45001366, "gpu": "NVIDIA A40", "torch": "2.9.0a0+50eac811a6.nv25.09", "weights": "allenai/OLMo-2-0425-1B", "micro_batch": 2, "accum": 16, "warmup": 45, "max_steps": 50, "max_wall_s": 18000, "score_every": 20, "doc_start": "<|endoftext|>", "setup_s": 90.8, "slurm_job": "1082570", "restart": null, "stop": "max_steps", "steps": 50, "train_wall_s": 827.9, "job_wall_s": 918.7, "token_positions": 3276800, "loss_tokens": 1799870, "epochs": 0.0566568663326982, "peak_mem_gb": 41.72}}
+exp06_train task 0 (tulu) done at 2026-10-15T16:34:35+02:00

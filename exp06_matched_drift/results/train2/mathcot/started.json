@@ -1,0 +1,44 @@
+{
+ "recipe": "mathcot",
+ "out": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-204027-0454f34/mathcot",
+ "device": "cuda",
+ "examples": 30512,
+ "tokens": 45000293,
+ "gpu": "NVIDIA A40",
+ "torch": "2.9.0a0+50eac811a6.nv25.09",
+ "weights": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2/mathcot/ckpt/step01500",
+ "micro_batch": 2,
+ "accum": 16,
+ "warmup": 90,
+ "max_steps": 3000,
+ "max_wall_s": 30600.0,
+ "score_every": 20,
+ "doc_start": "<|endoftext|>",
+ "setup_s": 62.6,
+ "schedule_steps": 3000,
+ "step_offset": 1500,
+ "marks": [
+  3.0,
+  6.0,
+  10.0
+ ],
+ "drift_ref": "base",
+ "init_from": "/home/id.aau.dk/pr04wm/runs/ci/exp06_train/20261015-163611-afeacb2",
+ "init_checkpoint": {
+  "recipe": "mathcot",
+  "step": 1500,
+  "marks": [
+   "final"
+  ],
+  "dbpb_fresh": 2.4961789792323095,
+  "contrast_ks": 2.096883334183941,
+  "contrast_rf": 2.2779297813861317,
+  "token_positions": 98304000,
+  "loss_tokens": 69357560,
+  "epochs": 1.6314237021499738,
+  "base": "allenai/OLMo-2-0425-1B",
+  "template_tokenizer": "allenai/OLMo-2-0425-1B-Instruct"
+ },
+ "slurm_job": "1084160",
+ "restart": null
+}

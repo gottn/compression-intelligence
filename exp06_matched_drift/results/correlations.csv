@@ -1,0 +1,35 @@
+x,y,subset,n,pearson,pearson_lo,pearson_hi,spearman,spearman_lo,spearman_hi,boot_valid,loo_min,loo_max,r_without_tulu,r_without_smoltalk,r_without_mathcot
+contrast_ks,forgetting,mark checkpoints,6,0.4310,-0.7946,0.9996,0.4286,-0.8000,1.0000,9999,0.1609,0.8346,0.8639,0.1178,-0.5303
+contrast_ks,gain_ifeval,mark checkpoints,6,-0.4045,-0.9882,0.8386,-0.4058,-1.0000,0.8944,9982,-0.6778,-0.0538,-0.7974,-0.4428,0.5937
+contrast_ks,gain_gsm8k,mark checkpoints,6,-0.5317,-0.9984,0.1636,-0.7714,-1.0000,0.0000,9999,-0.7987,-0.3046,-0.8157,-0.2363,-0.1483
+contrast_ks,arc_loss,mark checkpoints,6,0.4096,-0.7387,0.9999,0.3143,-0.8000,1.0000,9999,0.2215,0.7754,0.7868,-0.0238,-0.2386
+contrast_ks,mmlu_loss,mark checkpoints,6,0.4277,-0.8982,0.9856,0.2000,-1.0000,1.0000,9999,0.1047,0.7783,0.8822,0.3289,-0.8011
+contrast_ks,dbpb_fresh,mark checkpoints,6,0.6088,-0.1046,1.0000,0.7714,-0.0909,1.0000,9999,0.4302,0.7967,0.5183,0.9140,0.7010
+contrast_rf,forgetting,mark checkpoints,6,0.6944,-0.3223,1.0000,0.6571,-0.6000,1.0000,9999,0.5906,0.8914,0.7203,0.9510,-0.0563
+contrast_rf,gain_ifeval,mark checkpoints,6,-0.7579,-1.0000,-0.2628,-0.8986,-1.0000,-0.3178,9982,-0.9809,-0.6713,-0.5509,-0.9878,-0.4337
+contrast_rf,gain_gsm8k,mark checkpoints,6,-0.5837,-0.9997,0.9864,-0.4286,-1.0000,1.0000,9999,-0.8929,-0.4281,-0.6351,-0.9817,0.9678
+contrast_rf,arc_loss,mark checkpoints,6,0.6339,-0.5954,0.9753,0.6000,-0.6000,1.0000,9999,0.5052,0.8426,0.7055,0.9168,-0.3667
+contrast_rf,mmlu_loss,mark checkpoints,6,0.7916,0.5328,0.9952,0.8857,0.2000,1.0000,9999,0.7310,0.9595,0.6960,0.9859,0.8449
+contrast_rf,dbpb_fresh,mark checkpoints,6,0.2133,-0.7702,0.9938,0.2571,-0.8121,1.0000,9999,-0.0676,0.5421,0.5144,0.0557,0.3789
+dbpb_fresh,forgetting,mark checkpoints,6,-0.0897,-0.8990,0.9882,0.2000,-1.0000,1.0000,9999,-0.5435,0.2852,0.0281,-0.1548,-0.6348
+dbpb_fresh,gain_ifeval,mark checkpoints,6,-0.0439,-1.0000,1.0000,-0.1160,-1.0000,0.8944,9982,-0.3505,0.4650,-0.0175,-0.1632,0.2026
+dbpb_fresh,gain_gsm8k,mark checkpoints,6,0.0730,-0.9984,0.8736,-0.3143,-1.0000,1.0000,9999,-0.2937,0.5386,0.0381,0.0529,0.5994
+dbpb_fresh,arc_loss,mark checkpoints,6,-0.2054,-0.9705,0.9824,-0.0286,-1.0000,1.0000,9999,-0.5349,0.2439,-0.1191,-0.3349,-0.5843
+dbpb_fresh,mmlu_loss,mark checkpoints,6,0.0421,-0.8018,0.9711,-0.0286,-1.0000,1.0000,9999,-0.4450,0.3908,0.1034,0.0516,-0.1400
+contrast_ks,forgetting,all checkpoints (marks + finals),12,0.2885,-0.2881,0.7779,0.4545,-0.2330,0.9011,10000,0.0675,0.4494,0.5045,0.1487,0.0630
+contrast_ks,gain_ifeval,all checkpoints (marks + finals),12,-0.1984,-0.6593,0.3299,-0.1296,-0.6235,0.5217,10000,-0.3504,-0.0298,-0.2768,-0.1705,0.1919
+contrast_ks,gain_gsm8k,all checkpoints (marks + finals),12,-0.3364,-0.7650,0.1987,-0.4764,-0.8628,0.1500,10000,-0.4927,-0.1355,-0.4870,-0.1802,-0.3843
+contrast_ks,arc_loss,all checkpoints (marks + finals),12,0.2420,-0.3087,0.7555,0.4126,-0.2357,0.8909,10000,0.0599,0.4248,0.4008,0.0757,0.2152
+contrast_ks,mmlu_loss,all checkpoints (marks + finals),12,0.2329,-0.3717,0.7173,0.0839,-0.6088,0.6277,10000,-0.0052,0.3967,0.5040,0.0980,-0.4711
+contrast_ks,dbpb_fresh,all checkpoints (marks + finals),12,0.7996,0.6182,0.9649,0.8741,0.5652,0.9787,10000,0.7640,0.8615,0.7311,0.9578,0.8145
+contrast_rf,forgetting,all checkpoints (marks + finals),12,0.3477,-0.3160,0.7619,0.3846,-0.2901,0.8986,10000,0.1221,0.5487,0.0365,0.5869,0.4436
+contrast_rf,gain_ifeval,all checkpoints (marks + finals),12,-0.2304,-0.7170,0.4128,-0.1821,-0.7993,0.5217,10000,-0.4174,-0.0521,0.1799,-0.5414,0.0467
+contrast_rf,gain_gsm8k,all checkpoints (marks + finals),12,-0.2531,-0.6922,0.4167,-0.0771,-0.6858,0.6055,10000,-0.4273,0.0014,-0.0220,-0.6047,0.4184
+contrast_rf,arc_loss,all checkpoints (marks + finals),12,0.2807,-0.3704,0.7373,0.3007,-0.3477,0.8577,10000,0.0901,0.5052,-0.0609,0.5192,0.3014
+contrast_rf,mmlu_loss,all checkpoints (marks + finals),12,0.2869,-0.3599,0.7213,0.1538,-0.5500,0.6857,10000,0.0394,0.4613,0.0262,0.5310,-0.1772
+contrast_rf,dbpb_fresh,all checkpoints (marks + finals),12,0.6870,0.2713,0.9052,0.7902,0.3529,0.9780,10000,0.6105,0.7570,0.7266,0.7292,0.6974
+dbpb_fresh,forgetting,all checkpoints (marks + finals),12,-0.0383,-0.5648,0.5496,0.2378,-0.4875,0.7891,10000,-0.2110,0.1210,-0.1150,0.0251,0.1225
+dbpb_fresh,gain_ifeval,all checkpoints (marks + finals),12,0.1328,-0.5209,0.6590,0.1086,-0.6029,0.7401,10000,-0.0944,0.2637,0.3225,-0.0972,0.3337
+dbpb_fresh,gain_gsm8k,all checkpoints (marks + finals),12,0.0578,-0.5283,0.5681,-0.0630,-0.6846,0.5775,10000,-0.0982,0.2301,0.1338,-0.0665,0.0895
+dbpb_fresh,arc_loss,all checkpoints (marks + finals),12,-0.1057,-0.6145,0.5211,0.1608,-0.5548,0.7956,10000,-0.2596,0.0651,-0.2186,-0.0742,0.1573
+dbpb_fresh,mmlu_loss,all checkpoints (marks + finals),12,-0.0649,-0.5762,0.4987,-0.1049,-0.7385,0.4745,10000,-0.2420,0.0770,-0.0958,0.0094,-0.2851
