@@ -1,0 +1,90 @@
+{
+ "group": "b3_arc_0shot_chat",
+ "folder": "b3_arc_0shot_chat",
+ "kwargs": {
+  "tasks": [
+   "arc_easy",
+   "arc_challenge"
+  ],
+  "log_samples": true,
+  "apply_chat_template": true,
+  "fewshot_as_multiturn": true,
+  "random_seed": 0,
+  "numpy_random_seed": 1234,
+  "torch_random_seed": 1234,
+  "fewshot_random_seed": 1234,
+  "limit": 10
+ },
+ "samples": null,
+ "tokenizer": "own",
+ "chat_template_args": {},
+ "template_md5": "9a1b1065834e140093019c313c23b567",
+ "status": "ok",
+ "wall_s": 2.7,
+ "tasks": {
+  "arc_easy": {
+   "metrics": {
+    "acc,none": 0.5,
+    "acc_stderr,none": 0.16666666666666666,
+    "acc_norm,none": 0.2,
+    "acc_norm_stderr,none": 0.13333333333333333
+   },
+   "version": 1.0,
+   "leaf_versions": [
+    "1.0"
+   ],
+   "n_shot": [
+    0
+   ],
+   "n_effective": 10,
+   "n_original": 2376,
+   "n_leaves": 1
+  },
+  "arc_challenge": {
+   "metrics": {
+    "acc,none": 0.2,
+    "acc_stderr,none": 0.13333333333333333,
+    "acc_norm,none": 0.2,
+    "acc_norm_stderr,none": 0.13333333333333333
+   },
+   "version": 1.0,
+   "leaf_versions": [
+    "1.0"
+   ],
+   "n_shot": [
+    0
+   ],
+   "n_effective": 10,
+   "n_original": 1172,
+   "n_leaves": 1
+  }
+ },
+ "truncation": {
+  "arc_challenge": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 111
+  },
+  "arc_easy": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 63
+  }
+ },
+ "lm_eval_version": "0.4.13",
+ "transformers_version": "5.19.0",
+ "max_length": 2048,
+ "chat_template_md5": null,
+ "config": {
+  "batch_size": null,
+  "batch_sizes": [
+   64
+  ],
+  "model_dtype": "torch.float16",
+  "random_seed": 0,
+  "numpy_seed": 1234,
+  "torch_seed": 1234,
+  "fewshot_seed": 1234,
+  "limit": 10
+ }
+}

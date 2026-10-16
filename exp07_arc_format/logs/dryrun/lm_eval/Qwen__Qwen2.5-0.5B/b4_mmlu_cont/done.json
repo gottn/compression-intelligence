@@ -1,0 +1,458 @@
+{
+ "group": "b4_mmlu_cont",
+ "folder": "b4_mmlu_cont",
+ "kwargs": {
+  "tasks": [
+   "mmlu_continuation"
+  ],
+  "log_samples": true,
+  "apply_chat_template": false,
+  "fewshot_as_multiturn": false,
+  "random_seed": 0,
+  "numpy_random_seed": 1234,
+  "torch_random_seed": 1234,
+  "fewshot_random_seed": 1234
+ },
+ "samples": {
+  "mmlu_abstract_algebra_continuation": 10,
+  "mmlu_anatomy_continuation": 10,
+  "mmlu_astronomy_continuation": 10,
+  "mmlu_business_ethics_continuation": 10,
+  "mmlu_clinical_knowledge_continuation": 10,
+  "mmlu_college_biology_continuation": 10,
+  "mmlu_college_chemistry_continuation": 10,
+  "mmlu_college_computer_science_continuation": 10,
+  "mmlu_college_mathematics_continuation": 10,
+  "mmlu_college_medicine_continuation": 10,
+  "mmlu_college_physics_continuation": 10,
+  "mmlu_computer_security_continuation": 10,
+  "mmlu_conceptual_physics_continuation": 10,
+  "mmlu_econometrics_continuation": 10,
+  "mmlu_electrical_engineering_continuation": 10,
+  "mmlu_elementary_mathematics_continuation": 10,
+  "mmlu_formal_logic_continuation": 10,
+  "mmlu_global_facts_continuation": 10,
+  "mmlu_high_school_biology_continuation": 10,
+  "mmlu_high_school_chemistry_continuation": 10,
+  "mmlu_high_school_computer_science_continuation": 10,
+  "mmlu_high_school_european_history_continuation": 10,
+  "mmlu_high_school_geography_continuation": 10,
+  "mmlu_high_school_government_and_politics_continuation": 10,
+  "mmlu_high_school_macroeconomics_continuation": 10,
+  "mmlu_high_school_mathematics_continuation": 10,
+  "mmlu_high_school_microeconomics_continuation": 10,
+  "mmlu_high_school_physics_continuation": 10,
+  "mmlu_high_school_psychology_continuation": 10,
+  "mmlu_high_school_statistics_continuation": 10,
+  "mmlu_high_school_us_history_continuation": 10,
+  "mmlu_high_school_world_history_continuation": 10,
+  "mmlu_human_aging_continuation": 10,
+  "mmlu_human_sexuality_continuation": 10,
+  "mmlu_international_law_continuation": 10,
+  "mmlu_jurisprudence_continuation": 10,
+  "mmlu_logical_fallacies_continuation": 10,
+  "mmlu_machine_learning_continuation": 10,
+  "mmlu_management_continuation": 10,
+  "mmlu_marketing_continuation": 10,
+  "mmlu_medical_genetics_continuation": 10,
+  "mmlu_miscellaneous_continuation": 10,
+  "mmlu_moral_disputes_continuation": 10,
+  "mmlu_moral_scenarios_continuation": 10,
+  "mmlu_nutrition_continuation": 10,
+  "mmlu_philosophy_continuation": 10,
+  "mmlu_prehistory_continuation": 10,
+  "mmlu_professional_accounting_continuation": 10,
+  "mmlu_professional_law_continuation": 10,
+  "mmlu_professional_medicine_continuation": 10,
+  "mmlu_professional_psychology_continuation": 10,
+  "mmlu_public_relations_continuation": 10,
+  "mmlu_security_studies_continuation": 10,
+  "mmlu_sociology_continuation": 10,
+  "mmlu_us_foreign_policy_continuation": 10,
+  "mmlu_virology_continuation": 10,
+  "mmlu_world_religions_continuation": 10
+ },
+ "tokenizer": "own",
+ "status": "ok",
+ "wall_s": 27.7,
+ "tasks": {
+  "mmlu_continuation": {
+   "metrics": {
+    "acc,none": 0.3280701754385965,
+    "acc_stderr,none": 0.01942189696539838
+   },
+   "version": "2",
+   "leaf_versions": [
+    "1.0"
+   ],
+   "n_shot": [
+    0
+   ],
+   "n_effective": 570,
+   "n_original": 14042,
+   "n_leaves": 57,
+   "leaf_effective": {
+    "mmlu_abstract_algebra_continuation": 10,
+    "mmlu_anatomy_continuation": 10,
+    "mmlu_astronomy_continuation": 10,
+    "mmlu_business_ethics_continuation": 10,
+    "mmlu_clinical_knowledge_continuation": 10,
+    "mmlu_college_biology_continuation": 10,
+    "mmlu_college_chemistry_continuation": 10,
+    "mmlu_college_computer_science_continuation": 10,
+    "mmlu_college_mathematics_continuation": 10,
+    "mmlu_college_medicine_continuation": 10,
+    "mmlu_college_physics_continuation": 10,
+    "mmlu_computer_security_continuation": 10,
+    "mmlu_conceptual_physics_continuation": 10,
+    "mmlu_econometrics_continuation": 10,
+    "mmlu_electrical_engineering_continuation": 10,
+    "mmlu_elementary_mathematics_continuation": 10,
+    "mmlu_formal_logic_continuation": 10,
+    "mmlu_global_facts_continuation": 10,
+    "mmlu_high_school_biology_continuation": 10,
+    "mmlu_high_school_chemistry_continuation": 10,
+    "mmlu_high_school_computer_science_continuation": 10,
+    "mmlu_high_school_european_history_continuation": 10,
+    "mmlu_high_school_geography_continuation": 10,
+    "mmlu_high_school_government_and_politics_continuation": 10,
+    "mmlu_high_school_macroeconomics_continuation": 10,
+    "mmlu_high_school_mathematics_continuation": 10,
+    "mmlu_high_school_microeconomics_continuation": 10,
+    "mmlu_high_school_physics_continuation": 10,
+    "mmlu_high_school_psychology_continuation": 10,
+    "mmlu_high_school_statistics_continuation": 10,
+    "mmlu_high_school_us_history_continuation": 10,
+    "mmlu_high_school_world_history_continuation": 10,
+    "mmlu_human_aging_continuation": 10,
+    "mmlu_human_sexuality_continuation": 10,
+    "mmlu_international_law_continuation": 10,
+    "mmlu_jurisprudence_continuation": 10,
+    "mmlu_logical_fallacies_continuation": 10,
+    "mmlu_machine_learning_continuation": 10,
+    "mmlu_management_continuation": 10,
+    "mmlu_marketing_continuation": 10,
+    "mmlu_medical_genetics_continuation": 10,
+    "mmlu_miscellaneous_continuation": 10,
+    "mmlu_moral_disputes_continuation": 10,
+    "mmlu_moral_scenarios_continuation": 10,
+    "mmlu_nutrition_continuation": 10,
+    "mmlu_philosophy_continuation": 10,
+    "mmlu_prehistory_continuation": 10,
+    "mmlu_professional_accounting_continuation": 10,
+    "mmlu_professional_law_continuation": 10,
+    "mmlu_professional_medicine_continuation": 10,
+    "mmlu_professional_psychology_continuation": 10,
+    "mmlu_public_relations_continuation": 10,
+    "mmlu_security_studies_continuation": 10,
+    "mmlu_sociology_continuation": 10,
+    "mmlu_us_foreign_policy_continuation": 10,
+    "mmlu_virology_continuation": 10,
+    "mmlu_world_religions_continuation": 10
+   }
+  }
+ },
+ "truncation": {
+  "mmlu_abstract_algebra_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 82
+  },
+  "mmlu_anatomy_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 54
+  },
+  "mmlu_astronomy_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 82
+  },
+  "mmlu_business_ethics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 74
+  },
+  "mmlu_clinical_knowledge_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 50
+  },
+  "mmlu_college_biology_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 58
+  },
+  "mmlu_college_chemistry_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 80
+  },
+  "mmlu_college_computer_science_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 184
+  },
+  "mmlu_college_mathematics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 107
+  },
+  "mmlu_college_medicine_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 956
+  },
+  "mmlu_college_physics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 84
+  },
+  "mmlu_computer_security_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 158
+  },
+  "mmlu_conceptual_physics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 48
+  },
+  "mmlu_econometrics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 83
+  },
+  "mmlu_electrical_engineering_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 81
+  },
+  "mmlu_elementary_mathematics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 65
+  },
+  "mmlu_formal_logic_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 138
+  },
+  "mmlu_global_facts_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 79
+  },
+  "mmlu_high_school_biology_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 109
+  },
+  "mmlu_high_school_chemistry_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 87
+  },
+  "mmlu_high_school_computer_science_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 127
+  },
+  "mmlu_high_school_european_history_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 515
+  },
+  "mmlu_high_school_geography_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 48
+  },
+  "mmlu_high_school_government_and_politics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 63
+  },
+  "mmlu_high_school_macroeconomics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 106
+  },
+  "mmlu_high_school_mathematics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 150
+  },
+  "mmlu_high_school_microeconomics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 85
+  },
+  "mmlu_high_school_physics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 121
+  },
+  "mmlu_high_school_psychology_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 82
+  },
+  "mmlu_high_school_statistics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 147
+  },
+  "mmlu_high_school_us_history_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 361
+  },
+  "mmlu_high_school_world_history_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 481
+  },
+  "mmlu_human_aging_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 52
+  },
+  "mmlu_human_sexuality_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 91
+  },
+  "mmlu_international_law_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 72
+  },
+  "mmlu_jurisprudence_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 65
+  },
+  "mmlu_logical_fallacies_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 65
+  },
+  "mmlu_machine_learning_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 74
+  },
+  "mmlu_management_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 42
+  },
+  "mmlu_marketing_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 68
+  },
+  "mmlu_medical_genetics_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 59
+  },
+  "mmlu_miscellaneous_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 71
+  },
+  "mmlu_moral_disputes_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 57
+  },
+  "mmlu_moral_scenarios_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 119
+  },
+  "mmlu_nutrition_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 53
+  },
+  "mmlu_philosophy_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 42
+  },
+  "mmlu_prehistory_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 70
+  },
+  "mmlu_professional_accounting_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 129
+  },
+  "mmlu_professional_law_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 263
+  },
+  "mmlu_professional_medicine_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 271
+  },
+  "mmlu_professional_psychology_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 135
+  },
+  "mmlu_public_relations_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 144
+  },
+  "mmlu_security_studies_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 103
+  },
+  "mmlu_sociology_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 53
+  },
+  "mmlu_us_foreign_policy_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 65
+  },
+  "mmlu_virology_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 62
+  },
+  "mmlu_world_religions_continuation": {
+   "n_docs": 10,
+   "n_over": 0,
+   "max_tokens": 43
+  }
+ },
+ "lm_eval_version": "0.4.13",
+ "transformers_version": "5.19.0",
+ "max_length": 2048,
+ "chat_template_md5": null,
+ "config": {
+  "batch_size": null,
+  "batch_sizes": [
+   19
+  ],
+  "model_dtype": "torch.float16",
+  "random_seed": 0,
+  "numpy_seed": 1234,
+  "torch_seed": 1234,
+  "fewshot_seed": 1234,
+  "limit": null
+ }
+}
