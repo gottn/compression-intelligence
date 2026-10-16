@@ -2,8 +2,9 @@
 
     .venv/bin/python exp06_matched_drift/analyze_matched.py [--results R]
 
-Reads   results/train/<recipe>[-attemptK]/{drift.csv, done.json, base_check.json, train.csv}   (train_sft.py, AAU A40)
-        results/train/checkpoints.txt                                    (one line per saved checkpoint)
+Reads   results/train/<recipe>/{drift.csv, done.json, base_check.json, checkpoints.txt}   (stage 1, updates 1-1,500)
+        results/train2/<recipe>/{...}                                    (stage 2, warm restart from the stage-1 final;
+                                                                          drift against the original base)
         results/lm_eval/<label>/summary.json                             (run_eval.py on AAU A10; label exp06__base
                                                                           is the base with the Instruct template)
         ../exp04_benchmarks/results/scores.csv                           (the base's general score, exp04)
@@ -49,7 +50,9 @@ MARKS: tuple[str, ...] = ("3", "6", "10")
 N_BOOT, SEED, Z95 = 10_000, 0, 1.96
 H1_PASS, H1_SOFT, H2_MAX, FAIL_R, MIN_N = 0.8, 0.6, 0.3, 0.9, 6
 H4_ORDER: tuple[str, ...] = ("mathcot", "smoltalk", "tulu")  # expected descending contrast and forgetting at 6%
-MARK_SET, ALL_SET = "mark checkpoints", "mark checkpoints + finals"
+MARK_SET, ALL_SET = "mark checkpoints", "all checkpoints (marks + finals)"
+STAGES: tuple[tuple[str, str], ...] = (("1", "train"), ("2", "train2"))  # (stage, results subdirectory)
+STAGE1_STEPS = 1500  # stage 2 continues the update numbering after this
 CONTRASTS: tuple[str, ...] = ("contrast_ks", "contrast_rf")
 OUTCOMES: tuple[str, ...] = ("forgetting", "gain_ifeval", "gain_gsm8k", "arc_loss", "mmlu_loss")
 # dataviz reference palette, categorical slots 1-3 (validated all-pairs, light mode); marks by marker shape
@@ -85,10 +88,11 @@ def checkpoint_table(lines: Sequence[str], drift: pd.DataFrame, evals: Mapping[s
         d = drift[(drift.recipe == c["recipe"]) & (drift.step == step)]
         if len(d) != 1:
             raise ValueError(f"{c['label']}: {len(d)} drift rows")
-        r = {"label": c["label"], "recipe": c["recipe"], "step": step, "marks": c["marks"],
+        r = {"label": c["label"], "recipe": c["recipe"], "stage": stage_of_step(step), "step": step,
+             "marks": c["marks"],
              "is_mark": any(t in MARKS for t in mark_tags(c["marks"])), "is_final": "final" in mark_tags(c["marks"]),
              **{k: d.iloc[0][k] for k in ("token_positions", "nonpad_tokens", "loss_tokens", "epochs", "dbpb_fresh",
-                                          "dbpb_enwik8_ctrl", "drift_knowledge", "drift_middle", "drift_style",
+                                          "dbpb_wiki2026", "dbpb_arxiv2026", "dbpb_gutenberg2026", "dbpb_enwik8_ctrl", "drift_knowledge", "drift_middle", "drift_style",
                                           "drift_rare", "drift_frequent", "contrast_ks", "contrast_rf",
                                           "train_loss")}}
         if c["label"] in sc.index:
@@ -107,6 +111,24 @@ def checkpoint_table(lines: Sequence[str], drift: pd.DataFrame, evals: Mapping[s
     order = {n: i for i, n in enumerate(RECIPES)}
     return pd.DataFrame(rows).sort_values(["recipe", "step"], key=lambda col: col.map(order) if col.name == "recipe"
                                           else col).reset_index(drop=True)
+
+
+def stage_of_step(step: int, boundary: int = STAGE1_STEPS) -> int:
+    """1 for updates up to the stage-1 stop (its final checkpoint included), 2 after it."""
+    return 1 if step <= boundary else 2
+
+
+def merge_stages(logs: Sequence[pd.DataFrame]) -> pd.DataFrame:
+    """One drift trajectory per recipe from stage logs in order: each later stage contributes only the updates after
+    the earlier stage's last row (its first row re-scores the init weights and duplicates that row)."""
+    out = []
+    for k, d in enumerate(logs):
+        d = d.assign(stage=k + 1)
+        if out:
+            last = pd.concat(out).groupby("recipe").step.max()
+            d = d[d.step > d.recipe.map(last).fillna(-1)]
+        out.append(d)
+    return pd.concat(out, ignore_index=True).sort_values(["recipe", "step"], kind="mergesort").reset_index(drop=True)
 
 
 def per_mark(table: pd.DataFrame) -> pd.DataFrame:
@@ -192,12 +214,15 @@ def verdict_h1(r: float, n: int) -> str:
     return v + (" (underpowered, n < 6)" if n < MIN_N else "") if np.isfinite(r) else "not evaluable"
 
 
-def rule_table(table: pd.DataFrame, corr: pd.DataFrame, h3: pd.DataFrame, contrast: str) -> pd.DataFrame:
-    """H1-H4 and the fail rule for one contrast (contrast_ks primary, contrast_rf secondary), mark checkpoints."""
-    n = int(table.is_mark.sum())
-    r1 = lookup(corr, contrast, "forgetting", MARK_SET)
-    r2 = lookup(corr, contrast, "gain_ifeval", MARK_SET)
-    rd = lookup(corr, contrast, "dbpb_fresh", MARK_SET)
+def rule_table(table: pd.DataFrame, corr: pd.DataFrame, h3: pd.DataFrame, contrast: str,
+               subset: str = MARK_SET) -> pd.DataFrame:
+    """H1-H4 and the fail rule for one contrast (contrast_ks primary, contrast_rf secondary). H1, H2 and the fail
+    rule's r over `subset` (pre-registered: the mark checkpoints); H3 and H4 always use the marks."""
+    n_raw = lookup(corr, contrast, "forgetting", subset, "n")  # checkpoints with a benchmark score
+    n = int(n_raw) if np.isfinite(n_raw) else 0
+    r1 = lookup(corr, contrast, "forgetting", subset)
+    r2 = lookup(corr, contrast, "gain_ifeval", subset)
+    rd = lookup(corr, contrast, "dbpb_fresh", subset)
     six = per_mark(table)
     six = six[six.mark == "6"].set_index("recipe") if len(six) else six
     c_order = strictly_descending(dict(six[contrast]) if len(six) else {}, H4_ORDER)
@@ -207,19 +232,43 @@ def rule_table(table: pd.DataFrame, corr: pd.DataFrame, h3: pd.DataFrame, contra
     h3_ok = int(h3.get("exceeds_floor", pd.Series(dtype=bool)).fillna(False).sum()) if len(h3) else 0
     fail = (np.isfinite(rd) and rd > FAIL_R) or (np.isfinite(r1) and r1 < H1_SOFT and c_order is False)
     rows = [
-        {"id": "H1", "contrast": contrast, "statistic": f"Pearson r({contrast}, forgetting), n = {n}", "value": r1,
+        {"id": "H1", "subset": subset, "contrast": contrast, "statistic": f"Pearson r({contrast}, forgetting), n = {n}", "value": r1,
          "verdict": verdict_h1(r1, n)},
-        {"id": "H2", "contrast": contrast, "statistic": f"Pearson r({contrast}, IFEval gain), n = {n}", "value": r2,
+        {"id": "H2", "subset": subset, "contrast": contrast, "statistic": f"Pearson r({contrast}, IFEval gain), n = {n}", "value": r2,
          "verdict": ("pass" if abs(r2) < H2_MAX else "fail") if np.isfinite(r2) else "not evaluable"},
-        {"id": "H3", "contrast": contrast, "statistic": "marks whose forgetting range exceeds the 95% floor",
+        {"id": "H3", "subset": "marks", "contrast": contrast, "statistic": "marks whose forgetting range exceeds the 95% floor",
          "value": h3_ok, "verdict": "pass" if h3_ok >= 2 else "fail"},
-        {"id": "H4", "contrast": contrast, "statistic": "6% mark: contrast and forgetting mathcot > smoltalk > tulu",
+        {"id": "H4", "subset": "6% mark", "contrast": contrast, "statistic": "6% mark: contrast and forgetting mathcot > smoltalk > tulu",
          "value": f"contrast {c_order}, forgetting {f_order}", "verdict": h4},
-        {"id": "fail rule", "contrast": contrast,
+        {"id": "fail rule", "subset": subset, "contrast": contrast,
          "statistic": f"r({contrast}, Δbpb_fresh) > 0.9, or H1 < 0.6 with the H4 contrast order violated",
          "value": rd, "verdict": "triggered: lead not supported" if fail else "not triggered"},
     ]
     return pd.DataFrame(rows)
+
+
+PROFILE: tuple[str, ...] = ("wiki2026", "arxiv2026", "gutenberg2026", "enwik8_ctrl")
+EXPLORE_RECIPE = "mathcot"  # the recipe that forgets, named in the exploratory hypothesis
+
+
+def corpus_profile(table: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, object]]:
+    """EXPLORATORY (not pre-registered): per mark checkpoint, each corpus's Δbpb as a share of Δbpb_fresh, and the
+    stated hypothesis per mark (mathcot's arxiv share below both others' and its gutenberg share above both)."""
+    pm = per_mark(table)
+    rows = [{"recipe": r.recipe, "mark": r.mark, "step": r.step, "dbpb_fresh": r.dbpb_fresh,
+             **{f"ratio_{c}": getattr(r, f"dbpb_{c}") / r.dbpb_fresh for c in PROFILE}} for r in pm.itertuples()]
+    prof = pd.DataFrame(rows)
+    verdict: dict[str, object] = {}
+    for m, g in prof.groupby("mark", sort=False):
+        g = g.set_index("recipe")
+        if EXPLORE_RECIPE not in g.index or len(g) < 3:
+            verdict[m] = "not evaluable"
+            continue
+        others = g.drop(EXPLORE_RECIPE)
+        verdict[m] = {"arxiv_lower": bool(g.loc[EXPLORE_RECIPE, "ratio_arxiv2026"] < others.ratio_arxiv2026.min()),
+                      "gutenberg_higher": bool(g.loc[EXPLORE_RECIPE, "ratio_gutenberg2026"]
+                                               > others.ratio_gutenberg2026.max())}
+    return prof, verdict
 
 
 def fmt(v: object, digits: int = 2) -> str:
@@ -229,17 +278,18 @@ def fmt(v: object, digits: int = 2) -> str:
 
 
 def summary_markdown(table: pd.DataFrame, tests: pd.DataFrame, corr: pd.DataFrame, h3: pd.DataFrame,
-                     checks: Mapping[str, object], resid: Mapping[str, float]) -> str:
+                     checks: Mapping[str, object], resid: Mapping[str, float],
+                     profile: tuple[pd.DataFrame, Mapping[str, object]] | None = None) -> str:
     out = ["# exp06 summary (written by analyze_matched.py)", "", "## Tests", "",
-           "| id | contrast | statistic | value | verdict |", "|---|---|---|---|---|"]
-    out += [f"| {r.id} | {r.contrast} | {r.statistic} | {fmt(r.value, 3) if isinstance(r.value, float) else r.value}"
-            f" | {r.verdict} |" for r in tests.itertuples()]
+           "| id | set | contrast | statistic | value | verdict |", "|---|---|---|---|---|---|"]
+    out += [f"| {r.id} | {r.subset} | {r.contrast} | {r.statistic} | "
+            f"{fmt(r.value, 3) if isinstance(r.value, float) else r.value} | {r.verdict} |" for r in tests.itertuples()]
     out += ["", "## Checkpoints", "",
-            "| recipe | step | marks | tokens (M) | epochs | Δbpb_fresh % | contrast K−S pp | contrast R−F pp | "
+            "| recipe | stage | step | marks | tokens (M) | epochs | Δbpb_fresh % | contrast K−S pp | contrast R−F pp | "
             "forgetting % (floor) | IFEval gain | gsm8k gain | ARC loss % | MMLU loss % |",
-            "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+            "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in table.itertuples():
-        out.append(f"| {r.recipe} | {r.step} | {r.marks} | {r.token_positions / 1e6:.1f} | {r.epochs:.2f} | "
+        out.append(f"| {r.recipe} | {r.stage} | {r.step} | {r.marks} | {r.token_positions / 1e6:.1f} | {r.epochs:.2f} | "
                    f"{r.dbpb_fresh:+.2f} | {r.contrast_ks:+.2f} | {r.contrast_rf:+.2f} | "
                    f"{fmt(getattr(r, 'forgetting', np.nan))} ({fmt(getattr(r, 'floor_pct', np.nan))}) | "
                    f"{fmt(getattr(r, 'gain_ifeval', np.nan), 1)} | {fmt(getattr(r, 'gain_gsm8k', np.nan), 1)} | "
@@ -253,8 +303,14 @@ def summary_markdown(table: pd.DataFrame, tests: pd.DataFrame, corr: pd.DataFram
         out.append(f"| {r.subset} | {r.x} | {r.y} | {r.n} | {r.pearson:+.3f} [{r.pearson_lo:+.2f}, "
                    f"{r.pearson_hi:+.2f}] | {r.spearman:+.3f} | {fmt(r.r_without_tulu, 2)} / "
                    f"{fmt(r.r_without_smoltalk, 2)} / {fmt(r.r_without_mathcot, 2)} |")
-    out += ["", "## Residual reading (forgetting after OLS on Δbpb_fresh, mark checkpoints)", ""]
-    out += [f"- r({k}, residual) = {v:+.3f}" for k, v in resid.items()]
+    out += ["", "## Residual reading (r of the contrast with forgetting after OLS on Δbpb_fresh)", ""]
+    out += [f"- {k}: r = {v:+.3f}" for k, v in resid.items()]
+    if profile is not None:
+        prof, verdict = profile
+        out += ["", "## EXPLORATORY, not pre-registered: per-corpus drift shape at the marks", "",
+                "Each corpus's Δbpb divided by Δbpb_fresh (the mean of the three fresh corpora).", "",
+                prof.to_markdown(index=False, floatfmt=".3f"), "",
+                f"Hypothesis (stated in RESULTS.md before this was computed), per mark: {json.dumps(verdict)}"]
     out += ["", "## Sanity checks", "", "```", json.dumps(checks, indent=1, default=float), "```", ""]
     return "\n".join(out)
 
@@ -288,6 +344,9 @@ def figure(traj: pd.DataFrame, table: pd.DataFrame, corr: pd.DataFrame) -> Figur
             tag = next((m for m in mark_tags(r.marks) if m in MARK_SHAPE), "final")
             for ax, x, y in ((a, r.token_positions / 1e6, r.dbpb_fresh), (b, r.dbpb_fresh, r.contrast_ks)):
                 ax.plot(x, y, MARK_SHAPE[tag], color=col, ms=8, mec=SURFACE, mew=2, zorder=3)
+    a.axvline(STAGE1_STEPS * 32 * 2048 / 1e6, color=INK2, lw=0.8, ls=":")
+    a.annotate("stage 2 (warm restart)", (STAGE1_STEPS * 32 * 2048 / 1e6, 0.2), xytext=(4, 0),
+               textcoords="offset points", fontsize=7, color=INK2)
     for m in MARKS:
         a.axhline(float(m), color=MUTED, lw=0.8, ls="--")
         b.axvline(float(m), color=MUTED, lw=0.8, ls="--")
@@ -298,17 +357,18 @@ def figure(traj: pd.DataFrame, table: pd.DataFrame, corr: pd.DataFrame) -> Figur
     b.set_xlabel("Δbpb_fresh vs base (%)", color=INK2, fontsize=9)
     b.set_ylabel("contrast knowledge − style (pp)", color=INK2, fontsize=9)
     b.set_title("(b) direction of the drift at each dose", color=INK, fontsize=10, loc="left")
-    pts = table[table.is_mark & table.get("forgetting", pd.Series(np.nan, index=table.index)).notna()]
+    pts = table[table.get("forgetting", pd.Series(np.nan, index=table.index)).notna()]
     for ax, y, ylab, title in ((c, "forgetting", "forgetting (% of base general score)", "(c) H1: contrast vs forgetting"),
                                (d, "gain_ifeval", "IFEval chat gain vs base (points)", "(d) H2: contrast vs IFEval gain")):
         for r in pts.itertuples():
-            tag = next(m for m in mark_tags(r.marks) if m in MARKS)
+            tag = next((m for m in mark_tags(r.marks) if m in MARKS), "final")
             ax.plot(r.contrast_ks, getattr(r, y), MARK_SHAPE[tag], color=RECIPE_COLOR[r.recipe], ms=9, mec=SURFACE,
                     mew=2)
-            ax.annotate(f"{r.recipe} {tag}%", (r.contrast_ks, getattr(r, y)), xytext=(5, 4),
+            ax.annotate(f"{r.step}", (r.contrast_ks, getattr(r, y)), xytext=(5, 4),
                         textcoords="offset points", fontsize=7, color=INK2)
-        rr = lookup(corr, "contrast_ks", y, MARK_SET)
-        ax.set_title(f"{title} (r = {fmt(rr, 2)}, n = {len(pts)})", color=INK, fontsize=10, loc="left")
+        ra, rm = lookup(corr, "contrast_ks", y, ALL_SET), lookup(corr, "contrast_ks", y, MARK_SET)
+        ax.set_title(f"{title}\nr = {fmt(ra, 2)} (all {len(pts)}), {fmt(rm, 2)} (marks {int(pts.is_mark.sum())})",
+                     color=INK, fontsize=10, loc="left")
         ax.set_xlabel("contrast knowledge − style (pp)", color=INK2, fontsize=9)
         ax.set_ylabel(ylab, color=INK2, fontsize=9)
         ax.axhline(0, color=MUTED, lw=0.8)
@@ -321,23 +381,20 @@ def figure(traj: pd.DataFrame, table: pd.DataFrame, corr: pd.DataFrame) -> Figur
 
 
 # ----------------------------------------------------------------------------- effects
-def run_dirs(train: Path) -> dict[str, Path]:
-    """Per recipe, the last attempt directory that finished (done.json)."""
-    out = {}
-    for rec in RECIPES:
-        cands = sorted([p for p in train.glob(f"{rec}*") if (p / "done.json").exists()
-                        and (p.name == rec or p.name.startswith(f"{rec}-attempt"))])
-        if cands:
-            out[rec] = cands[-1]
-    return out
+def stage_dirs(out: Path) -> dict[tuple[str, str], Path]:
+    """{(stage, recipe): run directory} for every stage directory that finished (done.json)."""
+    return {(st, rec): out / sub / rec for st, sub in STAGES for rec in RECIPES
+            if (out / sub / rec / "done.json").exists()}
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--results", default=str(HERE / "results"))
     out = Path(ap.parse_args().results)
-    dirs = run_dirs(out / "train")
-    traj = pd.concat([pd.read_csv(d / "drift.csv") for d in dirs.values()], ignore_index=True)
+    dirs = stage_dirs(out)
+    logs = [pd.concat([pd.read_csv(d / "drift.csv") for (st, _), d in dirs.items() if st == stage], ignore_index=True)
+            for stage, _ in STAGES if any(k[0] == stage for k in dirs)]
+    traj = merge_stages(logs)
     lines = [ln for d in dirs.values() for ln in (d / "checkpoints.txt").read_text().splitlines(keepends=True)]
     evals = {p.parent.name: json.loads(p.read_text()) for p in sorted((out / "lm_eval").glob("*/summary.json"))}
     base_eval = general_scores(pd.DataFrame([eval_scores(evals.pop(BASE_LABEL))])).iloc[0]
@@ -348,22 +405,32 @@ def main() -> None:
     table = checkpoint_table(lines, traj, evals, base, base_chat)
     corr = correlation_table(table)
     h3 = h3_rows(table, base)
-    tests = pd.concat([rule_table(table, corr, h3, c) for c in CONTRASTS], ignore_index=True)
-    marks_only = table[table.is_mark]
-    resid = {c: residual_corr(marks_only, c, "forgetting", "dbpb_fresh") for c in CONTRASTS}
+    tests = pd.concat([rule_table(table, corr, h3, c, sub) for sub in (MARK_SET, ALL_SET) for c in CONTRASTS],
+                      ignore_index=True)
+    resid = {f"{c}, {name}": residual_corr(d, c, "forgetting", "dbpb_fresh") for c in CONTRASTS
+             for name, d in ((MARK_SET, table[table.is_mark]), (ALL_SET, table))}
     checks = {"exp06 base general (rerun, Instruct tokenizer)": float(base_eval.general),
               "exp04 base general": base["general"],
               "base general diff (points)": 100 * (float(base_eval.general) - base["general"]),
               "base chat ifeval": base_chat["ifeval"], "base chat gsm8k": base_chat["gsm8k"],
               "base plain ifeval (exp04)": base["ifeval_plain"],
-              "step-0 bpb vs exp03 (max |rel|)": {r: json.loads((d / "base_check.json").read_text())["max_abs_rel"]
-                                                 for r, d in dirs.items()},
-              "runs": {r: json.loads((d / "done.json").read_text()) for r, d in dirs.items()}}
+              "base bpb vs exp03 (max |rel|), per stage and recipe": {
+                  f"{st}/{r}": json.loads((d / "base_check.json").read_text())["max_abs_rel"] for (st, r), d in dirs.items()},
+              "stage-2 first row minus stage-1 final, Δbpb_fresh (pp)": {
+                  r: float(pd.read_csv(out / "train2" / r / "drift.csv").dbpb_fresh.iloc[0]
+                           - pd.read_csv(out / "train" / r / "drift.csv").dbpb_fresh.iloc[-1])
+                  for r in RECIPES if ("1", r) in dirs and ("2", r) in dirs},
+              "runs": {f"{st}/{r}": {k: v for k, v in json.loads((d / "done.json").read_text()).items()
+                                     if k in ("gpu", "stop", "steps", "train_wall_s", "token_positions", "epochs",
+                                              "peak_mem_gb", "step_offset", "drift_ref", "slurm_job")}
+                       for (st, r), d in dirs.items()}}
     table.to_csv(out / "checkpoints.csv", index=False, float_format="%.5f")
     traj.to_csv(out / "trajectories.csv", index=False, float_format="%.5f")
     corr.to_csv(out / "correlations.csv", index=False, float_format="%.4f")
     tests.to_csv(out / "tests.csv", index=False, float_format="%.4f")
-    (out / "summary.md").write_text(summary_markdown(table, tests, corr, h3, checks, resid))
+    profile = corpus_profile(table)
+    profile[0].to_csv(out / "exploratory_corpus_profile.csv", index=False, float_format="%.5f")
+    (out / "summary.md").write_text(summary_markdown(table, tests, corr, h3, checks, resid, profile))
     figure(traj, table, corr).savefig(out / "fig_matched.png", dpi=160, facecolor=SURFACE)
     print((out / "summary.md").read_text())
 

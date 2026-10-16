@@ -19,9 +19,13 @@
 #       allenai/OLMo-2-0425-1B-Instruct --label exp06__base' infra/cluster/submit.sh exp06_eval --array=0"
 #   ssh -o BatchMode=yes aau "cd R && CKPT_LIST=<train run>/checkpoints.txt \
 #       infra/cluster/submit.sh exp06_eval --array=0-<n-1>%4"
-#   (Mac) SETUP=<setup run> TRAIN=<train run> EVAL=<eval run> BASE_EVAL=<base eval run> bash run_all.sh fetch
+#   stage 2 (budget extension, RESULTS.md): queued behind stage 1 with --dependency=afterany:<stage-1 array>:
+#   ssh -o BatchMode=yes aau "cd R && PREP=<setup run>/data JOB_ARGS='--init-from <stage-1 run> --drift-ref base \
+#       --max-steps 3000 --schedule-steps 3000 --max-wall-s 30600 --marks 3,6,10' infra/cluster/submit.sh exp06_train \
+#       --array=0-2 --time=09:00:00 --dependency=afterany:<stage-1 array>"   (+ its own eval array, as above)
+#   (Mac) SETUP=<setup run> TRAIN=<stage-1 run> TRAIN2=<stage-2 run> BASE_EVAL=<base eval run> bash run_all.sh fetch
 #   bash run_all.sh analyze     Mac: results/{checkpoints.csv, trajectories.csv, correlations.csv, tests.csv,
-#                               summary.md, fig_matched.png}
+#                               exploratory_corpus_profile.csv, summary.md, fig_matched.png}
 set -euo pipefail
 cd "$(dirname "$0")/.."
 PY=.venv/bin/python
@@ -33,19 +37,34 @@ case "${1:-analyze}" in
       rsync -az --include='data/' --include='*.prov.json' --include='summary.json' --include='slurm-*.out' \
             --include='commit.txt' --include='pip_freeze.txt' --exclude='*' "aau:$SETUP/" $OUT/logs/setup/
     fi
-    if [ -n "${TRAIN:-}" ]; then  # drift logs, train logs, per-token bits; never the checkpoint weights
-      rsync -az --exclude='ckpt/' "aau:$TRAIN/" $OUT/results/train/
-      rsync -az --include='*/' --include='exp06_checkpoint.json' --exclude='*' "aau:$TRAIN/" $OUT/results/train/
-    fi
-    for v in EVAL BASE_EVAL; do
-      run="${!v:-}"
+    for v in TRAIN TRAIN2; do  # drift/train logs and checkpoint metadata, never weights; per-token bits of the
+      run="${!v:-}"            # reference and checkpoint updates only
       [ -n "$run" ] || continue
+      dst=$OUT/results/$( [ "$v" = TRAIN ] && echo train || echo train2 )
+      rsync -az --exclude='ckpt/' --exclude='results/' --exclude='tokens/' --exclude='slurm-*.out' \
+            --exclude='commit*.txt' "aau:$run/" "$dst/"
+      rsync -az --exclude='results/' --include='*/' --include='exp06_checkpoint.json' --exclude='*' \
+            --prune-empty-dirs "aau:$run/" "$dst/"
+      rsync -az --include='slurm-*.out' --include='commit*.txt' --exclude='*' "aau:$run/" \
+            "$OUT/logs/$( [ "$v" = TRAIN ] && echo stage1 || echo stage2 )/"
+      for r in tulu smoltalk mathcot; do
+        [ -f "$dst/$r/checkpoints.txt" ] || continue
+        first=$(sed -n 2p "$dst/$r/drift.csv" | cut -d, -f2)  # the reference row (update 0, or the init)
+        inc=()
+        for st in $first $(cut -f4 "$dst/$r/checkpoints.txt"); do inc+=("--include=$(printf 'step%05d' "$st")__*.npy"); done
+        mkdir -p "$dst/$r/tokens"
+        rsync -az "${inc[@]}" --exclude='*' "aau:$run/$r/tokens/" "$dst/$r/tokens/"
+      done
       rsync -az --include='*/' --include='summary.json' --include='done.json' --include='results.json' \
             --exclude='*' "aau:$run/results/" $OUT/results/lm_eval/
-      rsync -az --include='slurm-*.out' --include='commit.txt' --exclude='*' "aau:$run/" "$OUT/logs/$(echo "$v" | tr A-Z a-z)/"
-    done ;;
+    done
+    if [ -n "${BASE_EVAL:-}" ]; then
+      rsync -az --include='*/' --include='summary.json' --include='done.json' --include='results.json' \
+            --exclude='*' "aau:$BASE_EVAL/results/" $OUT/results/lm_eval/
+      rsync -az --include='slurm-*.out' --include='commit*.txt' --exclude='*' "aau:$BASE_EVAL/" $OUT/logs/base_eval/
+    fi ;;
   analyze)
     $PY $OUT/analyze_matched.py > $OUT/logs/analyze.log 2>&1
-    echo "done: $OUT/results/{checkpoints.csv,trajectories.csv,correlations.csv,tests.csv,summary.md,fig_matched.png}" ;;
+    echo "done: $OUT/results/{checkpoints.csv,trajectories.csv,correlations.csv,tests.csv,exploratory_corpus_profile.csv,summary.md,fig_matched.png}" ;;
   *) echo "usage: run_all.sh [fetch|analyze]"; exit 1 ;;
 esac

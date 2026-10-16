@@ -43,6 +43,7 @@ def fixture() -> tuple[list[str], pd.DataFrame, dict[str, dict[str, object]]]:
             c = c0 * (1 + 0.1 * k)
             drift_rows.append({"recipe": rec, "step": step, "token_positions": step * 65536, "nonpad_tokens": 1,
                                "loss_tokens": 1, "epochs": step / 700, "dbpb_fresh": d, "dbpb_enwik8_ctrl": d,
+                               "dbpb_wiki2026": d, "dbpb_arxiv2026": d, "dbpb_gutenberg2026": d,
                                "drift_knowledge": d + c / 2, "drift_middle": d, "drift_style": d - c / 2,
                                "drift_rare": d + c / 3, "drift_frequent": d - c / 3, "contrast_ks": c,
                                "contrast_rf": 2 * c / 3, "train_loss": 1.0})
@@ -81,3 +82,14 @@ def test_strictly_descending() -> None:
     assert strictly_descending({"mathcot": 3, "smoltalk": 2, "tulu": 1}, order) is True
     assert strictly_descending({"mathcot": 3, "smoltalk": 3, "tulu": 1}, order) is False
     assert strictly_descending({"mathcot": 3, "tulu": 1}, order) is None
+
+
+def test_merge_stages_drops_the_duplicated_init_row() -> None:
+    from exp06_matched_drift.analyze_matched import merge_stages, stage_of_step
+    s1 = pd.DataFrame({"recipe": ["a", "a", "b"], "step": [0, 1500, 1500], "dbpb_fresh": [0.0, 2.0, 3.0]})
+    s2 = pd.DataFrame({"recipe": ["a", "a", "b", "b"], "step": [1500, 1520, 1500, 1520],
+                       "dbpb_fresh": [2.0, 2.1, 3.0, 3.2]})
+    m = merge_stages([s1, s2])
+    assert m[m.recipe == "a"].step.tolist() == [0, 1500, 1520] and m[m.recipe == "a"].stage.tolist() == [1, 1, 2]
+    assert m[m.recipe == "b"].step.tolist() == [1500, 1520]
+    assert stage_of_step(1500) == 1 and stage_of_step(1520) == 2 and stage_of_step(920) == 1
