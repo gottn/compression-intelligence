@@ -12,6 +12,7 @@ Per recipe (definitions in RESULTS.md; helpers in cilab/sft.py):
 If a recipe's fitting pool runs out first, the budget for every recipe becomes that pool's total: recipes are prepared
 in the order given, a short pool lowers the budget, and recipes already prepared are cut to the new budget (they are a
 prefix of the same seeded order, so the cut is exact).
+Datasets are loaded at the revisions pinned in RECIPES (the ones exp06 recorded).
 Writes DIR/<recipe>.npz (ids int32, mask bool, offsets int64 of each example in the flat arrays, source index of each
 example), DIR/<recipe>.prov.json (dataset id, config, revision, counts, drop reasons, token stats, source mix) and
 DIR/summary.json.
@@ -48,12 +49,18 @@ class Recipe:
     config: str | None
     split: str
     source_cols: tuple[str, ...]  # columns tallied for the source mix
+    revision: str | None = None  # hub commit; None resolves the current head (exp06's setup did, on 2026-10-15)
 
 
+# Revisions pinned to the ones exp06's setup job recorded (logs/setup/data/*.prov.json), so a rerun (exp07) makes the
+# same subsets.
 RECIPES: tuple[Recipe, ...] = (
-    Recipe("tulu", "allenai/tulu-3-sft-mixture", None, "train", ("source",)),
-    Recipe("smoltalk", "HuggingFaceTB/smoltalk", "all", "train", ("source",)),
-    Recipe("mathcot", "open-r1/OpenR1-Math-220k", "all", "train", ("source", "problem_type")),
+    Recipe("tulu", "allenai/tulu-3-sft-mixture", None, "train", ("source",),
+           "b14afda60f1bbebe55d5d2fa1e4df5042f97f8be"),
+    Recipe("smoltalk", "HuggingFaceTB/smoltalk", "all", "train", ("source",),
+           "5feaf2fd3ffca7c237fc38d1861bc30365d48ffa"),
+    Recipe("mathcot", "open-r1/OpenR1-Math-220k", "all", "train", ("source", "problem_type"),
+           "e4e141ec9dea9f8326f4d347be56105859b2bd68"),
 )
 
 
@@ -81,12 +88,13 @@ def make_render(tok: object):
 
 
 def load_recipe(recipe: Recipe) -> tuple[object, str, float]:
-    """(dataset split, hub revision it was loaded at, load wall s); downloads into HF_HOME."""
+    """(dataset split, hub revision it was loaded at, load wall s); downloads into HF_HOME. A recipe without a pinned
+    revision is loaded at the hub's current head."""
     from datasets import load_dataset
     from huggingface_hub import HfApi
 
     t0 = time.time()
-    revision = HfApi().dataset_info(recipe.dataset).sha
+    revision = recipe.revision or HfApi().dataset_info(recipe.dataset).sha
     ds = load_dataset(recipe.dataset, recipe.config, split=recipe.split, revision=revision)
     return ds, revision, time.time() - t0
 

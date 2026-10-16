@@ -214,14 +214,14 @@ def append_locked(path: Path, line: str) -> None:
 
 
 def save_checkpoint(shadow: object, tpl_tok: object, out: Path, recipe: str, step: int, marks: Sequence[str],
-                    meta: Mapping[str, object], lists: Sequence[Path]) -> Path:
+                    meta: Mapping[str, object], lists: Sequence[Path], prefix: str = LABEL_PREFIX) -> Path:
     d = out / "ckpt" / f"step{step:05d}"
     t0 = time.time()
     shadow.save_pretrained(d)
     tpl_tok.save_pretrained(d)
     (d / "exp06_checkpoint.json").write_text(json.dumps({"recipe": recipe, "step": step, "marks": list(marks),
                                                          **meta}, indent=1))
-    line = checkpoint_line(checkpoint_label(LABEL_PREFIX, recipe, step), str(d), recipe, step, marks)
+    line = checkpoint_line(checkpoint_label(prefix, recipe, step), str(d), recipe, step, marks)
     for p in lists:
         append_locked(p, line)
     print(json.dumps({"checkpoint": str(d), "marks": list(marks), "save_s": round(time.time() - t0, 1)}), flush=True)
@@ -284,6 +284,7 @@ def cmd_train(args: argparse.Namespace) -> int:
            "doc_start": corp["start_str"], "setup_s": round(time.time() - t_job, 1),
            "schedule_steps": args.schedule_steps, "step_offset": offset, "marks": list(marks),
            "drift_ref": args.drift_ref, "init_from": args.init_from, "init_checkpoint": init_meta or None,
+           "label_prefix": args.label_prefix,
            "slurm_job": os.environ.get("SLURM_JOB_ID"), "restart": os.environ.get("SLURM_RESTART_COUNT")}
     (out / "started.json").write_text(json.dumps(env, indent=1))
     print(json.dumps(env), flush=True)
@@ -328,7 +329,7 @@ def cmd_train(args: argparse.Namespace) -> int:
                     "token_positions": stats["token_positions"], "loss_tokens": stats["loss_tokens"],
                     "epochs": stats["epochs"], "base": weights, "template_tokenizer": TEMPLATE_TOKENIZER,
                     **({"init_from": weights, "drift_ref": args.drift_ref} if args.init_from else {})}
-            save_checkpoint(shadow, tpl_tok, out, recipe, step, tags, meta, lists)
+            save_checkpoint(shadow, tpl_tok, out, recipe, step, tags, meta, lists, args.label_prefix)
 
     feed = batches(examples, int(tok.pad_token_id), offset if args.init_from else 0)
     if args.init_from:  # resume the data order where the earlier stage stopped
@@ -450,6 +451,7 @@ def main() -> None:
                    help="drift reference: the first scored weights (init) or the original OLMo-2 base")
     t.add_argument("--step-offset", type=int, default=None, help="first update number (default: the init's step)")
     t.add_argument("--max-wall-s", type=float, default=MAX_WALL_S)
+    t.add_argument("--label-prefix", default=LABEL_PREFIX, help="checkpoint label prefix (exp07 reruns: exp07)")
     t.add_argument("--score-every", type=int, default=SCORE_EVERY)
     t.add_argument("--micro-batch", type=int, default=2)
     t.add_argument("--grad-ckpt", action="store_true")
