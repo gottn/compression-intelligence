@@ -1,0 +1,2 @@
+2ef8eb7c18d2ae6c6b54d95ef5cc99cd19f24612
+feat(exp07): ARC format battery, jobs and analysis — fixture yields K, mixed, format, survives
